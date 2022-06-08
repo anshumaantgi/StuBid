@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "StuBid",
+    "slug": "StuBid",
+    "description": "StuBid is a one-stop mobile application which allows students from all Singapore Universities to conveniently buy or sell unwanted items online through an anonymous bidding system, maximizing the benefits gained by both the seller and buyer.",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./app/assets/StuBid-Logo-Original-ver.png",
+    "userInterfaceStyle": "light",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./app/assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./app/assets/favicon.png"
+    }
+  }
+}
