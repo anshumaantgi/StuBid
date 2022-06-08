@@ -7,7 +7,13 @@ const MyProfilepage = ({navigation}) => {
         <View style={styles.container}>
              <Text
                 onPress={() => alert('This is the "MyProfile" screen.')}
-                style={{ fontSize: 26, fontWeight: 'bold' }}>MyProfile</Text>
+                style={{ fontSize: 26, fontWeight: 'bold' }}>My Profile
+            </Text>
+
+            <Text
+                onPress={() => navigation.navigate("LogoutSuccess")}
+                style={{ fontSize: 26, fontWeight: 'bold', marginTop: 50 }}> Click here to Logout
+            </Text>
         </View>
     );
 }

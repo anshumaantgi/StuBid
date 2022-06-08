@@ -9,6 +9,9 @@ import ForgetPassword from './app/Screens/ForgetPassword';
 import Homepage from './app/Screens/Homepage';
 import VerifyEmailSuccess from './app/Screens/VerifyEmailSuccess';
 import ResetPasswordSuccess from './app/Screens/ResetPasswordSuccess';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MainContainer from './app/Screens/MainContainer';
+import LogoutSuccess from './app/Screens/LogoutSuccess';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,11 +33,13 @@ const App = () => {
               <Stack.Screen name = "Login" component={Login} />
               <Stack.Screen name = "Registration" component={Registration} />
               <Stack.Screen name = "ForgetPassword" component={ForgetPassword} />
-              <Stack.Screen name = "Homepage" component={Homepage} />
               <Stack.Screen name = "VerifyEmailSuccess" component={VerifyEmailSuccess} />
               <Stack.Screen name = "ResetPasswordSuccess" component={ResetPasswordSuccess} />
+              <Stack.Screen name = "LogoutSuccess" component={LogoutSuccess} />
+              <Stack.Screen name = "MainContainer" component={MainContainer} />
             </Stack.Navigator>
           </NavigationContainer>
+
   );
 }
 

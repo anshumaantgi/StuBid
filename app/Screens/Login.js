@@ -22,7 +22,7 @@ const Login = ({navigation}) => {
             <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
                 <Text style ={styles.forgetpasswordtext}>Forget Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {sendValues(email, password); navigation.navigate("Homepage");}}>
+            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {sendValues(email, password); navigation.navigate("MainContainer");}}>
                 <Text style ={styles.customBtnText}>Login</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>
