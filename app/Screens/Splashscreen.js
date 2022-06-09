@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import { useFonts } from 'expo-font';
+import {auth} from '../config/config.js';
 
 const Splashscreen = ({navigation}) => {
 
@@ -10,8 +11,14 @@ const Splashscreen = ({navigation}) => {
   });
 
   setTimeout(()=>{
-    navigation.navigate('Onboard')
-  },3000)
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+          navigation.navigate('Homepage');
+      } else {
+          navigation.navigate('Onboard');
+      }
+    })
+  },3000);
 
   return (
     <View style={styles.container}>
