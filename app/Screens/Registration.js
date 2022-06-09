@@ -3,6 +3,8 @@ import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
+import RegisterationView from '../views/RegisterationView.js'
+import {auth, db} from '../config/config.js'
 
 const Registration = ({navigation}) => {
 
@@ -26,12 +28,8 @@ const Registration = ({navigation}) => {
       {label: 'Singapore University of Social Sciences (SUSS)', value: 'SUSS'},
     ]);
 
-    function sendValues(enteredfullname, selectuniname, enteredemail, enteredpassword, enteredrepassword) {
-        console.log(enteredfullname);
-        console.log(selectuniname);
-        console.log(enteredemail);
-        console.log(enteredpassword);
-        console.log(enteredrepassword);
+    async function sendValues(enteredfullname, selectuniname, enteredemail, enteredpassword, enteredrepassword) {
+        return await new RegisterationView(db, auth).createUser(enteredfullname, enteredemail,selectuniname, enteredpassword, enteredrepassword);
     };
 
     function FindUniMatchAddress(selectuniname) {
@@ -103,7 +101,13 @@ const Registration = ({navigation}) => {
             </View>
             <TextInput style = {styles.textinput} placeholder='Password' placeholderTextColor={colors.white} value = {password} onChangeText={(value) => setPassword(value)} secureTextEntry={true}/>
             <TextInput style = {styles.textinput} placeholder='Re-Enter Password' placeholderTextColor={colors.white} value = {repassword} onChangeText={(value) => setRepassword(value)} secureTextEntry={true}/>
-            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {sendValues(fullname, value, email + unimatchaddress, password, repassword); navigation.navigate("VerifyEmailSuccess");}}>
+            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
+                sendValues(fullname, value, email + unimatchaddress, password, repassword)
+                .then((success) =>  {navigation.navigate("VerifyEmailSuccess")})
+                .catch((error) => {alert(error.message)})
+            }
+        }
+            >
                 <Text style ={styles.customBtnText}>Create Account</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>
