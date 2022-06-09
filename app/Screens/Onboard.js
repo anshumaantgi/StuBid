@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StatusBar, Image, StyleSheet} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import colors from '../config/colors.js';
-
+import {auth} from '../config/config.js';
 const data = [
     {
       title: 'All-In-One Marketplace to sell or buy items',
@@ -85,7 +85,7 @@ const Onboard = ({navigation}) => {
           dotStyle={styles.dotStyle}
           activeDotStyle={styles.activeDotStyle}
           data={data}
-          onDone={() => navigation.navigate('WelcomeScreen')}
+          onDone = {() => navigation.navigate('WelcomeScreen')}
         />
       </View>
     )

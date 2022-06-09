@@ -2,14 +2,16 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
+import {auth} from '../config/config.js';
+import ForgotPasswordView from '../views/ForgotPasswordView.js';
 
 const ForgetPassword = ({navigation}) => {
 
     // initize the state hook
     const [email, setEmail] = useState('');
 
-    function sendValues(enteredemail) {
-        console.log(enteredemail);
+    async function sendValues(enteredemail) {
+        return await new ForgotPasswordView(auth).resetPassword(email);
     };
 
     return (
@@ -22,7 +24,11 @@ const ForgetPassword = ({navigation}) => {
             <Text style={styles.text}> 
             By tapping Send to Email, resetted password will be sent to your email with follow-up actions.
             </Text>
-            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {sendValues(email); navigation.navigate("ResetPasswordSuccess");}}>
+            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
+                sendValues(email)
+                .then ((sucess) => navigation.navigate("ResetPasswordSuccess"))
+                .catch ((error) => alert(error.message));
+                }}>
                 <Text style ={styles.customBtnText}>Send to Email</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>
