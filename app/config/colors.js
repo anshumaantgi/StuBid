@@ -4,4 +4,6 @@ export default {
     lightbrown: "#F1E6B8",
     lightgrey: "#D3D3D3",
     textinput: "rgba(77, 51, 12, 0.4)",
+    black: "#000000",
+    gold: "#DFB23F",
 }
