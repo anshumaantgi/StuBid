@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
+import LoginView from '../views/LoginView.js';
+import { auth } from '../config/config.js';
 
 const Login = ({navigation}) => {
 
@@ -9,9 +11,8 @@ const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function sendValues(enteredemail, enteredpassword) {
-        console.log(enteredemail);
-        console.log(enteredpassword);
+    async function sendValues(enteredemail, enteredpassword) {
+        return new LoginView(auth).logUser(enteredemail, enteredpassword);
     };
 
     return (
@@ -22,7 +23,12 @@ const Login = ({navigation}) => {
             <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
                 <Text style ={styles.forgetpasswordtext}>Forget Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {sendValues(email, password); navigation.navigate("Homepage");}}>
+            <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
+                sendValues(email, password)
+                .then((success) => {navigation.navigate("Homepage");})
+                .catch((error) => alert(error.message))
+                
+                }}>
                 <Text style ={styles.customBtnText}>Login</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>
