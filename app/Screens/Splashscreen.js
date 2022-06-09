@@ -13,7 +13,7 @@ const Splashscreen = ({navigation}) => {
   setTimeout(()=>{
     auth.onAuthStateChanged((user) => {
       if (user) {
-          navigation.navigate('Homepage');
+          navigation.navigate('MainContainer');
       } else {
           navigation.navigate('Onboard');
       }
