@@ -25,7 +25,7 @@ const Login = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(email, password)
-                .then((success) => {navigation.navigate("Homepage");})
+                .then((success) => {navigation.navigate("MainContainer");})
                 .catch((error) => alert(error.message))
                 
                 }}>
