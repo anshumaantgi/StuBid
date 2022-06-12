@@ -11,7 +11,7 @@ const ForgetPassword = ({navigation}) => {
     const [email, setEmail] = useState('');
 
     async function sendValues(enteredemail) {
-        return await new ForgotPasswordView(auth).resetPassword(email);
+        return await new ForgotPasswordView(auth).resetPassword(enteredemail);
     };
 
     return (
@@ -26,7 +26,7 @@ const ForgetPassword = ({navigation}) => {
             </Text>
             <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(email)
-                .then ((sucess) => navigation.navigate("ResetPasswordSuccess"))
+                .then ((success) => navigation.navigate("ResetPasswordSuccess"))
                 .catch ((error) => alert(error.message));
                 }}>
                 <Text style ={styles.customBtnText}>Send to Email</Text>

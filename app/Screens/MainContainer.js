@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
 import Homepage from './Homepage';
@@ -9,6 +10,9 @@ import Auctionpage from './Auctionpage';
 import Notificationpage from './Notificationpage';
 import MyProfilepage from './MyProfilepage';
 import colors from '../config/colors';
+import { View } from 'react-native';
+import Auction1 from './Auction1';
+import Auction2 from './Auction2';
 
 //Screen names
 const homeName = "Home";
@@ -62,7 +66,19 @@ function MainContainer() {
        >
 
         <Tab.Screen name={homeName} component={Homepage} />
-        <Tab.Screen name={AuctionName} component={Auctionpage} />
+        <Tab.Screen 
+          name={AuctionName} 
+          component={View}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              // Prevent default action
+              e.preventDefault();
+    
+              // Do something with the `navigation` object
+              navigation.navigate("Auction1"); // Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            },
+          })}
+        />
         <Tab.Screen name={NotificationName} component={Notificationpage} />
         <Tab.Screen name={MyProfileName} component={MyProfilepage} />
 
