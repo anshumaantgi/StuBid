@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet, AsyncStorage} from 'react-native';
 import { useFonts } from 'expo-font';
 import {auth} from '../config/config.js';
 
@@ -15,7 +15,7 @@ const Splashscreen = ({navigation}) => {
       if (user) {
           navigation.navigate('MainContainer');
       } else {
-          navigation.navigate('Onboard');
+        navigation.navigate('Onboard');
       }
     })
   },3000);

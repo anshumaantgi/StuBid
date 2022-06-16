@@ -15,6 +15,7 @@ import LogoutSuccess from './app/Screens/LogoutSuccess';
 import Auction1 from './app/Screens/Auction1';
 import Auction2 from './app/Screens/Auction2';
 import colors from './app/config/colors';
+import ItemPublishSuccess from './app/Screens/ItemPublishSuccess';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,8 +41,9 @@ const App = () => {
               <Stack.Screen options={{headerShown: false}} name = "ResetPasswordSuccess" component={ResetPasswordSuccess} />
               <Stack.Screen options={{headerShown: false}} name = "LogoutSuccess" component={LogoutSuccess} />
               <Stack.Screen options={{headerShown: false}} name = "MainContainer" component={MainContainer} />
-              <Stack.Screen options={{title: 'Auction (Part 1)', headerTintColor: colors.black}} name = "Auction1" component={Auction1} />
-              <Stack.Screen options={{title: 'Auction (Part 2)', headerTintColor: colors.black}} name = "Auction2" component={Auction2} />
+              <Stack.Screen options={{title: 'Auction Item', headerTintColor: colors.black}} name = "Auction1" component={Auction1} />
+              <Stack.Screen options={{title: 'Category & Price of Item', headerTintColor: colors.black}} name = "Auction2" component={Auction2} />
+              <Stack.Screen options={{headerShown: false}} name = "ItemPublishSuccess" component={ItemPublishSuccess} />
             </Stack.Navigator>
           </NavigationContainer>
 
