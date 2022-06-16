@@ -8,9 +8,10 @@ import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-const Auction2 = ({navigation}) => {
+const Auction2 = ({route, navigation}) => {
 
       // initize the state hook
+      const auctionView =  route.params;
       const [startingprice, setStartingprice] = useState('');
       const [buyoutprice, setBuyoutprice] = useState('');
 
@@ -55,13 +56,15 @@ const Auction2 = ({navigation}) => {
             throw new Error("Minimum Day of Bidding must be at least 1");
           } else if (parseInt(enteredbuyoutprice) <=  parseInt(enteredstartingprice)) {
             throw new Error("Buyout Bid must be higher than Starting Bid!");
-          } 
-        console.log(enteredcategory); // URI of image
-        console.log(enteredendbid);
-        console.log(entereddaysleft);
-        console.log(enteredstartingprice);
-        console.log(enteredbuyoutprice);
-        console.log(SellerAnonymousName);
+          } else {
+            // Create Auction Object and Input Auction ID
+            // Save the Anonymous name to the Auction Object
+            auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,0,entereddaysleft,new Date().toLocaleString())
+            .then((success) => // Add succesful Product to user List of created Products
+            null)
+            .catch((err) => {
+              throw new Error(err.message)});
+          }
     };
     
     return (

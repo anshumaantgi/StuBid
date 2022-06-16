@@ -5,8 +5,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../config/colors.js';
 import * as ImagePicker from 'expo-image-picker';
 import { doc, getDoc, getFirestore} from "firebase/firestore"; 
-import { auth } from '../config/config.js';
+import { auth,db } from '../config/config.js';
 import UploadItemPhoto from '../assets/UploadItemPhoto_resize.png';
+import AuctionView from '../views/AuctionView.js';
+import Product from '../models/Product.js';
 
 
 
@@ -47,16 +49,18 @@ const Auction1 = ({navigation}) => {
     }
   };
 
-  async function sendValues(enteredimage, entereditemname, entereditemdesc, entereduseruni) {
+  function sendValues(enteredimage, entereditemname, entereditemdesc, entereduseruni) {
     if (!(enteredimage && entereditemname && entereditemdesc && entereduseruni)) {
       throw new Error("Please do not leave any fields empty!");
     } else if (enteredimage === UploadItemPhotoURI) {
       throw new Error("Have you upload the item image?");
-    } 
-    console.log(enteredimage); // URI of image
-    console.log(entereditemname);
-    console.log(entereditemdesc);
-    console.log(entereduseruni);
+    } else {
+      newProduct = new Product(entereditemname,auth.currentUser.uid,entereditemdesc,enteredimage);
+      
+      return new AuctionView(auth, db , newProduct)
+
+    }
+    
 };
     
     const db = getFirestore();
@@ -128,9 +132,13 @@ const Auction1 = ({navigation}) => {
               <Ionicons style={styles.lockIcon} name={'lock-closed-outline'} size={24} color={colors.darkbrown} />
              </View>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
-                sendValues(image, itemname, itemdesc, useruni)
-                .then((success) => {navigation.navigate("Auction2");})
-                .catch((error) => alert(error.message))
+                try  {
+                navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, useruni));
+
+                } catch (err) {
+                  alert(err.message);
+                }
+              
                 
                 }}>
                 <Text style ={styles.customBtnText}>Next</Text>
