@@ -7,4 +7,6 @@ export default {
     black: "#000000",
     gold: "#DFB23F",
     red: "#F02B1E",
+    orange: "#FF7D0B",
+    activeday: "rgba(116, 65, 0, 0.5)",
 }

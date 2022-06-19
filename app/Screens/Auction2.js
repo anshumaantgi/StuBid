@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView} from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -6,6 +6,7 @@ import colors from '../config/colors.js';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { doc, getDocs, getFirestore, collection} from "firebase/firestore"; 
 
 
 const Auction2 = ({route, navigation}) => {
@@ -14,6 +15,7 @@ const Auction2 = ({route, navigation}) => {
       const auctionView =  route.params;
       const [startingprice, setStartingprice] = useState('');
       const [buyoutprice, setBuyoutprice] = useState('');
+      const [counter, setCounter] = useState(0);
 
       // Date picker
       const [date, setDate] = useState(new Date());
@@ -48,9 +50,28 @@ const Auction2 = ({route, navigation}) => {
       const { uniqueNamesGenerator, adjectives, animals } = require('unique-names-generator');
       const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, animals] }); // big_donkey
 
+      //Retrieve Total number of documents (purpose is for auto accumulate Auction ID)
+      const countdocs = async()=> {
+        var count = 0;
+        const db = getFirestore();
+        const querySnapshot = await getDocs(collection(db, "products"));
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+          count = count + 1
+          }
+          )
+          console.log("DOG", count);
+          setCounter(count)};
+        
+        useEffect(() => {
+           countdocs();
+        }, [])
+
       // Function to send to database
       async function sendValues(enteredcategory, enteredendbid, entereddaysleft, enteredstartingprice, enteredbuyoutprice, SellerAnonymousName) {
         if (!(enteredcategory && enteredendbid  && enteredstartingprice && enteredbuyoutprice && SellerAnonymousName)) {
+          console.log(counter);
             throw new Error("Please do not leave any fields empty!");
           } if (entereddaysleft === 0) {
             throw new Error("Minimum Day of Bidding must be at least 1");
@@ -59,7 +80,7 @@ const Auction2 = ({route, navigation}) => {
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
-            auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,0,entereddaysleft,new Date().toLocaleString())
+            auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,counter,entereddaysleft,new Date().toLocaleString())
             .then((success) => // Add succesful Product to user List of created Products
             null)
             .catch((err) => {
