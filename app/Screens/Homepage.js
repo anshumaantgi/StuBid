@@ -3,8 +3,10 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndic
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore} from "firebase/firestore"; 
+
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
+import { Inter_500Medium } from '@expo-google-fonts/inter';
 
 
 // const productitem = [
@@ -90,15 +92,16 @@ const Homepage = ({navigation}) => {
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null); //contain last document of snapshot, will be used to get more product data
     const [products, setProducts] = useState([]);
-
+    const [url,setUrl] = useState();
      const db = getFirestore();
-     const productsRef = collection(db, 'products');
+     const productsRef = collection(db, 'auctions');
     
 
     useEffect(() => {
         getProducts();
     }, []);
 
+    
     const getProducts = async () => {
         setIsLoading(true);
 
@@ -108,18 +111,19 @@ const Homepage = ({navigation}) => {
 
     // Get the last visible document
     const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-    console.log("last", lastVisible);
+   // console.log("last", lastVisible);
 
         if (!documentSnapshots.empty) {
             let newProducts = [];
 
             setLastDoc(lastVisible);
-
+            
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
+                // Check is the prduct is sold by current user
+                // Each Auction collection will have array Bids
+                // For each prduct , it will retrieve the the bids anf check if bid owner is current user 
                 newProducts.push(documentSnapshots.docs[i].data());
-                console.log(newProducts);
-            }
-
+        }
             setProducts(newProducts);
         } else {
             setLastDoc(null);
@@ -140,15 +144,17 @@ const Homepage = ({navigation}) => {
 
         if (!documentSnapshots.empty) {
             let newProducts = products;
-             // Get the last visible document
+             // Get the last visible document , Bidder , Seller or Viewer
             const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
-                console.log(newProducts);
+                
+                // Is it Ongoing 
+                // Check is the prduct is sold by current user
+                // Each Auction collection will have array Bid
             }
-
             setProducts(newProducts);
             if (documentSnapshots.docs.length < 3) {
                 setLastDoc(null);
@@ -167,7 +173,8 @@ const Homepage = ({navigation}) => {
     const renderList = ({name, photo, description, anonymous_owner, current_price, activeDays, createdAt, isNew}) => {
         return (
             <View style = {styles.list}>
-                <Image source = {photo} style = {styles.listImage} />
+                <Image source = {{uri:photo}} 
+                style = {styles.listImage} />
                 <View style = {styles.listingContainer}>
                     <View style = {styles.container}>
                         <Text style= {styles.name}>{name}</Text>
@@ -249,7 +256,17 @@ const Homepage = ({navigation}) => {
                 }}
                 data={products}
                 keyExtractor={item =>  item.auctionId.toString()}
-                renderItem={({item}) => renderList(item)} />
+                renderItem={({item}) => {
+                    const render = { name: item.product.name
+                        , photo: item.product.pictureUri, 
+                        description: item.product.description, 
+                        anonymous_owner: item.anomName, 
+                        current_price: item.currPrice, 
+                        activeDays:item.product.activeDays, 
+                        createdAt: item.createdAt}
+                    return renderList(render);
+                }} />
+
             </View>
         </View>
         
