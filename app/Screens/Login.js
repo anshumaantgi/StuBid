@@ -29,7 +29,6 @@ const Login = ({navigation}) => {
                 .catch((error) => alert(error.message))
                 
                 }}>
-
                 <Text style ={styles.customBtnText}>Login</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row'}}>

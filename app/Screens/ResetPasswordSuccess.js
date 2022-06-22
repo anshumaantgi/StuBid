@@ -8,7 +8,7 @@ const ResetPasswordSuccess = ({navigation}) => {
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
           <Text style={styles.text}> 
-          Password resettted Successfully!
+          Password resetted Successfully!
           </Text>
           <Text style={styles.text}> 
            Please check your email for follow-up actions.

@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { TextInput } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import RegisterationView from '../views/RegisterationView.js'
 import {auth, db} from '../config/config.js'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Registration = ({navigation}) => {
 
@@ -26,6 +27,7 @@ const Registration = ({navigation}) => {
       {label: 'Singapore Institute of Technology (SIT)', value: 'SIT'},
       {label: 'Singapore University of Technology & Design (SUTD)', value: 'SUTD'},
       {label: 'Singapore University of Social Sciences (SUSS)', value: 'SUSS'},
+      {label: 'For debugging/testing purpose (GMAIL)', value: 'GMAIL'},
     ]);
 
     async function sendValues(enteredfullname, selectuniname, enteredemail, enteredpassword, enteredrepassword) {
@@ -64,6 +66,11 @@ const Registration = ({navigation}) => {
                 //console.log('@suss.edu.sg');
                 setUnimatchaddress('@suss.edu.sg');
                 break;
+            case "GMAIL" :
+                // Do work here
+                //console.log('@suss.edu.sg');
+                setUnimatchaddress('@gmail.com');
+                break;
             default :
                 // Do work here
                 console.log('Uni not listed here');
@@ -73,7 +80,8 @@ const Registration = ({navigation}) => {
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView>
+        <SafeAreaView style={styles.container}>
             <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
             <TextInput style = {styles.textinput} placeholder='Full Name' placeholderTextColor={colors.white} value = {fullname} onChangeText={(value) => setFullname(value)}/>
             <DropDownPicker
@@ -83,6 +91,10 @@ const Registration = ({navigation}) => {
                 setOpen={setOpen}
                 setValue={setValue}
                 setItems={setItems}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
                 onChangeValue={(value) => {
                     setValue(value);
                     FindUniMatchAddress(value);
@@ -116,7 +128,8 @@ const Registration = ({navigation}) => {
                     <Text style ={styles.logintext}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
+        </ScrollView>
     );
 }
 
@@ -131,6 +144,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         alignItems: 'center',
         justifyContent: 'center',
+        marginVertical: '20%',
       },
 
     logo: {
