@@ -6,7 +6,7 @@ export default class ForgotPasswordView {
     }
 
     async resetPassword(email) {
-        await sendPasswordResetEmail(this.auth, this.auth.currentUser.email)
+        await sendPasswordResetEmail(this.auth, email)
         .then(() => {
             console.log(email);
           })

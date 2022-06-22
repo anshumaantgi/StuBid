@@ -80,7 +80,7 @@ const Registration = ({navigation}) => {
 
 
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
         <SafeAreaView style={styles.container}>
             <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
             <TextInput style = {styles.textinput} placeholder='Full Name' placeholderTextColor={colors.white} value = {fullname} onChangeText={(value) => setFullname(value)}/>
