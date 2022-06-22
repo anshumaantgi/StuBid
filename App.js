@@ -16,6 +16,7 @@ import Auction1 from './app/Screens/Auction1';
 import Auction2 from './app/Screens/Auction2';
 import colors from './app/config/colors';
 import ItemPublishSuccess from './app/Screens/ItemPublishSuccess';
+import Filterpage from './app/Screens/Filterpage';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,8 @@ const App = () => {
               <Stack.Screen options={{title: 'Auction Item', headerTintColor: colors.black}} name = "Auction1" component={Auction1} />
               <Stack.Screen options={{title: 'Category & Price of Item', headerTintColor: colors.black}} name = "Auction2" component={Auction2} />
               <Stack.Screen options={{headerShown: false}} name = "ItemPublishSuccess" component={ItemPublishSuccess} />
+              <Stack.Screen options={{title: 'Filter Products',}} name = "Filter" component={Filterpage} />
+              <Stack.Screen options={{headerShown: false}} name = "Home" component={Homepage} />
             </Stack.Navigator>
           </NavigationContainer>
 

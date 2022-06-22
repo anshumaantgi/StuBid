@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, RefreshControl} from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore} from "firebase/firestore"; 
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where} from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
+import {FilterContext} from './MainContainer.js';
 
 
 // const productitem = [
@@ -82,18 +84,71 @@ import { async } from '@firebase/util';
 //     },
 // ];
 
-const Homepage = ({navigation}) => {
+const Homepage = ({route, navigation}) => {
 
     let onEndReachedCalledDuringMomentum = false;
+    //check filter storage
+    const filterchecker = React.useContext(FilterContext);
+    var uniSelected = [];
+    var catSelected = [];
+    var priceSelected = [];
 
+    if (filterchecker) {
+        uniSelected = filterchecker.uniSelectedarray;
+        catSelected = filterchecker.catSelectedarray;
+        priceSelected = filterchecker.priceSelectedarray;
+    }
+
+    console.log(uniSelected, 'HI');
+    console.log(catSelected, 'HIasd');
+    console.log(priceSelected, 'HI');
+    // initialise state 
+    var defaultfirst = null;
+    var defaultlast = null;
+    var filterunifirst = null;
+    var filterunilast = null;
+    var filtercatfirst = null;
+    var filtercatlast = null;
+    var filterpricefirst = null;
+    var filterpricelast = null;
+
+    //initialise state hook
     const [isLoading, setIsLoading] = useState(false);
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null); //contain last document of snapshot, will be used to get more product data
     const [products, setProducts] = useState([]);
 
-     const db = getFirestore();
-     const productsRef = collection(db, 'products');
-    
+    //Search Bar
+    const [search, setSearch] = useState('');
+
+    // Firestore setup
+    const db = getFirestore();
+    const productsRef = collection(db, 'auctions');
+
+    //Retrieval by search field
+    const searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), limit(3));
+    const searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), startAfter(lastDoc), limit(3));
+
+    // //Retrieval by Filter uni
+    if (filterchecker && uniSelected.length) {
+    filterunifirst = query(productsRef,  orderBy("product.originUni"), where('product.originUni', 'in', uniSelected), limit(3));
+    filterunilast = query(productsRef,  orderBy("product.originUni"), where('product.originUni', 'in', uniSelected), startAfter(lastDoc), limit(3));
+    }
+    //Retrieval by Filter categories
+    else if (filterchecker && catSelected.length) {
+    filtercatfirst = query(productsRef,  orderBy("product.category"), where('product.category', 'in', catSelected), limit(3));
+    filtercatlast = query(productsRef,  orderBy("product.category"), where('product.category', 'in', catSelected), startAfter(lastDoc), limit(3));
+    }
+    //Retrieval by Filter price range
+    else if (filterchecker && !(priceSelected[0] == 0 && priceSelected[1] == 500000)) {
+    filterpricefirst = query(productsRef, orderBy("currPrice"), where('currPrice', '>=', priceSelected[0]), where('currPrice', '<=', priceSelected[1]), limit(3));
+    filterpricelast = query(productsRef, orderBy("currPrice"), where('currPrice', '>=', priceSelected[0]), where('currPrice', '<=', priceSelected[1]), startAfter(lastDoc), limit(3));
+    }
+    else {
+    //Retrieval by Default 
+    defaultfirst = query(productsRef, orderBy("auctionId", "desc"), limit(3));
+    defaultlast = query(productsRef, orderBy("auctionId", "desc"), startAfter(lastDoc), limit(3));
+    }
 
     useEffect(() => {
         getProducts();
@@ -101,14 +156,21 @@ const Homepage = ({navigation}) => {
 
     const getProducts = async () => {
         setIsLoading(true);
+    // Query the first page of docs
 
-        // Query the first page of docs
-    const first = query(productsRef, orderBy("auctionId"), limit(3));
+    if (!search == '') {
+        var first = searchnamefirst;
+    }
+    
+    else {
+        var first = defaultfirst;
+    }
+    
     const documentSnapshots = await getDocs(first);
 
     // Get the last visible document
     const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-    console.log("last", lastVisible);
+    //console.log("last", lastVisible);
 
         if (!documentSnapshots.empty) {
             let newProducts = [];
@@ -117,7 +179,7 @@ const Homepage = ({navigation}) => {
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
-                console.log(newProducts);
+               // console.log(newProducts);
             }
 
             setProducts(newProducts);
@@ -135,8 +197,15 @@ const Homepage = ({navigation}) => {
         setTimeout(async () => {
         // Construct a new query starting at this document,
         // get the next 25 cities.
-        const next = query(collection(db, "products"), orderBy("auctionId"), startAfter(lastDoc), limit(3));
-        const documentSnapshots = await getDocs(next);
+        
+    if (!search == '') {
+        var next = searchnamelast;
+    }
+    else {
+        var next = defaultlast;
+    }  
+        
+    const documentSnapshots = await getDocs(next);
 
         if (!documentSnapshots.empty) {
             let newProducts = products;
@@ -146,7 +215,7 @@ const Homepage = ({navigation}) => {
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
-                console.log(newProducts);
+                //console.log(newProducts);
             }
 
             setProducts(newProducts);
@@ -164,28 +233,28 @@ const Homepage = ({navigation}) => {
 
     }
 
-    const renderList = ({name, photo, description, anonymous_owner, current_price, activeDays, createdAt, isNew}) => {
+    const renderList = ({anomName, currPrice, product, createdAt, isNew}) => {
         return (
             <View style = {styles.list}>
-                <Image source = {photo} style = {styles.listImage} />
+                <Image source = {null} style = {styles.listImage} />
                 <View style = {styles.listingContainer}>
                     <View style = {styles.container}>
-                        <Text style= {styles.name}>{name}</Text>
+                        <Text style= {styles.name}>{product.name}</Text>
                     </View>
                 </View>
                 <View style = {styles.descriptionContainer}>
                     <Text style = {styles.description}>Description:</Text>
-                    <Text style = {styles.descriptiontext}>{description}</Text>
+                    <Text style = {styles.descriptiontext}>{product.description}</Text>
                 </View>
                 <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
                     <View>
                         <View style = {styles.currentpriceContainer}>
                             <Text style = {styles.dollarsign}>$</Text>
-                            <Text style = {styles.currentprice}>{current_price}</Text>
+                            <Text style = {styles.currentprice}>{currPrice}</Text>
                             <Ionicons style={styles.lockIcon} name={'caret-up-circle-outline'} size={27} color={colors.red} />
                         </View>
                         <View style = {styles.selleranonymouscontainer}>
-                            <Text style = {styles.selleranonymous}>{anonymous_owner}</Text>
+                            <Text style = {styles.selleranonymous}>{anomName}</Text>
                         </View>
                         <View style = {styles.date_publishedcontainer}>
                             <Text style = {styles.date_published}>{createdAt}</Text>
@@ -196,7 +265,7 @@ const Homepage = ({navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {activeDays} Days
+                            {product.activeDays} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -228,6 +297,33 @@ const Homepage = ({navigation}) => {
         <View style={styles.container}>
             <View style = {styles.header}>
               <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
+            </View>
+            <View style = {styles.searchandfilter}>
+            <TextInput style = {styles.searchinput}
+                 placeholder='Search for Products' 
+                 placeholderTextColor={colors.white}
+                 value = {search}  
+                 onChangeText={(value) => setSearch(value)}
+                 />
+            <TouchableOpacity style = {styles.customsearchBtnBG}
+             onPress={() =>
+              {
+                if (search == '') {
+                    alert("Search Field is empty!");
+                } else {
+                    onRefresh();
+                }
+                }}>
+                <Text style ={styles.customsearchBtnText}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.customfilterBtnBG}
+             onPress={() =>
+              {
+                navigation.navigate("Filter");
+              }
+                }>
+            <Ionicons style={styles.filterIcon} name={'filter-outline'} size={24} color={colors.white} />
+            </TouchableOpacity>
             </View>
             <View style={styles.container}>
             <Text style = {styles.title}>   Recent Aunction</Text>
@@ -263,8 +359,6 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        display: 'flex',
-        flexDirection: 'row',
         backgroundColor: colors.white,
         alignItems: 'center',
         justifyContent: 'center',
@@ -276,11 +370,54 @@ const styles = StyleSheet.create({
         marginTop: -30,
     },
 
+    searchandfilter : {
+        flexDirection: 'row',
+        marginTop: -70,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    searchinput: {
+        backgroundColor: colors.darkbrown,
+        width: '60%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+  
+        color: colors.white,
+        
+    },
+
+    customsearchBtnText: {
+        fontSize: 14,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    customsearchBtnBG: {
+        width: '20%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        backgroundColor: colors.activeday,
+    },
+
+
+    customfilterBtnBG: {
+        width: '10%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 16,
+        backgroundColor: colors.gold,
+    },
+
     title: {
         fontSize: 20,
         color: colors.darkbrown,
         fontFamily: "Montserrat-Black",
-        marginTop: -30,
+        marginTop: 20
+    
     },
 
     list: {
