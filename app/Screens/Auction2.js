@@ -89,7 +89,7 @@ const Auction2 = ({route, navigation}) => {
       const countdocs = async()=> {
         var count = 0;
         const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "products"));
+        const querySnapshot = await getDocs(collection(db, "auctions"));
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
@@ -113,11 +113,15 @@ const Auction2 = ({route, navigation}) => {
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
+<<<<<<< HEAD
             auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,counter,enteredbidduration,new Date().toLocaleString())
             .then((success) => // Add succesful Product to user List of created Products
             null)
             .catch((err) => {
               throw new Error(err.message)});
+=======
+            return await auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,counter,entereddaysleft,SellerAnonymousName)
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
           }
     };
     

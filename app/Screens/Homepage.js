@@ -3,10 +3,18 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndic
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+<<<<<<< HEAD
 import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where} from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
+=======
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore} from "firebase/firestore"; 
+
+import { auth,db } from '../config/config.js';
+import { async } from '@firebase/util';
+import { Inter_500Medium } from '@expo-google-fonts/inter';
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
 
 
 // const productitem = [
@@ -117,6 +125,7 @@ const Homepage = ({route, navigation}) => {
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null); //contain last document of snapshot, will be used to get more product data
     const [products, setProducts] = useState([]);
+<<<<<<< HEAD
 
     //Search Bar
     const [search, setSearch] = useState('');
@@ -149,11 +158,18 @@ const Homepage = ({route, navigation}) => {
     defaultfirst = query(productsRef, orderBy("auctionId", "desc"), limit(3));
     defaultlast = query(productsRef, orderBy("auctionId", "desc"), startAfter(lastDoc), limit(3));
     }
+=======
+    const [url,setUrl] = useState();
+     const db = getFirestore();
+     const productsRef = collection(db, 'auctions');
+    
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
 
     useEffect(() => {
         getProducts();
     }, []);
 
+    
     const getProducts = async () => {
         setIsLoading(true);
     // Query the first page of docs
@@ -170,18 +186,29 @@ const Homepage = ({route, navigation}) => {
 
     // Get the last visible document
     const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+<<<<<<< HEAD
     //console.log("last", lastVisible);
+=======
+   // console.log("last", lastVisible);
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
 
         if (!documentSnapshots.empty) {
             let newProducts = [];
 
             setLastDoc(lastVisible);
-
+            
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
+                // Check is the prduct is sold by current user
+                // Each Auction collection will have array Bids
+                // For each prduct , it will retrieve the the bids anf check if bid owner is current user 
                 newProducts.push(documentSnapshots.docs[i].data());
+<<<<<<< HEAD
                // console.log(newProducts);
             }
 
+=======
+        }
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
             setProducts(newProducts);
         } else {
             setLastDoc(null);
@@ -209,15 +236,21 @@ const Homepage = ({route, navigation}) => {
 
         if (!documentSnapshots.empty) {
             let newProducts = products;
-             // Get the last visible document
+             // Get the last visible document , Bidder , Seller or Viewer
             const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
+<<<<<<< HEAD
                 //console.log(newProducts);
+=======
+                
+                // Is it Ongoing 
+                // Check is the prduct is sold by current user
+                // Each Auction collection will have array Bid
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
             }
-
             setProducts(newProducts);
             if (documentSnapshots.docs.length < 3) {
                 setLastDoc(null);
@@ -236,7 +269,12 @@ const Homepage = ({route, navigation}) => {
     const renderList = ({anomName, currPrice, product, createdAt, isNew}) => {
         return (
             <View style = {styles.list}>
+<<<<<<< HEAD
                 <Image source = {null} style = {styles.listImage} />
+=======
+                <Image source = {{uri:photo}} 
+                style = {styles.listImage} />
+>>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
                 <View style = {styles.listingContainer}>
                     <View style = {styles.container}>
                         <Text style= {styles.name}>{product.name}</Text>
@@ -345,7 +383,17 @@ const Homepage = ({route, navigation}) => {
                 }}
                 data={products}
                 keyExtractor={item =>  item.auctionId.toString()}
-                renderItem={({item}) => renderList(item)} />
+                renderItem={({item}) => {
+                    const render = { name: item.product.name
+                        , photo: item.product.pictureUri, 
+                        description: item.product.description, 
+                        anonymous_owner: item.anomName, 
+                        current_price: item.currPrice, 
+                        activeDays:item.product.activeDays, 
+                        createdAt: item.createdAt}
+                    return renderList(render);
+                }} />
+
             </View>
         </View>
         
