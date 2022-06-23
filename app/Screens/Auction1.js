@@ -21,6 +21,7 @@ const Auction1 = ({navigation}) => {
   const [itemname, setItemname] = useState('');
   const [itemdesc, setItemdesc] = useState('');
   const [useruni, setUseruni] = useState('');
+  var unicode = '';
   
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const Auction1 = ({navigation}) => {
             //console.log(`${key}: ${value}`);
           //}
           const originUni = data.originUni;
+          unicode = originUni;
           switch (originUni) {
             case "NUS" :
                 // Do work here
@@ -103,11 +105,6 @@ const Auction1 = ({navigation}) => {
                 //console.log('@suss.edu.sg');
                 setUseruni('Singapore University of Social Sciences (SUSS)');
                 break;
-            case "GMAIL" :
-                // Do work here
-                //console.log('@suss.edu.sg');
-                setUseruni('Orbital-2122-StuBid (Debugging)');
-                break;
             default :
                 // Do work here
                 console.log('Uni not listed here');
@@ -133,7 +130,7 @@ const Auction1 = ({navigation}) => {
              </View>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 try  {
-                navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, useruni));
+                navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, unicode));
 
                 } catch (err) {
                   alert(err.message);

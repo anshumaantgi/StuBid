@@ -3,129 +3,56 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndic
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-<<<<<<< HEAD
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where} from "firebase/firestore"; 
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, } from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
-=======
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore} from "firebase/firestore"; 
 
-import { auth,db } from '../config/config.js';
-import { async } from '@firebase/util';
-import { Inter_500Medium } from '@expo-google-fonts/inter';
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
-
-
-// const productitem = [
-
-//     {
-//         id : 1,
-//         name: 'dog',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'dogddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss',
-//         anonymous_owner: 'anonymous_tiger',
-//         current_price: 100,
-//         active_days: 3,
-//         date_published: "23/6/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 2,
-//         name: 'cat',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.',
-//         anonymous_owner: 'anonymous_cat',
-//         current_price: 120,
-//         active_days: 7,
-//         date_published: "23/1/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 3,
-//         name: 'cow',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam',
-//         anonymous_owner: 'anonymous_cow',
-//         current_price: 222,
-//         active_days: 1,
-//         date_published: "23/1/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 4,
-//         name: 'goat',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'goat photo',
-//         anonymous_owner: 'anonymous_goat',
-//         current_price: 444,
-//         active_days: 10,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-
-//     {
-//         id : 5,
-//         name: 'dragon',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'dragon photo',
-//         anonymous_owner: 'anonymous_dragon',
-//         current_price: 999,
-//         active_days: 5,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-
-//     {
-//         id : 6,
-//         name: 'bacon',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'bacon photo',
-//         anonymous_owner: 'anonymous_bacon',
-//         current_price: 77,
-//         active_days: 7,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-// ];
 
 const Homepage = ({route, navigation}) => {
 
     let onEndReachedCalledDuringMomentum = false;
-    //check filter storage
+
+    //Define filter storage
     const filterchecker = React.useContext(FilterContext);
     var uniSelected = [];
     var catSelected = [];
     var priceSelected = [];
+    const startpricefilter = 0;
+    const endpricefilter = 500000;
 
+    //check if filter has been selected
     if (filterchecker) {
         uniSelected = filterchecker.uniSelectedarray;
         catSelected = filterchecker.catSelectedarray;
         priceSelected = filterchecker.priceSelectedarray;
     }
 
-    console.log(uniSelected, 'HI');
-    console.log(catSelected, 'HIasd');
-    console.log(priceSelected, 'HI');
     // initialise state 
-    var defaultfirst = null;
-    var defaultlast = null;
-    var filterunifirst = null;
-    var filterunilast = null;
-    var filtercatfirst = null;
-    var filtercatlast = null;
-    var filterpricefirst = null;
-    var filterpricelast = null;
+    var defaultfirst = null; // show default
+    var defaultlast = null; // show default
+    var filterunifirst = null; // uni
+    var filterunilast = null; // uni
+    var filtercatfirst = null; // category
+    var filtercatlast = null; // category
+    var filterpricefirst = null; // price range
+    var filterpricelast = null; // price range
+    // var filterunicatfirst = null; // uni and category
+    // var filterunicatlast = null; // uni and category
+    // var filterunipricefirst = null; // uni and price range 
+    // var filterunipricelast = null; // uni and price range 
+    // var filtercatpricefirst = null; // category and price range 
+    // var filtercatpricelast = null; //  category and price range 
+    // var filterunicatpricefirst = null; //uni, category and price range
+    // var filterunicatpricelast = null; //uni, category and price range
+    var searchnamefirst = null; // search field
+    var searchnamelast = null; // search field
 
     //initialise state hook
     const [isLoading, setIsLoading] = useState(false);
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null); //contain last document of snapshot, will be used to get more product data
     const [products, setProducts] = useState([]);
-<<<<<<< HEAD
 
     //Search Bar
     const [search, setSearch] = useState('');
@@ -135,49 +62,62 @@ const Homepage = ({route, navigation}) => {
     const productsRef = collection(db, 'auctions');
 
     //Retrieval by search field
-    const searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), limit(3));
-    const searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), startAfter(lastDoc), limit(3));
-
-    // //Retrieval by Filter uni
-    if (filterchecker && uniSelected.length) {
-    filterunifirst = query(productsRef,  orderBy("product.originUni"), where('product.originUni', 'in', uniSelected), limit(3));
-    filterunilast = query(productsRef,  orderBy("product.originUni"), where('product.originUni', 'in', uniSelected), startAfter(lastDoc), limit(3));
-    }
-    //Retrieval by Filter categories
-    else if (filterchecker && catSelected.length) {
-    filtercatfirst = query(productsRef,  orderBy("product.category"), where('product.category', 'in', catSelected), limit(3));
-    filtercatlast = query(productsRef,  orderBy("product.category"), where('product.category', 'in', catSelected), startAfter(lastDoc), limit(3));
-    }
-    //Retrieval by Filter price range
-    else if (filterchecker && !(priceSelected[0] == 0 && priceSelected[1] == 500000)) {
-    filterpricefirst = query(productsRef, orderBy("currPrice"), where('currPrice', '>=', priceSelected[0]), where('currPrice', '<=', priceSelected[1]), limit(3));
-    filterpricelast = query(productsRef, orderBy("currPrice"), where('currPrice', '>=', priceSelected[0]), where('currPrice', '<=', priceSelected[1]), startAfter(lastDoc), limit(3));
-    }
-    else {
-    //Retrieval by Default 
-    defaultfirst = query(productsRef, orderBy("auctionId", "desc"), limit(3));
-    defaultlast = query(productsRef, orderBy("auctionId", "desc"), startAfter(lastDoc), limit(3));
-    }
-=======
-    const [url,setUrl] = useState();
-     const db = getFirestore();
-     const productsRef = collection(db, 'auctions');
+    searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), limit(3));
+    searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), startAfter(lastDoc), limit(3));
     
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
+    //Retrieval by Default 
+    defaultfirst = query(productsRef, orderBy("createdAt", "desc"), limit(3));
+    defaultlast = query(productsRef, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(3));
+    
+    //Retrieval by Filter uni
+    if (filterchecker && uniSelected.length) {
+        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), limit(3));
+        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter category
+    if (filterchecker && catSelected.length) {
+        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', 'in', catSelected), limit(3));
+        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', 'in', catSelected), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter price range
+    if (filterchecker && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterpricefirst = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterpricelast = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+    }
+
+    // //Retrieval by Filter uni and category
+    // if (filterchecker && uniSelected.length && catSelected.length) {
+    //     //filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected));
+       
+    // }
+
+
 
     useEffect(() => {
         getProducts();
     }, []);
 
-    
     const getProducts = async () => {
         setIsLoading(true);
     // Query the first page of docs
-
+    //console.log((priceSelected[0] == 0 && priceSelected[1] == 500000));
     if (!search == '') {
         var first = searchnamefirst;
     }
-    
+    else if (filterchecker && (uniSelected.length && !catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunifirst;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filtercatfirst;
+    }
+    else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterpricefirst;
+    }
+    // else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+    //     var first = filterunicatfirst;
+    // }
     else {
         var first = defaultfirst;
     }
@@ -186,32 +126,23 @@ const Homepage = ({route, navigation}) => {
 
     // Get the last visible document
     const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-<<<<<<< HEAD
     //console.log("last", lastVisible);
-=======
-   // console.log("last", lastVisible);
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
 
         if (!documentSnapshots.empty) {
             let newProducts = [];
 
             setLastDoc(lastVisible);
-            
+
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
-                // Check is the prduct is sold by current user
-                // Each Auction collection will have array Bids
-                // For each prduct , it will retrieve the the bids anf check if bid owner is current user 
                 newProducts.push(documentSnapshots.docs[i].data());
-<<<<<<< HEAD
                // console.log(newProducts);
             }
 
-=======
-        }
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
             setProducts(newProducts);
         } else {
             setLastDoc(null);
+            setProducts([]);
+            alert('No Products are Found. Please Refresh/Clear Filter and try again.');
         }
 
         setIsLoading(false);
@@ -228,6 +159,18 @@ const Homepage = ({route, navigation}) => {
     if (!search == '') {
         var next = searchnamelast;
     }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunilast;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filtercatlast;
+    }
+    else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterpricelast;
+    }
+    // else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+    //     var next = filterunicatlast;
+    // }
     else {
         var next = defaultlast;
     }  
@@ -236,21 +179,15 @@ const Homepage = ({route, navigation}) => {
 
         if (!documentSnapshots.empty) {
             let newProducts = products;
-             // Get the last visible document , Bidder , Seller or Viewer
+             // Get the last visible document
             const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
-<<<<<<< HEAD
                 //console.log(newProducts);
-=======
-                
-                // Is it Ongoing 
-                // Check is the prduct is sold by current user
-                // Each Auction collection will have array Bid
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
             }
+
             setProducts(newProducts);
             if (documentSnapshots.docs.length < 3) {
                 setLastDoc(null);
@@ -267,14 +204,49 @@ const Homepage = ({route, navigation}) => {
     }
 
     const renderList = ({anomName, currPrice, product, createdAt, isNew}) => {
+        var category = '';
+        switch (product.category) {
+            case "CA" :
+                // Do work here
+                //console.log('@u.nus.edu');
+                category = 'Clothing & Accessories';
+                break;
+            case "ELE" :
+                // Do work here
+                category = 'Electronics';
+                break;
+            case "ENT" :
+                // Do work here
+                category = 'Entertainment';
+                break;
+            case "HB" :
+                // Do work here
+                category = 'Hobbies';
+                break;
+            case "HG" :
+                // Do work here
+                category = 'Home & Garden';
+                break;
+            case "HR" :
+                // Do work here
+                category = 'Housing (Rental)';
+                break;
+            case "VEH" :
+                // Do work here
+                category = 'Vehicles';
+                break;
+            case "OTH" :
+                // Do work here
+                category = 'Others';
+                break;
+            default :
+                // Do work here
+                console.log('Category not listed here');
+                break;
+          }
         return (
             <View style = {styles.list}>
-<<<<<<< HEAD
-                <Image source = {null} style = {styles.listImage} />
-=======
-                <Image source = {{uri:photo}} 
-                style = {styles.listImage} />
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
+                <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
                 <View style = {styles.listingContainer}>
                     <View style = {styles.container}>
                         <Text style= {styles.name}>{product.name}</Text>
@@ -292,10 +264,21 @@ const Homepage = ({route, navigation}) => {
                             <Ionicons style={styles.lockIcon} name={'caret-up-circle-outline'} size={27} color={colors.red} />
                         </View>
                         <View style = {styles.selleranonymouscontainer}>
-                            <Text style = {styles.selleranonymous}>{anomName}</Text>
+                        <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
+                            <Text style = {styles.selleranonymous}> {anomName}</Text>
+                            
+                        </View>
+                        <View style = {styles.uninamecontainer}>
+                            <Ionicons style={styles.lockIcon} name={'school-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.uniname}> {product.originUni}</Text>
+                        </View>
+                        <View style = {styles.catnamecontainer}>
+                            <Ionicons style={styles.lockIcon} name={'list-circle-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.catname}> {category}</Text>
                         </View>
                         <View style = {styles.date_publishedcontainer}>
-                            <Text style = {styles.date_published}>{createdAt}</Text>
+                            <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
                     </View>
                     <View style = {styles.activedaycontainer}>
@@ -357,7 +340,7 @@ const Homepage = ({route, navigation}) => {
             <TouchableOpacity style = {styles.customfilterBtnBG}
              onPress={() =>
               {
-                navigation.navigate("Filter");
+                navigation.replace("Filter");
               }
                 }>
             <Ionicons style={styles.filterIcon} name={'filter-outline'} size={24} color={colors.white} />
@@ -382,18 +365,8 @@ const Homepage = ({route, navigation}) => {
                     }
                 }}
                 data={products}
-                keyExtractor={item =>  item.auctionId.toString()}
-                renderItem={({item}) => {
-                    const render = { name: item.product.name
-                        , photo: item.product.pictureUri, 
-                        description: item.product.description, 
-                        anonymous_owner: item.anomName, 
-                        current_price: item.currPrice, 
-                        activeDays:item.product.activeDays, 
-                        createdAt: item.createdAt}
-                    return renderList(render);
-                }} />
-
+                keyExtractor={item =>  item.createdAt.toString()}
+                renderItem={({item}) => renderList(item)} />
             </View>
         </View>
         
@@ -536,12 +509,37 @@ const styles = StyleSheet.create({
 
     selleranonymous : {
         color: colors.darkbrown,
-        fontSize: 15,
+        fontSize: 16,
+    },
+
+    uninamecontainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    uniname: {
+        color: colors.darkbrown,
+        fontSize: 10,
+    },
+
+    catnamecontainer : {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    catname : {
+        color: colors.darkbrown,
+        fontSize: 10,
+    },
+
+    date_publishedcontainer : {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 
     date_published : {
         color: colors.darkbrown,
-        fontSize: 15,
+        fontSize: 10,
     },
 
     customBtnText: {

@@ -259,19 +259,12 @@ const windowWidth = Dimensions.get('window').width;
                 console.log(uniSelectedarray);
                 console.log(catSelectedarray);
                 console.log(priceSelectedarray);
-
-
-                if (!(uniSelectedarray.length || catSelectedarray.length) && (priceSelectedarray[0] == 0 && priceSelectedarray[1] == 500000)){
-                    throw new Error("There are no currently no changes made.");
-                } else {
-                    navigation.navigate( "MainContainer", {uniSelectedarray, catSelectedarray, priceSelectedarray});
-                }
-
+             
+                navigation.navigate( "MainContainer", {uniSelectedarray, catSelectedarray, priceSelectedarray});
 
                 } catch (err) {
                   alert(err.message);
                 }
-              
                 
                 }}>
                 <Text style ={styles.customBtnText}>Apply Changes</Text>

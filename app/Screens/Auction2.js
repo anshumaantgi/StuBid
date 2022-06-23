@@ -85,8 +85,8 @@ const Auction2 = ({route, navigation}) => {
         }
       }
 
-      //Retrieve Total number of documents (purpose is for auto accumulate Auction ID)
-      const countdocs = async()=> {
+       //Retrieve Total number of documents (purpose is for auto accumulate Auction ID)
+       const countdocs = async()=> {
         var count = 0;
         const db = getFirestore();
         const querySnapshot = await getDocs(collection(db, "auctions"));
@@ -96,8 +96,9 @@ const Auction2 = ({route, navigation}) => {
           count = count + 1
           }
           )
-          //console.log("DOG", count);
-          setCounter(count)};
+          console.log("DOG", count);
+          setCounter(count)
+          console.log("CAAAA", counter)};
         
         useEffect(() => {
            countdocs();
@@ -105,23 +106,15 @@ const Auction2 = ({route, navigation}) => {
 
       // Function to send to database
       async function sendValues(enteredcategory, enteredendbid, enteredbidduration, enteredstartingprice, enteredbuyoutprice, SellerAnonymousName) {
-        if (!(enteredcategory && enteredbidduration  && enteredstartingprice && enteredbuyoutprice && SellerAnonymousName)) {
+        if (!(enteredcategory && enteredbidduration && enteredstartingprice && enteredbuyoutprice && SellerAnonymousName)) {
             //console.log(counter);
             throw new Error("Please do not leave any fields empty!");
           } else if (parseInt(enteredbuyoutprice) <=  parseInt(enteredstartingprice)) {
-            throw new Error("Buyout Bid must be higher than Starting Bid!");
+              throw new Error("Buyout Bid must be higher than Starting Bid!");
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
-<<<<<<< HEAD
-            auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,counter,enteredbidduration,new Date().toLocaleString())
-            .then((success) => // Add succesful Product to user List of created Products
-            null)
-            .catch((err) => {
-              throw new Error(err.message)});
-=======
-            return await auctionView.createProduct(enteredstartingprice, enteredbuyoutprice,enteredcategory,counter,entereddaysleft,SellerAnonymousName)
->>>>>>> d05982b96ad8b3fc773827a55d1371607bcbd341
+            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,counter,parseInt(enteredbidduration),SellerAnonymousName)
           }
     };
     
