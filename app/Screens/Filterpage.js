@@ -9,13 +9,17 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 const Filterpage = ({navigation}) => {
 
-//width of screen
-const windowWidth = Dimensions.get('window').width;
-  
-//Store selectedoptions in array
-    var uniSelectedarray = [];
-    var catSelectedarray = [];
-    var priceSelectedarray = [];
+  //width of screen
+  const windowWidth = Dimensions.get('window').width;
+
+  // Set startfilterprice and endfilterprice
+  var startfilterprice = 0;
+  var endfilterprice = 50000;
+
+  // store filter values
+  var unifilter = '';
+  var catfilter = '';
+  var pricefilterarray = [];
 
   // initize the state hook
 
@@ -38,7 +42,7 @@ const windowWidth = Dimensions.get('window').width;
   const [OTH, setOTH] = useState(false);
 
   //Price range
-  const [multiSliderValue, setMultiSliderValue] = useState([0, 500000]);
+  const [multiSliderValue, setMultiSliderValue] = useState([startfilterprice, endfilterprice]);
   const multiSliderValuesChange = (values) => setMultiSliderValue(values);
   
 
@@ -55,7 +59,6 @@ const windowWidth = Dimensions.get('window').width;
                  setSit(false);
                  setSutd(false);
                  setSuss(false);
-                 uniSelectedarray = [];
                 } catch (err) {
                   alert(err.message);
                 }
@@ -64,32 +67,85 @@ const windowWidth = Dimensions.get('window').width;
                 </TouchableOpacity>
              </View>
              <CheckBox
-                onPress={() => setNus(!nus)}
+                onPress={() =>
+                  { 
+                  setNus(true)
+                  setNtu(false)
+                  setSmu(false)
+                  setSit(false)
+                  setSutd(false)
+                  setSuss(false)
+                  }
+                }
                 title="National University of Singapore (NUS)"
                 isChecked={nus}
               />
               <CheckBox
-                onPress={() => setNtu(!ntu)}
+                onPress={() =>
+                   {
+                    setNus(false)
+                    setNtu(true)
+                    setSmu(false)
+                    setSit(false)
+                    setSutd(false)
+                    setSuss(false)
+                   }}
                 title="Nanyang Technological University (NTU)"
                 isChecked={ntu}
               />
               <CheckBox
-                onPress={() => setSmu(!smu)}
+                onPress={() => 
+                {
+                  setNus(false)
+                  setNtu(false)
+                  setSmu(true)
+                  setSit(false)
+                  setSutd(false)
+                  setSuss(false)
+                }
+              }
                 title="Singapore Management University (SMU)"
                 isChecked={smu}
               />
               <CheckBox
-                onPress={() => setSit(!sit)}
+                onPress={() => 
+                {
+                  setNus(false)
+                  setNtu(false)
+                  setSmu(false)
+                  setSit(true)
+                  setSutd(false)
+                  setSuss(false)
+                }
+              }
                 title="Singapore Institute of Technology (SIT)"
                 isChecked={sit}
               />
               <CheckBox
-                onPress={() => setSutd(!sutd)}
+                onPress={() =>
+                {
+                  setNus(false)
+                  setNtu(false)
+                  setSmu(false)
+                  setSit(false)
+                  setSutd(true)
+                  setSuss(false)
+                }
+              }
                 title="Singapore University of Technology & Design (SUTD)"
                 isChecked={sutd}
               />
               <CheckBox
-                onPress={() => setSuss(!suss)}
+                onPress={() => 
+                {
+                  setNus(false)
+                  setNtu(false)
+                  setSmu(false)
+                  setSit(false)
+                  setSutd(false)
+                  setSuss(true)
+                }
+              }
                 title="Singapore University of Social Sciences (SUSS)"
                 isChecked={suss}
               />
@@ -105,7 +161,6 @@ const windowWidth = Dimensions.get('window').width;
                     setHR(false);
                     setVEH(false);
                     setOTH(false);
-                    catSelectedarray = [];
                 } catch (err) {
                   alert(err.message);
                 }
@@ -114,42 +169,129 @@ const windowWidth = Dimensions.get('window').width;
                 </TouchableOpacity>
              </View>
              <CheckBox
-                onPress={() => setCA(!CA)}
+                onPress={() =>
+                {
+                    setCA(true)
+                    setELE(false)
+                    setENT(false)
+                    setHB(false)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(false)
+                }
+              }
                 title="Clothing & Accessories"
                 isChecked={CA}
               />
               <CheckBox
-                onPress={() => setELE(!ELE)}
+                onPress={() => 
+                {
+                    setCA(false)
+                    setELE(true)
+                    setENT(false)
+                    setHB(false)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(false)
+                }
+              }
                 title="Electronics"
                 isChecked={ELE}
               />
               <CheckBox
-                onPress={() => setENT(!ENT)}
+                onPress={() => 
+                {
+                    setCA(false)
+                    setELE(false)
+                    setENT(true)
+                    setHB(false)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(false)
+                }
+              }
                 title="Entertainment"
                 isChecked={ENT}
               />
               <CheckBox
-                onPress={() => setHB(!HB)}
+                onPress={() => {
+                    setCA(false)
+                    setELE(false)
+                    setENT(false)
+                    setHB(true)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(false)
+                }
+              }
                 title="Hobbies"
                 isChecked={HB}
               />
               <CheckBox
-                onPress={() => setHG(!HG)}
+                onPress={() => 
+                {
+                    setCA(false)
+                    setELE(false)
+                    setENT(false)
+                    setHB(false)
+                    setHG(true)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(false)
+                }
+              }
                 title="Home & Garden"
                 isChecked={HG}
               />
               <CheckBox
-                onPress={() => setHR(!HR)}
+                onPress={() =>
+                {
+                    setCA(false)
+                    setELE(false)
+                    setENT(false)
+                    setHB(false)
+                    setHG(false)
+                    setHR(true)
+                    setVEH(false)
+                    setOTH(false)
+                } 
+              }
                 title="Housing (Rental)"
                 isChecked={HR}
               />
               <CheckBox
-                onPress={() => setVEH(!VEH)}
+                onPress={() => 
+                {
+                    setCA(false)
+                    setELE(false)
+                    setENT(false)
+                    setHB(false)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(true)
+                    setOTH(false)
+                }
+              }
                 title="Vehicles"
                 isChecked={VEH}
               />
               <CheckBox
-                onPress={() => setOTH(!OTH)}
+                onPress={() => 
+                {
+                    setCA(false)
+                    setELE(false)
+                    setENT(false)
+                    setHB(false)
+                    setHG(false)
+                    setHR(false)
+                    setVEH(false)
+                    setOTH(true)
+                }
+              }
                 title="Others"
                 isChecked={OTH}
               />
@@ -157,8 +299,7 @@ const windowWidth = Dimensions.get('window').width;
              <Text style={styles.title}>Price</Text>
              <TouchableOpacity style = {styles.customclearBtnBG} onPress={() => {
                 try  {
-                    setMultiSliderValue([0, 500000]);
-                    priceSelectedarray = [];
+                    setMultiSliderValue([startfilterprice, endfilterprice]);
 
                 } catch (err) {
                   alert(err.message);
@@ -174,8 +315,8 @@ const windowWidth = Dimensions.get('window').width;
                 values={[multiSliderValue[0], multiSliderValue[1]]}
                 sliderLength={windowWidth - 80}
                 onValuesChange={multiSliderValuesChange}
-                min={0}
-                max={10000}
+                min={startfilterprice}
+                max={endfilterprice}
                 step={1}
                 trackStyle={{
                     height: 10,
@@ -191,6 +332,7 @@ const windowWidth = Dimensions.get('window').width;
                 />
         
             </View>
+            <Text style = {styles.text}>*Clear/Reset All fields and apply changes to revert back to default settings.</Text>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 try  {
                
@@ -210,57 +352,61 @@ const windowWidth = Dimensions.get('window').width;
                 // console.log(OTH);
                 // console.log(multiSliderValue[0]);
                 // console.log(multiSliderValue[1]);
+              
+              //check uni
+              if (nus) {
+                unifilter = 'NUS';
+              } 
+              else if (ntu) {
+                unifilter = 'NTU';
+              }
+              else if (smu) {
+                unifilter = 'SMU';
+              }
+              else if (sit) {
+                unifilter = 'SIT';
+              }
+              else if (sutd) {
+                unifilter = 'SUTD';
+              }
+              else if (suss) {
+                unifilter = 'SUSS';
+              }
 
-                if (nus) {
-                    uniSelectedarray.push('NUS');
-                } 
-                if (ntu) {
-                    uniSelectedarray.push('NTU');
-                }
-                if (smu) {
-                    uniSelectedarray.push('SMU');
-                }
-                if (sit) {
-                    uniSelectedarray.push('SIT');
-                }
-                if (sutd) {
-                    uniSelectedarray.push('SUTD');
-                }
-                if (suss) {
-                    uniSelectedarray.push('SUSS');
-                }
-                if (CA) {
-                    catSelectedarray.push('CA');
-                }
-                if (ELE) {
-                    catSelectedarray.push('ELE');
-                }
-                if (ENT) {
-                    catSelectedarray.push('ENT');
-                }
-                if (HB) {
-                    catSelectedarray.push('HB');
-                }
-                if (HG) {
-                    catSelectedarray.push('HG');
-                }
-                if (HR) {
-                    catSelectedarray.push('HR');
-                }
-                if (VEH) {
-                    catSelectedarray.push('VEH');
-                }
-                if (OTH) {
-                    catSelectedarray.push('OTH');
-                }
-                priceSelectedarray.push(multiSliderValue[0]);
-                priceSelectedarray.push(multiSliderValue[1]);
+              //check category
+              if (CA) {
+                catfilter = 'CA';
+              }
+              else if (ELE) {
+                catfilter = 'ELE';
+              }
+              else if (ENT) {
+                catfilter = 'ENT';
+              }
+              else if (HB) {
+                catfilter = 'HB';
+              }
+              else if (HG) {
+                catfilter = 'HG';
+              }
+              else if (HR) {
+                catfilter = 'HR';
+              }
+              else if (VEH) {
+                catfilter = 'VEH';
+              }
+              else if (OTH) {
+                catfilter = 'OTH';
+              }
 
-                console.log(uniSelectedarray);
-                console.log(catSelectedarray);
-                console.log(priceSelectedarray);
+              pricefilterarray.push(multiSliderValue[0]);
+              pricefilterarray.push(multiSliderValue[1]);
+
+              // console.log(unifilter);
+              // console.log(catfilter);
+              // console.log(pricefilterarray);
              
-                navigation.replace( "MainContainer", {uniSelectedarray, catSelectedarray, priceSelectedarray});
+              navigation.replace( "MainContainer", {unifilter, catfilter, pricefilterarray});
 
                 } catch (err) {
                   alert(err.message);
@@ -293,6 +439,15 @@ const styles = StyleSheet.create({
       fontFamily: "Montserrat-Black",
       fontSize: 16,
       marginVertical: 15,
+    },
+
+    text: {
+      color: colors.darkbrown,
+      fontSize: 10,
+      width: '80%',
+      alignSelf: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
     },
 
     Pricetext: {

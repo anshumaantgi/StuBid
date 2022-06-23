@@ -15,17 +15,17 @@ const Homepage = ({route, navigation}) => {
 
     //Define filter storage
     const filterchecker = React.useContext(FilterContext);
-    var uniSelected = [];
-    var catSelected = [];
+    var uniSelected = '';
+    var catSelected = '';
     var priceSelected = [];
     const startpricefilter = 0;
-    const endpricefilter = 500000;
+    const endpricefilter = 50000;
 
     //check if filter has been selected
     if (filterchecker) {
-        uniSelected = filterchecker.uniSelectedarray;
-        catSelected = filterchecker.catSelectedarray;
-        priceSelected = filterchecker.priceSelectedarray;
+        uniSelected = filterchecker.unifilter;
+        catSelected = filterchecker.catfilter;
+        priceSelected = filterchecker.pricefilterarray;
     }
 
     // initialise state 
@@ -37,14 +37,14 @@ const Homepage = ({route, navigation}) => {
     var filtercatlast = null; // category
     var filterpricefirst = null; // price range
     var filterpricelast = null; // price range
-    // var filterunicatfirst = null; // uni and category
-    // var filterunicatlast = null; // uni and category
-    // var filterunipricefirst = null; // uni and price range 
-    // var filterunipricelast = null; // uni and price range 
-    // var filtercatpricefirst = null; // category and price range 
-    // var filtercatpricelast = null; //  category and price range 
-    // var filterunicatpricefirst = null; //uni, category and price range
-    // var filterunicatpricelast = null; //uni, category and price range
+    var filterunicatfirst = null; // uni and category
+    var filterunicatlast = null; // uni and category
+    var filterunipricefirst = null; // uni and price range 
+    var filterunipricelast = null; // uni and price range 
+    var filtercatpricefirst = null; // category and price range 
+    var filtercatpricelast = null; //  category and price range 
+    var filterunicatpricefirst = null; //uni, category and price range
+    var filterunicatpricelast = null; //uni, category and price range
     var searchnamefirst = null; // search field
     var searchnamelast = null; // search field
 
@@ -71,16 +71,14 @@ const Homepage = ({route, navigation}) => {
     
     //Retrieval by Filter uni
     if (filterchecker && uniSelected.length) {
-        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), limit(3));
-        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), startAfter(lastDoc), limit(3));
-        // filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', "NUS"), where('product.category', '==', "OTH"), limit(3));
-        // filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', "NUS"), where('product.category', '==', "OTH"), startAfter(lastDoc), limit(3));
+        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), limit(3));
+        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter category
     if (filterchecker && catSelected.length) {
-        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', 'in', catSelected), limit(3));
-        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', 'in', catSelected), startAfter(lastDoc), limit(3));
+        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), limit(3));
+        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter price range
@@ -89,11 +87,29 @@ const Homepage = ({route, navigation}) => {
         filterpricelast = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
     }
 
-    // //Retrieval by Filter uni and category
-    // if (filterchecker && uniSelected.length && catSelected.length) {
-    //     //filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected));
-       
-    // }
+    //Retrieval by Filter uni and category
+    if (filterchecker && uniSelected.length && catSelected.length) {
+        filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), limit(3));
+        filterunicatlast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
+    }
+
+     //Retrieval by Filter uni and price range
+     if (filterchecker && uniSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterunipricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunipricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter category and price range
+    if (filterchecker && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filtercatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filtercatpricelast = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter uni and category and price range
+    if (filterchecker && uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterunicatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunicatpricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+    }
 
 
 
@@ -117,9 +133,18 @@ const Homepage = ({route, navigation}) => {
     else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
         var first = filterpricefirst;
     }
-    // else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
-    //     var first = filterunicatfirst;
-    // }
+    else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunicatfirst;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunipricefirst;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filtercatpricefirst;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunicatpricefirst;
+    }
     else {
         var first = defaultfirst;
     }
@@ -170,9 +195,18 @@ const Homepage = ({route, navigation}) => {
     else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
         var next = filterpricelast;
     }
-    // else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
-    //     var next = filterunicatlast;
-    // }
+    else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunicatlast;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunipricelast;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filtercatpricelast;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunicatpricelast;
+    }
     else {
         var next = defaultlast;
     }  
