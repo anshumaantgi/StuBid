@@ -260,7 +260,7 @@ const windowWidth = Dimensions.get('window').width;
                 console.log(catSelectedarray);
                 console.log(priceSelectedarray);
              
-                navigation.navigate( "MainContainer", {uniSelectedarray, catSelectedarray, priceSelectedarray});
+                navigation.replace( "MainContainer", {uniSelectedarray, catSelectedarray, priceSelectedarray});
 
                 } catch (err) {
                   alert(err.message);

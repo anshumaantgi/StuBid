@@ -73,6 +73,8 @@ const Homepage = ({route, navigation}) => {
     if (filterchecker && uniSelected.length) {
         filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), limit(3));
         filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', 'in', uniSelected), startAfter(lastDoc), limit(3));
+        // filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', "NUS"), where('product.category', '==', "OTH"), limit(3));
+        // filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', "NUS"), where('product.category', '==', "OTH"), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter category
@@ -340,7 +342,7 @@ const Homepage = ({route, navigation}) => {
             <TouchableOpacity style = {styles.customfilterBtnBG}
              onPress={() =>
               {
-                navigation.replace("Filter");
+                navigation.navigate("Filter");
               }
                 }>
             <Ionicons style={styles.filterIcon} name={'filter-outline'} size={24} color={colors.white} />
