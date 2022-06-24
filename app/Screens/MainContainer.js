@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,9 +21,12 @@ const NotificationName = "Notification";
 const MyProfileName = "My Profile";
 
 const Tab = createBottomTabNavigator();
+export const FilterContext = React.createContext();
 
-function MainContainer() {
+function MainContainer({route, navigation}) {
+
   return (
+    <FilterContext.Provider value = {route.params}>
       <Tab.Navigator
         initialRouteName={homeName}
         screenOptions={({ route }) => ({
@@ -64,8 +67,7 @@ function MainContainer() {
         },
         })}
        >
-
-        <Tab.Screen name={homeName} component={Homepage} />
+        <Tab.Screen name={homeName} component={Homepage}/>
         <Tab.Screen 
           name={AuctionName} 
           component={View}
@@ -83,6 +85,7 @@ function MainContainer() {
         <Tab.Screen name={MyProfileName} component={MyProfilepage} />
 
       </Tab.Navigator>
+    </FilterContext.Provider>
   );
 }
 

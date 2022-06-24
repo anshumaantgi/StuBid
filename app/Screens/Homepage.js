@@ -1,132 +1,175 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, RefreshControl} from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore} from "firebase/firestore"; 
-
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, } from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
-import { Inter_500Medium } from '@expo-google-fonts/inter';
+import {FilterContext} from './MainContainer.js';
 
 
-// const productitem = [
-
-//     {
-//         id : 1,
-//         name: 'dog',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'dogddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss',
-//         anonymous_owner: 'anonymous_tiger',
-//         current_price: 100,
-//         active_days: 3,
-//         date_published: "23/6/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 2,
-//         name: 'cat',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.',
-//         anonymous_owner: 'anonymous_cat',
-//         current_price: 120,
-//         active_days: 7,
-//         date_published: "23/1/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 3,
-//         name: 'cow',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam',
-//         anonymous_owner: 'anonymous_cow',
-//         current_price: 222,
-//         active_days: 1,
-//         date_published: "23/1/2022",
-//         isNew: true,
-//     },
-
-//     {
-//         id : 4,
-//         name: 'goat',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'goat photo',
-//         anonymous_owner: 'anonymous_goat',
-//         current_price: 444,
-//         active_days: 10,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-
-//     {
-//         id : 5,
-//         name: 'dragon',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'dragon photo',
-//         anonymous_owner: 'anonymous_dragon',
-//         current_price: 999,
-//         active_days: 5,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-
-//     {
-//         id : 6,
-//         name: 'bacon',
-//         photo: require('../assets/StuBid-Logo-Original-ver.png'),
-//         description: 'bacon photo',
-//         anonymous_owner: 'anonymous_bacon',
-//         current_price: 77,
-//         active_days: 7,
-//         date_published: "23/1/2022",
-//         isNew: false,
-//     },
-// ];
-
-const Homepage = ({navigation}) => {
+const Homepage = ({route, navigation}) => {
 
     let onEndReachedCalledDuringMomentum = false;
 
+    //Define filter storage
+    const filterchecker = React.useContext(FilterContext);
+    var uniSelected = '';
+    var catSelected = '';
+    var priceSelected = [];
+    const startpricefilter = 0;
+    const endpricefilter = 50000;
+
+    //check if filter has been selected
+    if (filterchecker) {
+        uniSelected = filterchecker.unifilter;
+        catSelected = filterchecker.catfilter;
+        priceSelected = filterchecker.pricefilterarray;
+    }
+
+    // initialise state 
+    var defaultfirst = null; // show default
+    var defaultlast = null; // show default
+    var filterunifirst = null; // uni
+    var filterunilast = null; // uni
+    var filtercatfirst = null; // category
+    var filtercatlast = null; // category
+    var filterpricefirst = null; // price range
+    var filterpricelast = null; // price range
+    var filterunicatfirst = null; // uni and category
+    var filterunicatlast = null; // uni and category
+    var filterunipricefirst = null; // uni and price range 
+    var filterunipricelast = null; // uni and price range 
+    var filtercatpricefirst = null; // category and price range 
+    var filtercatpricelast = null; //  category and price range 
+    var filterunicatpricefirst = null; //uni, category and price range
+    var filterunicatpricelast = null; //uni, category and price range
+    var searchnamefirst = null; // search field
+    var searchnamelast = null; // search field
+
+    //initialise state hook
     const [isLoading, setIsLoading] = useState(false);
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null); //contain last document of snapshot, will be used to get more product data
     const [products, setProducts] = useState([]);
-    const [url,setUrl] = useState();
-     const db = getFirestore();
-     const productsRef = collection(db, 'auctions');
+
+    //Search Bar
+    const [search, setSearch] = useState('');
+
+    // Firestore setup
+    const db = getFirestore();
+    const productsRef = collection(db, 'auctions');
+
+    //Retrieval by search field
+    searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), limit(3));
+    searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), startAfter(lastDoc), limit(3));
     
+    //Retrieval by Default 
+    defaultfirst = query(productsRef, orderBy("createdAt", "desc"), limit(3));
+    defaultlast = query(productsRef, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(3));
+    
+    //Retrieval by Filter uni
+    if (filterchecker && uniSelected.length) {
+        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), limit(3));
+        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter category
+    if (filterchecker && catSelected.length) {
+        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), limit(3));
+        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter price range
+    if (filterchecker && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterpricefirst = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterpricelast = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter uni and category
+    if (filterchecker && uniSelected.length && catSelected.length) {
+        filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), limit(3));
+        filterunicatlast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
+    }
+
+     //Retrieval by Filter uni and price range
+     if (filterchecker && uniSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterunipricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunipricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter category and price range
+    if (filterchecker && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filtercatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filtercatpricelast = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+    }
+
+    //Retrieval by Filter uni and category and price range
+    if (filterchecker && uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
+        filterunicatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunicatpricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+    }
+
+
 
     useEffect(() => {
         getProducts();
     }, []);
 
-    
     const getProducts = async () => {
         setIsLoading(true);
-
-        // Query the first page of docs
-    const first = query(productsRef, orderBy("auctionId"), limit(3));
+    // Query the first page of docs
+    //console.log((priceSelected[0] == 0 && priceSelected[1] == 500000));
+    if (!search == '') {
+        var first = searchnamefirst;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunifirst;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filtercatfirst;
+    }
+    else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterpricefirst;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunicatfirst;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunipricefirst;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filtercatpricefirst;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var first = filterunicatpricefirst;
+    }
+    else {
+        var first = defaultfirst;
+    }
+    
     const documentSnapshots = await getDocs(first);
 
     // Get the last visible document
     const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-   // console.log("last", lastVisible);
+    //console.log("last", lastVisible);
 
         if (!documentSnapshots.empty) {
             let newProducts = [];
 
             setLastDoc(lastVisible);
-            
+
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
-                // Check is the prduct is sold by current user
-                // Each Auction collection will have array Bids
-                // For each prduct , it will retrieve the the bids anf check if bid owner is current user 
                 newProducts.push(documentSnapshots.docs[i].data());
-        }
+               // console.log(newProducts);
+            }
+
             setProducts(newProducts);
         } else {
             setLastDoc(null);
+            setProducts([]);
+            alert('No Products are Found. Please Refresh/Clear Filter and try again.');
         }
 
         setIsLoading(false);
@@ -139,22 +182,48 @@ const Homepage = ({navigation}) => {
         setTimeout(async () => {
         // Construct a new query starting at this document,
         // get the next 25 cities.
-        const next = query(collection(db, "products"), orderBy("auctionId"), startAfter(lastDoc), limit(3));
-        const documentSnapshots = await getDocs(next);
+        
+    if (!search == '') {
+        var next = searchnamelast;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunilast;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filtercatlast;
+    }
+    else if (filterchecker && (!uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterpricelast;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && (priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunicatlast;
+    }
+    else if (filterchecker && (uniSelected.length && !catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunipricelast;
+    }
+    else if (filterchecker && (!uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filtercatpricelast;
+    }
+    else if (filterchecker && (uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter))) {
+        var next = filterunicatpricelast;
+    }
+    else {
+        var next = defaultlast;
+    }  
+        
+    const documentSnapshots = await getDocs(next);
 
         if (!documentSnapshots.empty) {
             let newProducts = products;
-             // Get the last visible document , Bidder , Seller or Viewer
+             // Get the last visible document
             const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
                 newProducts.push(documentSnapshots.docs[i].data());
-                
-                // Is it Ongoing 
-                // Check is the prduct is sold by current user
-                // Each Auction collection will have array Bid
+                //console.log(newProducts);
             }
+
             setProducts(newProducts);
             if (documentSnapshots.docs.length < 3) {
                 setLastDoc(null);
@@ -170,32 +239,82 @@ const Homepage = ({navigation}) => {
 
     }
 
-    const renderList = ({name, photo, description, anonymous_owner, current_price, activeDays, createdAt, isNew}) => {
+    const renderList = ({anomName, currPrice, product, createdAt, isNew}) => {
+        var category = '';
+        switch (product.category) {
+            case "CA" :
+                // Do work here
+                //console.log('@u.nus.edu');
+                category = 'Clothing & Accessories';
+                break;
+            case "ELE" :
+                // Do work here
+                category = 'Electronics';
+                break;
+            case "ENT" :
+                // Do work here
+                category = 'Entertainment';
+                break;
+            case "HB" :
+                // Do work here
+                category = 'Hobbies';
+                break;
+            case "HG" :
+                // Do work here
+                category = 'Home & Garden';
+                break;
+            case "HR" :
+                // Do work here
+                category = 'Housing (Rental)';
+                break;
+            case "VEH" :
+                // Do work here
+                category = 'Vehicles';
+                break;
+            case "OTH" :
+                // Do work here
+                category = 'Others';
+                break;
+            default :
+                // Do work here
+                console.log('Category not listed here');
+                break;
+          }
         return (
             <View style = {styles.list}>
-                <Image source = {{uri:photo}} 
-                style = {styles.listImage} />
+                <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
                 <View style = {styles.listingContainer}>
                     <View style = {styles.container}>
-                        <Text style= {styles.name}>{name}</Text>
+                        <Text style= {styles.name}>{product.name}</Text>
                     </View>
                 </View>
                 <View style = {styles.descriptionContainer}>
                     <Text style = {styles.description}>Description:</Text>
-                    <Text style = {styles.descriptiontext}>{description}</Text>
+                    <Text style = {styles.descriptiontext}>{product.description}</Text>
                 </View>
                 <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
                     <View>
                         <View style = {styles.currentpriceContainer}>
                             <Text style = {styles.dollarsign}>$</Text>
-                            <Text style = {styles.currentprice}>{current_price}</Text>
+                            <Text style = {styles.currentprice}>{currPrice}</Text>
                             <Ionicons style={styles.lockIcon} name={'caret-up-circle-outline'} size={27} color={colors.red} />
                         </View>
                         <View style = {styles.selleranonymouscontainer}>
-                            <Text style = {styles.selleranonymous}>{anonymous_owner}</Text>
+                        <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
+                            <Text style = {styles.selleranonymous}> {anomName}</Text>
+                            
+                        </View>
+                        <View style = {styles.uninamecontainer}>
+                            <Ionicons style={styles.lockIcon} name={'school-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.uniname}> {product.originUni}</Text>
+                        </View>
+                        <View style = {styles.catnamecontainer}>
+                            <Ionicons style={styles.lockIcon} name={'list-circle-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.catname}> {category}</Text>
                         </View>
                         <View style = {styles.date_publishedcontainer}>
-                            <Text style = {styles.date_published}>{createdAt}</Text>
+                            <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
+                            <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
                     </View>
                     <View style = {styles.activedaycontainer}>
@@ -203,7 +322,7 @@ const Homepage = ({navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {activeDays} Days
+                            {product.activeDays} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -236,6 +355,33 @@ const Homepage = ({navigation}) => {
             <View style = {styles.header}>
               <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
             </View>
+            <View style = {styles.searchandfilter}>
+            <TextInput style = {styles.searchinput}
+                 placeholder='Search for Products' 
+                 placeholderTextColor={colors.white}
+                 value = {search}  
+                 onChangeText={(value) => setSearch(value)}
+                 />
+            <TouchableOpacity style = {styles.customsearchBtnBG}
+             onPress={() =>
+              {
+                if (search == '') {
+                    alert("Search Field is empty!");
+                } else {
+                    onRefresh();
+                }
+                }}>
+                <Text style ={styles.customsearchBtnText}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.customfilterBtnBG}
+             onPress={() =>
+              {
+                navigation.navigate("Filter");
+              }
+                }>
+            <Ionicons style={styles.filterIcon} name={'filter-outline'} size={24} color={colors.white} />
+            </TouchableOpacity>
+            </View>
             <View style={styles.container}>
             <Text style = {styles.title}>   Recent Aunction</Text>
             <FlatList 
@@ -255,18 +401,8 @@ const Homepage = ({navigation}) => {
                     }
                 }}
                 data={products}
-                keyExtractor={item =>  item.auctionId.toString()}
-                renderItem={({item}) => {
-                    const render = { name: item.product.name
-                        , photo: item.product.pictureUri, 
-                        description: item.product.description, 
-                        anonymous_owner: item.anomName, 
-                        current_price: item.currPrice, 
-                        activeDays:item.product.activeDays, 
-                        createdAt: item.createdAt}
-                    return renderList(render);
-                }} />
-
+                keyExtractor={item =>  item.createdAt.toString()}
+                renderItem={({item}) => renderList(item)} />
             </View>
         </View>
         
@@ -280,8 +416,6 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        display: 'flex',
-        flexDirection: 'row',
         backgroundColor: colors.white,
         alignItems: 'center',
         justifyContent: 'center',
@@ -293,11 +427,54 @@ const styles = StyleSheet.create({
         marginTop: -30,
     },
 
+    searchandfilter : {
+        flexDirection: 'row',
+        marginTop: -70,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    searchinput: {
+        backgroundColor: colors.darkbrown,
+        width: '60%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+  
+        color: colors.white,
+        
+    },
+
+    customsearchBtnText: {
+        fontSize: 14,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    customsearchBtnBG: {
+        width: '20%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        backgroundColor: colors.activeday,
+    },
+
+
+    customfilterBtnBG: {
+        width: '10%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 16,
+        backgroundColor: colors.gold,
+    },
+
     title: {
         fontSize: 20,
         color: colors.darkbrown,
         fontFamily: "Montserrat-Black",
-        marginTop: -30,
+        marginTop: 20
+    
     },
 
     list: {
@@ -368,12 +545,37 @@ const styles = StyleSheet.create({
 
     selleranonymous : {
         color: colors.darkbrown,
-        fontSize: 15,
+        fontSize: 16,
+    },
+
+    uninamecontainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    uniname: {
+        color: colors.darkbrown,
+        fontSize: 10,
+    },
+
+    catnamecontainer : {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    catname : {
+        color: colors.darkbrown,
+        fontSize: 10,
+    },
+
+    date_publishedcontainer : {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 
     date_published : {
         color: colors.darkbrown,
-        fontSize: 15,
+        fontSize: 10,
     },
 
     customBtnText: {

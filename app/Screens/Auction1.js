@@ -21,6 +21,7 @@ const Auction1 = ({navigation}) => {
   const [itemname, setItemname] = useState('');
   const [itemdesc, setItemdesc] = useState('');
   const [useruni, setUseruni] = useState('');
+  var unicode = '';
   
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const Auction1 = ({navigation}) => {
             //console.log(`${key}: ${value}`);
           //}
           const originUni = data.originUni;
+          unicode = originUni;
           switch (originUni) {
             case "NUS" :
                 // Do work here
@@ -133,7 +135,7 @@ const Auction1 = ({navigation}) => {
              </View>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 try  {
-                navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, useruni));
+                navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, unicode));
 
                 } catch (err) {
                   alert(err.message);
