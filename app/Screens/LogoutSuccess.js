@@ -11,15 +11,15 @@ const LogoutSuccess = ({navigation}) => {
           Thanks for using StuBid!
           </Text>
           <Text style={styles.text}> 
-           You will be redirected back to the Log in Page.
+           You will be redirected back to the Welcome Page in 5 seconds.
           </Text>
           
-          <View style={{flexDirection: 'row'}}>
+          {/* <View style={{flexDirection: 'row'}}>
                 <Text style={styles.returnlogintext}>Return to Login Page? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style ={styles.logintext}>Login</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
           
         </View>
       );

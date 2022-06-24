@@ -4,6 +4,7 @@ import colors from '../config/colors.js';
 import { doc, getDoc, getFirestore} from "firebase/firestore"; 
 import { auth } from '../config/config.js';
 import { TextInput } from 'react-native-gesture-handler';
+import { StackActions } from '@react-navigation/native';
 
 const MyProfilepage = ({navigation}) => {
 
@@ -79,7 +80,13 @@ const MyProfilepage = ({navigation}) => {
              <Text style={{ fontSize: 16, fontWeight: 'bold' }}> School:  {useruni} </Text>
 
             <Text
-                onPress={() => {auth.signOut(); navigation.navigate("LogoutSuccess");}}
+                onPress={() => {
+                    setTimeout(()=>{
+                        auth.signOut(); 
+                      },5000);
+                      const popAction = StackActions.pop();
+                      navigation.dispatch(popAction);
+                    navigation.navigate("LogoutSuccess");}}
                 style={{ fontSize: 26, fontWeight: 'bold', marginTop: 50 }}> Click here to Logout
             </Text>
         </View>

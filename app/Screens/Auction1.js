@@ -105,6 +105,11 @@ const Auction1 = ({navigation}) => {
                 //console.log('@suss.edu.sg');
                 setUseruni('Singapore University of Social Sciences (SUSS)');
                 break;
+            case "GMAIL" :
+                // Do work here
+                //console.log('@suss.edu.sg');
+                setUseruni('Orbital-2122-StuBid (Debugging)');
+                break;
             default :
                 // Do work here
                 console.log('Uni not listed here');
