@@ -2,11 +2,12 @@
 
 export default class Product {
 
-    constructor(name, ownerId, description, pictureUri) {
+    constructor(name, ownerId, description, pictureUri, originUni) {
        this.name = name;
        this.ownerId = ownerId;
        this.auctionId = null;
        this.description = description;
+       this.originUni = originUni;
        this.createdAt = "";
        this.updatedAt = "";
        this.category = null;
@@ -22,6 +23,7 @@ export default class Product {
             ownerId : this.ownerId,
             auctionId : this.auctionId,
             description : this.description,
+            originUni: this.originUni,
             createdAt : this.createdAt,
             updatedAt : this.updatedAt,
             category : this.category,
@@ -42,9 +44,6 @@ export default class Product {
         this.updatedAt = createdAt;
     }
 
-    updateTime(updatedTime) {
-        this.updatedAt = updatedTime;
-    }
 
     toString() {
         return this.id + ', ' + this.name + ', ' + this.description;

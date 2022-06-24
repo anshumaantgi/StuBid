@@ -55,7 +55,7 @@ const Auction1 = ({navigation}) => {
     } else if (enteredimage === UploadItemPhotoURI) {
       throw new Error("Have you upload the item image?");
     } else {
-      newProduct = new Product(entereditemname,auth.currentUser.uid,entereditemdesc,enteredimage);
+      newProduct = new Product(entereditemname,auth.currentUser.uid,entereditemdesc,enteredimage , entereduseruni);
       
       return new AuctionView(auth, db , newProduct)
 
