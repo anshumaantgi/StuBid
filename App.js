@@ -12,6 +12,11 @@ import ResetPasswordSuccess from './app/Screens/ResetPasswordSuccess';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MainContainer from './app/Screens/MainContainer';
 import LogoutSuccess from './app/Screens/LogoutSuccess';
+import Auction1 from './app/Screens/Auction1';
+import Auction2 from './app/Screens/Auction2';
+import colors from './app/config/colors';
+import ItemPublishSuccess from './app/Screens/ItemPublishSuccess';
+import Filterpage from './app/Screens/Filterpage';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,17 +31,22 @@ const MyTheme = {
 const App = () => {
   return (
           <NavigationContainer theme={MyTheme}>
-            <Stack.Navigator screenOptions={{headerShown: false}}>
-              <Stack.Screen name = "Splashscreen" component={Splashscreen} />
-              <Stack.Screen name = "Onboard" component={Onboard} />
-              <Stack.Screen name = "WelcomeScreen" component={WelcomeScreen} />
-              <Stack.Screen name = "Login" component={Login} />
-              <Stack.Screen name = "Registration" component={Registration} />
-              <Stack.Screen name = "ForgetPassword" component={ForgetPassword} />
-              <Stack.Screen name = "VerifyEmailSuccess" component={VerifyEmailSuccess} />
-              <Stack.Screen name = "ResetPasswordSuccess" component={ResetPasswordSuccess} />
-              <Stack.Screen name = "LogoutSuccess" component={LogoutSuccess} />
-              <Stack.Screen name = "MainContainer" component={MainContainer} />
+            <Stack.Navigator>
+              <Stack.Screen options={{headerShown: false}} name = "Splashscreen" component={Splashscreen} />
+              <Stack.Screen options={{headerShown: false}} name = "Onboard" component={Onboard} />
+              <Stack.Screen options={{headerShown: false}} name = "WelcomeScreen" component={WelcomeScreen} />
+              <Stack.Screen options={{headerShown: false}} name = "Login" component={Login} />
+              <Stack.Screen options={{headerShown: false}} name = "Registration" component={Registration} />
+              <Stack.Screen options={{headerShown: false}} name = "ForgetPassword" component={ForgetPassword} />
+              <Stack.Screen options={{headerShown: false}} name = "VerifyEmailSuccess" component={VerifyEmailSuccess} />
+              <Stack.Screen options={{headerShown: false}} name = "ResetPasswordSuccess" component={ResetPasswordSuccess} />
+              <Stack.Screen options={{headerShown: false}} name = "LogoutSuccess" component={LogoutSuccess} />
+              <Stack.Screen options={{headerShown: false}} name = "MainContainer" component={MainContainer} />
+              <Stack.Screen options={{title: 'Auction Item', headerTintColor: colors.black}} name = "Auction1" component={Auction1} />
+              <Stack.Screen options={{title: 'Category & Price of Item', headerTintColor: colors.black}} name = "Auction2" component={Auction2} />
+              <Stack.Screen options={{headerShown: false}} name = "ItemPublishSuccess" component={ItemPublishSuccess} />
+              <Stack.Screen options={{title: 'Filter Products',}} name = "Filter" component={Filterpage} />
+              <Stack.Screen options={{headerShown: false}} name = "Home" component={Homepage} />
             </Stack.Navigator>
           </NavigationContainer>
 

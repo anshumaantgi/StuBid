@@ -6,4 +6,7 @@ export default {
     textinput: "rgba(77, 51, 12, 0.4)",
     black: "#000000",
     gold: "#DFB23F",
+    red: "#F02B1E",
+    orange: "#FF7D0B",
+    activeday: "rgba(116, 65, 0, 0.5)",
 }

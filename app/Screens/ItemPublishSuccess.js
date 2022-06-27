@@ -2,24 +2,24 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
-const LogoutSuccess = ({navigation}) => {
+const VerifyEmailSuccess = ({navigation}) => {
 
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
           <Text style={styles.text}> 
-          Thanks for using StuBid!
+           Item has been published Successfully.
           </Text>
           <Text style={styles.text}> 
-           You will be redirected back to the Welcome Page in 5 seconds.
+           Please take note of your anonymous identity.
           </Text>
           
-          {/* <View style={{flexDirection: 'row'}}>
-                <Text style={styles.returnlogintext}>Return to Login Page? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                    <Text style ={styles.logintext}>Login</Text>
+          <View style={{flexDirection: 'row'}}>
+                <Text style={styles.returnlogintext}>Return to Homepage? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("MainContainer")}>
+                    <Text style ={styles.logintext}>Homepage</Text>
                 </TouchableOpacity>
-            </View> */}
+            </View>
           
         </View>
       );
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default LogoutSuccess;
+export default VerifyEmailSuccess;

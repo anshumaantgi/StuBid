@@ -5,6 +5,7 @@ import colors from '../config/colors.js';
 const Auctionpage = ({navigation}) => {
     return (
         <View style={styles.container}>
+            
              <Text
                 onPress={() => alert('This is the "Auction" screen.')}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>Auction Screen</Text>
