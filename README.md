@@ -11,7 +11,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/anshumaantgi/StuBid">
-    <img src="images/Stubid-Logo-White-ver.png" alt="Logo" width="500" height="500">
+    <img src="images/StuBid-Logo-Original-ver.png" alt="Logo" width="500" height="500">
   </a>
 
 <h1 align="center"> <strong> StuBid  <strong/> </h1>
@@ -20,8 +20,7 @@
     StuBid, also known as 'Student Bidding', is a one-stop mobile application for all students studying in Singapore Universities to conveniently buy or sell unwanted items online through an anonymous bidding system, maximizing the benefits gained by both the seller and buyer.
     <br /> 
     <br /> 
-    <a href="https://docs.google.com/document/d/1lPc0IsSOcqIc8ryPoSQZ85QasmspVks4/edit"><strong>Explore the docs »</strong></a>
-    <br />
+    <a href="https://docs.google.com/document/d/1lPc0IsSOcqIc8ryPoSQZ85QasmspVks4/edit"><strong> Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://www.figma.com/file/ycRVCcj6LPQZd1haL2gPvv/StuBid?node-id=0%3A1">View Figma Demo</a>
@@ -87,7 +86,7 @@
  
 #### Prerequisites
 
-1. Download the Source Code from the repo , Development Branch.
+1. Download the Source Code from the repo, Main Branch.
 2. Run the terminal on the source code directory
 3. Run CLI command:  
     ```sh
