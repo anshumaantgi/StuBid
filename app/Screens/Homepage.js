@@ -239,7 +239,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({anomName, currPrice, product, createdAt, isNew}) => {
+    const renderList = ({anomName, currPrice, product, createdAt, ongoing, isNew}) => {
         var category = '';
         switch (product.category) {
             case "CA" :
@@ -301,8 +301,12 @@ const Homepage = ({route, navigation}) => {
                         </View>
                         <View style = {styles.selleranonymouscontainer}>
                         <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
-                            <Text style = {styles.selleranonymous}> {anomName}</Text>
-                            
+                        <TouchableOpacity onPress={() => {
+                            alert("Seller Review Page")
+                       
+                            }}> 
+                            <Text style = {styles.selleranonymous}> {anomName} </Text>
+                            </TouchableOpacity>
                         </View>
                         <View style = {styles.uninamecontainer}>
                             <Ionicons style={styles.lockIcon} name={'school-outline'} size={16} color={colors.black} />
@@ -326,10 +330,37 @@ const Homepage = ({route, navigation}) => {
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
-                        <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
-                            alert("Place a Bid")
+                        <TouchableOpacity 
+                            style = 
+                            {
+                                // will add in 'Continue Bidding' once database is done
+                                (auth.currentUser.uid == product.ownerId && ongoing)
+                                ? styles.ABcustomBtnBG
+                                : (auth.currentUser.uid != product.ownerId && ongoing)
+                                ? styles.PABcustomBtnBG
+                                : styles.LARcustomBtnBG
+                            } 
+                            onPress={() => 
+                            {
+                                 // will add in 'Continue Bidding' once database is done
+                                 (auth.currentUser.uid == product.ownerId && ongoing)
+                                 ? navigation.navigate("SellerBid", {anomName, currPrice, product, createdAt, ongoing})
+                                 : (auth.currentUser.uid != product.ownerId && ongoing)
+                                 ? navigation.navigate("BuyerBid", {anomName, currPrice, product, createdAt, ongoing})
+                                 : alert('Leave Review')
+                            
                             }}>
-                            <Text style ={styles.customBtnText}>Place a Bid</Text>
+                            <Text style ={styles.customBtnText}>
+                                {
+                                    // will add in 'Continue Bidding' once database is done
+                                    (auth.currentUser.uid == product.ownerId && ongoing)
+                                    ? 'Accept Bid'
+                                    : (auth.currentUser.uid != product.ownerId && ongoing)
+                                    ? 'Place a Bid'
+                                    : 'Leave Review'
+
+                                }
+                                </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -401,7 +432,7 @@ const Homepage = ({route, navigation}) => {
                     }
                 }}
                 data={products}
-                keyExtractor={item =>  item.createdAt.toString()}
+                keyExtractor={item =>  item.auctionId.toString()}
                 renderItem={({item}) => renderList(item)} />
             </View>
         </View>
@@ -585,8 +616,20 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-    customBtnBG: {
+    PABcustomBtnBG: {
         backgroundColor: colors.black,
+        padding: 15,
+        borderRadius: 50,
+    },
+
+    ABcustomBtnBG: {
+        backgroundColor: colors.green,
+        padding: 15,
+        borderRadius: 50,
+    },
+
+    LARcustomBtnBG: {
+        backgroundColor: colors.gold,
         padding: 15,
         borderRadius: 50,
     },

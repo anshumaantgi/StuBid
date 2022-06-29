@@ -9,4 +9,6 @@ export default {
     red: "#F02B1E",
     orange: "#FF7D0B",
     activeday: "rgba(116, 65, 0, 0.5)",
+    green: "#47E310",
+    blue: "#0019FF",
 }

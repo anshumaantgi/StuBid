@@ -86,19 +86,30 @@ const Auction2 = ({route, navigation}) => {
       }
 
        //Retrieve Total number of documents (purpose is for auto accumulate Auction ID)
-       const countdocs = async()=> {
-        var count = 0;
+       const arrayMax = (arr) => {
+        return arr.reduce(function (p, v) {
+          return ( p > v ? p : v );
+        });
+        }
+
+        const countdocs = async()=> {
+        var allauctionID = [];
         const db = getFirestore();
         const querySnapshot = await getDocs(collection(db, "auctions"));
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          count = count + 1
+          console.log(doc.id, " => ", doc.data().auctionId);
+          allauctionID.push(doc.data().auctionId);
           }
           )
-          console.log("DOG", count);
-          setCounter(count)
-          console.log("CAAAA", counter)};
+          if (allauctionID.length) {
+            setCounter(arrayMax(allauctionID) + 1);
+          }
+          else {
+            setCounter(1);
+          }
+          console.log("CAAAADDD", counter)
+        };
         
         useEffect(() => {
            countdocs();
