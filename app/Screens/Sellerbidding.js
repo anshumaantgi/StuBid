@@ -374,7 +374,6 @@ const styles = StyleSheet.create({
     list: {
         width: '100%',
         flexDirection: 'column',
-        paddingHorizontal: 10,
         marginBottom: 20,
         
     },
