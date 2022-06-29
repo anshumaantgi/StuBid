@@ -399,12 +399,12 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         marginBottom: 20,
-  
     },
 
     listImage: {
-        width: '100%',
+        width: 300,
         height: 300,
+        alignSelf: 'center',
     },
 
     listingContainer: {
