@@ -102,61 +102,33 @@ const bidderitem = [
 
 const Sellerbidding = ({route, navigation}) => {
 
-    //Product details retrieval previous screen
-    const productdetails =  route.params;
-    console.log(productdetails.product.name);
-
-    //Retrieve category full name
-    var category = '';
-        switch (productdetails.product.category) {
-            case "CA" :
-                // Do work here
-                //console.log('@u.nus.edu');
-                category = 'Clothing & Accessories';
-                break;
-            case "ELE" :
-                // Do work here
-                category = 'Electronics';
-                break;
-            case "ENT" :
-                // Do work here
-                category = 'Entertainment';
-                break;
-            case "HB" :
-                // Do work here
-                category = 'Hobbies';
-                break;
-            case "HG" :
-                // Do work here
-                category = 'Home & Garden';
-                break;
-            case "HR" :
-                // Do work here
-                category = 'Housing (Rental)';
-                break;
-            case "VEH" :
-                // Do work here
-                category = 'Vehicles';
-                break;
-            case "OTH" :
-                // Do work here
-                category = 'Others';
-                break;
-            default :
-                // Do work here
-                console.log('Category not listed here');
-                break;
-          }
+     //Auction ID from previous screen
+     const aId = route.params.auctionId;
 
     //initialise state hook
+    const [productdetails, setProductdetails] = useState('');
     const [bidding, setBidding] = useState([]);
 
     // Firestore setup
     const db = getFirestore();
     const biddingRef = collection(db, 'auctions');
 
+    // Retrieve product details from firestore via AuctionId
+    const getproductlisting = async() => {
+        var itemdetails = null;
+        const q = query(biddingRef, where("auctionId", "==", aId));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //console.log(doc.id, " => ", doc.data());
+          itemdetails = doc.data();
+        });
+        setProductdetails(itemdetails);
+    }
+
     useEffect(() => {
-        getBidding();
+        getproductlisting();
+        //getBidding();
     }, []);
 
     const getBidding = async () => {
@@ -218,6 +190,55 @@ const Sellerbidding = ({route, navigation}) => {
           }, 1000);
     }
 
+    const getcategory = () => {
+        var category = '';
+        if (productdetails) {
+            switch (productdetails.product.category) {
+                case "CA" :
+                    // Do work here
+                    //console.log('@u.nus.edu');
+                    category = 'Clothing & Accessories';
+                    break;
+                case "ELE" :
+                    // Do work here
+                    category = 'Electronics';
+                    break;
+                case "ENT" :
+                    // Do work here
+                    category = 'Entertainment';
+                    break;
+                case "HB" :
+                    // Do work here
+                    category = 'Hobbies';
+                    break;
+                case "HG" :
+                    // Do work here
+                    category = 'Home & Garden';
+                    break;
+                case "HR" :
+                    // Do work here
+                    category = 'Housing (Rental)';
+                    break;
+                case "VEH" :
+                    // Do work here
+                    category = 'Vehicles';
+                    break;
+                case "OTH" :
+                    // Do work here
+                    category = 'Others';
+                    break;
+                default :
+                    // Do work here
+                    console.log('Category not listed here');
+                    break;
+                }
+        }
+        else {
+            category = 'Loading...';
+        }
+        return category; 
+    }
+
     const ItemDivider = () => {
         return (
           <View
@@ -230,10 +251,12 @@ const Sellerbidding = ({route, navigation}) => {
         );
       }
 
+    
+
     return (
             <FlatList
                 ListHeaderComponent =
-                {
+                {productdetails &&
                     <View style={styles.container}>
                     <View style = {styles.list}>
                         <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
@@ -258,7 +281,7 @@ const Sellerbidding = ({route, navigation}) => {
                             </View>
                             <View style = {styles.catnamecontainer}>
                                 <Ionicons style={styles.lockIcon} name={'list-circle-outline'} size={16} color={colors.black} />
-                                <Text style = {styles.catname}> {category}</Text>
+                                <Text style = {styles.catname}> {getcategory()}</Text>
                             </View>
                             <View style = {styles.currentpriceContainer}>
                                 <Text style = {styles.dollarsign}>$</Text>
@@ -299,7 +322,7 @@ const Sellerbidding = ({route, navigation}) => {
                 }
 
                 ListFooterComponent =
-                {
+                {productdetails &&
                     <View style = {styles.buttoncontainer}>
                     <TouchableOpacity style = {styles.EDITcustomBtnBG} onPress={() => {
                        alert("Edit item")
@@ -347,16 +370,19 @@ const styles = StyleSheet.create({
     
     },
 
+    
     list: {
         width: '100%',
         flexDirection: 'column',
+        paddingHorizontal: 10,
         marginBottom: 20,
-  
+        
     },
 
     listImage: {
-        width: '100%',
+        width: 300,
         height: 300,
+        alignSelf: 'center',
     },
 
     listingContainer: {

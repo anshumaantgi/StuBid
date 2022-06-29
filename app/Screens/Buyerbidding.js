@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndica
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, } from "firebase/firestore"; 
+import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where} from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
@@ -109,62 +109,37 @@ const Buyerbidding = ({route, navigation}) => {
         setModalVisible(!isModalVisible);
     };
 
-    //Product details retrieval previous screen
-    const productdetails =  route.params;
-    console.log(productdetails.product.name);
-
-    //Retrieve category full name
-    var category = '';
-        switch (productdetails.product.category) {
-            case "CA" :
-                // Do work here
-                //console.log('@u.nus.edu');
-                category = 'Clothing & Accessories';
-                break;
-            case "ELE" :
-                // Do work here
-                category = 'Electronics';
-                break;
-            case "ENT" :
-                // Do work here
-                category = 'Entertainment';
-                break;
-            case "HB" :
-                // Do work here
-                category = 'Hobbies';
-                break;
-            case "HG" :
-                // Do work here
-                category = 'Home & Garden';
-                break;
-            case "HR" :
-                // Do work here
-                category = 'Housing (Rental)';
-                break;
-            case "VEH" :
-                // Do work here
-                category = 'Vehicles';
-                break;
-            case "OTH" :
-                // Do work here
-                category = 'Others';
-                break;
-            default :
-                // Do work here
-                console.log('Category not listed here');
-                break;
-          }
-
+    //Auction ID from previous screen
+    const aId = route.params.auctionId;
+    
     //initialise state hook
+    const [productdetails, setProductdetails] = useState('');
     const [bidding, setBidding] = useState([]);
 
     // Firestore setup
     const db = getFirestore();
     const biddingRef = collection(db, 'auctions');
+    
+    // Retrieve product details from firestore via AuctionId
+    const getproductlisting = async() => {
+        var itemdetails = null;
+        const q = query(biddingRef, where("auctionId", "==", aId));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //console.log(doc.id, " => ", doc.data());
+          itemdetails = doc.data();
+        });
+        setProductdetails(itemdetails);
+    }
 
     useEffect(() => {
-        getBidding();
+        getproductlisting();
+        //getBidding();
+       
     }, []);
+
+    
 
     const getBidding = async () => {
     // Query the first page of docs
@@ -225,6 +200,55 @@ const Buyerbidding = ({route, navigation}) => {
           }, 1000);
     }
 
+    const getcategory = () => {
+        var category = '';
+        if (productdetails) {
+            switch (productdetails.product.category) {
+                case "CA" :
+                    // Do work here
+                    //console.log('@u.nus.edu');
+                    category = 'Clothing & Accessories';
+                    break;
+                case "ELE" :
+                    // Do work here
+                    category = 'Electronics';
+                    break;
+                case "ENT" :
+                    // Do work here
+                    category = 'Entertainment';
+                    break;
+                case "HB" :
+                    // Do work here
+                    category = 'Hobbies';
+                    break;
+                case "HG" :
+                    // Do work here
+                    category = 'Home & Garden';
+                    break;
+                case "HR" :
+                    // Do work here
+                    category = 'Housing (Rental)';
+                    break;
+                case "VEH" :
+                    // Do work here
+                    category = 'Vehicles';
+                    break;
+                case "OTH" :
+                    // Do work here
+                    category = 'Others';
+                    break;
+                default :
+                    // Do work here
+                    console.log('Category not listed here');
+                    break;
+                }
+        }
+        else {
+            category = 'Loading...';
+        }
+        return category; 
+    }
+
     const ItemDivider = () => {
         return (
           <View
@@ -240,7 +264,7 @@ const Buyerbidding = ({route, navigation}) => {
     return (<View>
             <FlatList
                 ListHeaderComponent =
-                {
+                {productdetails &&
                     <View style={styles.container}>
                     <View style = {styles.list}>
                         <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
@@ -265,7 +289,7 @@ const Buyerbidding = ({route, navigation}) => {
                             </View>
                             <View style = {styles.catnamecontainer}>
                                 <Ionicons style={styles.lockIcon} name={'list-circle-outline'} size={16} color={colors.black} />
-                                <Text style = {styles.catname}> {category}</Text>
+                                <Text style = {styles.catname}> {getcategory()}</Text>
                             </View>
                             <View style = {styles.currentpriceContainer}>
                                 <Text style = {styles.dollarsign}>$</Text>
@@ -307,6 +331,7 @@ const Buyerbidding = ({route, navigation}) => {
 
                 ListFooterComponent =
                 {
+                    productdetails &&
                     <View style = {styles.buttoncontainer}>
                     <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
                        //alert("Buy item")

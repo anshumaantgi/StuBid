@@ -239,7 +239,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({anomName, currPrice, product, createdAt, ongoing, isNew}) => {
+    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, isNew}) => {
         var category = '';
         switch (product.category) {
             case "CA" :
@@ -344,9 +344,9 @@ const Homepage = ({route, navigation}) => {
                             {
                                  // will add in 'Continue Bidding' once database is done
                                  (auth.currentUser.uid == product.ownerId && ongoing)
-                                 ? navigation.navigate("SellerBid", {anomName, currPrice, product, createdAt, ongoing})
+                                 ? navigation.navigate("SellerBid", {auctionId})
                                  : (auth.currentUser.uid != product.ownerId && ongoing)
-                                 ? navigation.navigate("BuyerBid", {anomName, currPrice, product, createdAt, ongoing})
+                                 ? navigation.navigate("BuyerBid", {auctionId})
                                  : alert('Leave Review')
                             
                             }}>
@@ -516,11 +516,13 @@ const styles = StyleSheet.create({
         borderWidth: 0.2,
         borderColor: colors.darkbrown,
         borderRadius: 15,
+        
     },
 
     listImage: {
-        width: '100%',
+        width: 300,
         height: 300,
+        alignSelf: 'center',
     },
 
     listingContainer: {
