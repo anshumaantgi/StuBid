@@ -193,14 +193,13 @@ const Auction2 = ({route, navigation}) => {
              <TextInput style = {styles.textinput} placeholder='Buyout Bid Price ($)' placeholderTextColor={colors.white} value = {buyoutprice} onChangeText={(value) => setBuyoutprice(value)} keyboardType='numeric'/>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(value, endbiddate, value2, startingprice, buyoutprice, randomName)
-                .then((success) =>  {alert(`Please take note of your Anonymous name during the auction: \n\n` + randomName); navigation.navigate('ItemPublishSuccess');})
+                .then((success) =>  {navigation.navigate('ItemPublishSuccess', {randomName});})
                 .catch((error) => {alert(error.message)})
             }
         }
             >
                 <Text style ={styles.customBtnText}>Publish Item</Text>
             </TouchableOpacity>
-            <Text style={styles.selleranonymousname}>Your Anonymous Name (Seller) : {randomName}</Text>
         </SafeAreaView>
         </KeyboardAvoidingView>
     </ScrollView>

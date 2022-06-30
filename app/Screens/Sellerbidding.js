@@ -7,6 +7,7 @@ import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, s
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
+import Modal from "react-native-modal";
 
 const bidderitem = [
 
@@ -102,6 +103,15 @@ const bidderitem = [
 
 const Sellerbidding = ({route, navigation}) => {
 
+    //for displaying only, will retrieve buyer anonymous name from firestore
+    const buyerfakename = 'testing123'
+    //Set up Modal (Pop-up screen) when accept bid button is pressed, etc
+    const [isModalVisible, setModalVisible] = useState(false);
+     //Accept bid option toggle
+     const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
      //Auction ID from previous screen
      const aId = route.params.auctionId;
 
@@ -112,6 +122,15 @@ const Sellerbidding = ({route, navigation}) => {
     // Firestore setup
     const db = getFirestore();
     const biddingRef = collection(db, 'auctions');
+
+     //Send Sellout details to Firestore
+     async function sendselloutvalues(enteredbuyerId, enteredownerId, enteredbuyeranonname) {
+        console.log(enteredbuyerId);
+        console.log(enteredownerId);
+        console.log(enteredbuyeranonname);
+        toggleModal();
+        
+    }
 
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
@@ -165,9 +184,7 @@ const Sellerbidding = ({route, navigation}) => {
                     }}> 
                     <Text style = {styles.buyeranonymousname}>
                     {
-                        (auth.currentUser.uid == buyerId)
-                        ? ' Me'
-                        :  ' ' + anomName
+                        ' ' + anomName
                     }
                     </Text>
                 </TouchableOpacity>
@@ -323,19 +340,83 @@ const Sellerbidding = ({route, navigation}) => {
 
                 ListFooterComponent =
                 {productdetails &&
-                    <View style = {styles.buttoncontainer}>
-                    <TouchableOpacity style = {styles.EDITcustomBtnBG} onPress={() => {
-                       alert("Edit item")
-                       
-                       }}> 
-                       <Text style ={styles.EDITcustomBtnText}>Edit Item</Text>
-                   </TouchableOpacity>
-                   <TouchableOpacity style = {styles.ACCBIDcustomBtnBG} onPress={() => {
-                       alert("Accept a Bid")
-                       
-                       }}>
-                       <Text style ={styles.ACCBIDcustomBtnText}>Accept Bid</Text>
-                   </TouchableOpacity>
+                    <View>
+                        <View style = {styles.buttoncontainer}>
+                        <TouchableOpacity style = {styles.EDITcustomBtnBG} onPress={() => {
+                        alert("Edit item")
+                        
+                        }}> 
+                        <Text style ={styles.EDITcustomBtnText}>Edit Item</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {styles.ACCBIDcustomBtnBG} onPress={() => {
+                        //alert("Accept a Bid")
+                        toggleModal();
+                        }}>
+                        <Text style ={styles.ACCBIDcustomBtnText}>Accept Bid</Text>
+                    </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.container}>
+                        <Modal 
+                            isVisible={isModalVisible}
+                            animationIn="zoomInDown"
+                            animationOut="zoomOutUp"
+                            animationInTiming={1000}
+                            animationOutTiming={1000}
+                            backdropTransitionInTiming={600}
+                            backdropTransitionOutTiming={600}>
+                    
+                        <View style={styles.popupmenu}>
+                            <Text style = {styles.currentbid}>Are you sure you want to sell this item?</Text>
+                            <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
+                            <Text style = {styles.title}>{productdetails.product.name}</Text>
+                            <Text style = {styles.currenthighestbiddertext}>Current Highest Bidder: </Text>
+                            <View style = {styles.highestbiddercontainer}>
+                                <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
+                                <View>
+                                    <View style = {{flexDirection: 'row'}}>
+                                    <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
+                                    <TouchableOpacity onPress={() => {
+                                        alert("Bidder/Buyer Review Page")  
+                                        }}> 
+                                        <Text style = {styles.buyeranonymousname}>
+                                        {
+                                            ' ' + buyerfakename
+                                        }
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                    <Text style = {styles.buyeranonymousdate}>{productdetails.createdAt}</Text>
+                                </View>
+                                <View style = {styles.currentpriceContainer}>
+                                    <Text style = {styles.dollarsign}>$</Text>
+                                    <Text style = {styles.currentprice}>{productdetails.currPrice}</Text>
+                                    <Ionicons style={styles.lockIcon} name={'caret-up-circle-outline'} size={27} color={colors.red} />
+                                </View>
+                            </View>
+                            <Text style = {styles.termsandcondition}>
+                            By tapping on Accept Bid, I agree that my details will be 
+                            revealed to the Buyer for further transactions. Also, I will
+                            accept any penalties if I back out after accepting the bid. 
+                            </Text>
+                            <View style = {styles.SELLcontainer}>
+                            <TouchableOpacity style = {styles.ACCEPTcustomBtnBG} onPress={() => {
+                                //alert("Accept Bid")
+                                sendselloutvalues(auth.currentUser.uid, productdetails.product.ownerId, buyerfakename)
+                                .then((success) =>  {navigation.navigate('SelloutSuccess', {aId, buyerfakename})})
+                                .catch((error) => {alert(error.message)})
+                            }}> 
+                            <Text style ={styles.ACCEPTcustomBtnText}>Confirm</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
+                                toggleModal();
+                            }}>
+                            <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                            </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                    </View>
                     </View>
                 }
 
@@ -588,6 +669,74 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Black',
         color: colors.white,
         textAlign: "center",
+    },
+
+    popupmenu: {
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: colors.white,
+        borderRadius: 10,
+        padding: 20,
+    },
+
+    termsandcondition : {
+        fontSize: 12,
+        color: colors.darkbrown,
+        marginTop: 20,
+    },
+
+    SELLcontainer: {
+        flexDirection: 'row',  
+        margin: 20,
+        
+    },
+
+    ACCEPTcustomBtnBG: {
+        backgroundColor: colors.green,
+        padding: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+
+    },
+
+    ACCEPTcustomBtnText: {
+        fontSize: 24,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    CANCELcustomBtnBG: {
+        backgroundColor: colors.black,
+        borderRadius: 5,
+        padding: 15,
+        marginHorizontal: 20,
+    },
+
+    CANCELcustomBtnText: {
+        fontSize: 24,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    currenthighestbiddertext : {
+        color: colors.red,
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: 'bold',
+    },
+
+    highestbiddercontainer : {
+        flexDirection: 'row',  
+        alignItems: 'center',
+        justifyContent: 'space-between' ,
+        width: '100%',
+        borderWidth: 0.5,
+        borderStyle: 'dashed',
+        borderRadius: 20,
+        padding: 10,
+        marginTop: 10,
     },
 })
 

@@ -19,6 +19,9 @@ import ItemPublishSuccess from './app/Screens/ItemPublishSuccess';
 import Filterpage from './app/Screens/Filterpage';
 import Buyerbidding from './app/Screens/Buyerbidding';
 import Sellerbidding from './app/Screens/Sellerbidding';
+import BidSuccess from './app/Screens/BidSuccess';
+import BuyoutSuccess from './app/Screens/BuyoutSuccess';
+import SelloutSuccess from './app/Screens/SelloutSuccess';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +53,9 @@ const App = () => {
               <Stack.Screen options={{title: 'Filter Products',}} name = "Filter" component={Filterpage} />
               <Stack.Screen options={{title: 'Bid for Item',}} name = "BuyerBid" component={Buyerbidding} />
               <Stack.Screen options={{title: 'Accept a Bid',}} name = "SellerBid" component={Sellerbidding} />
+              <Stack.Screen options={{headerShown: false}} name = "BuyoutSuccess" component={BuyoutSuccess} />
+              <Stack.Screen options={{headerShown: false}} name = "BidSuccess" component={BidSuccess} />
+              <Stack.Screen options={{headerShown: false}} name = "SelloutSuccess" component={SelloutSuccess} />
       
             </Stack.Navigator>
           </NavigationContainer>

@@ -2,19 +2,23 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
-const ItemPublishSuccess = ({route, navigation}) => {
-    const selleranonname = route.params.randomName;
+const BuyoutSuccess = ({route, navigation}) => {
+    const buyeranonname = route.params.randomName;
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
           <Text style={styles.text}> 
-           Item has been published Successfully.
+           Congratulations!
           </Text>
           <Text style={styles.text}> 
-           Please take note of your Anonymous Identity : 
+           You have successfully bought the item as :
           </Text>
-          <Text style={styles.selleranon}> 
-            {selleranonname}
+          <Text style={styles.buyeranon}> 
+            {buyeranonname}
+          </Text>
+          <Text style={styles.text}> 
+            You may now exchange contact
+            with seller for further transaction.
           </Text>
           
           <View style={{flexDirection: 'row'}}>
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    selleranon : {
+    buyeranon : {
         fontSize: 15,
         color: colors.red,
         textAlign: "center",
@@ -71,4 +75,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default ItemPublishSuccess;
+export default BuyoutSuccess;

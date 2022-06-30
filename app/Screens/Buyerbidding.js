@@ -105,9 +105,19 @@ const Buyerbidding = ({route, navigation}) => {
 
     //Set up Modal (Pop-up screen) when bid/sell button is pressed, etc
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalVisible2, setModalVisible2] = useState(false);
+    //Buyout option toggle
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+    //Bid option toggle
+    const toggleModal2 = () => {
+        setModalVisible2(!isModalVisible2); 
+    };
+
+     //Ramdom name generator
+     const { uniqueNamesGenerator, adjectives, animals } = require('unique-names-generator');
+     const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, animals] }); // big_donkey
 
     //Auction ID from previous screen
     const aId = route.params.auctionId;
@@ -115,10 +125,40 @@ const Buyerbidding = ({route, navigation}) => {
     //initialise state hook
     const [productdetails, setProductdetails] = useState('');
     const [bidding, setBidding] = useState([]);
+    const [userbidprice, setUserbidprice] = useState('');
 
     // Firestore setup
     const db = getFirestore();
     const biddingRef = collection(db, 'auctions');
+    
+    //Send buyout details to Firestore
+    async function sendbuyoutvalues(enteredbuyerId, enteredownerId, enteredbuyeranonname) {
+        console.log(enteredbuyerId);
+        console.log(enteredownerId);
+        console.log(enteredbuyeranonname);
+        toggleModal();
+        
+    }
+
+    //Send user bid details to Firestore
+    async function senduserbidvalues(enteredbuyerId, enteredownerId, enteredbidPrice, enteredbidderanonname) {
+        if (!enteredbidPrice) {
+            throw new Error("Please enter your bidding price!");
+        }
+        else if (enteredbidPrice <= productdetails.product.minPrice) {
+            throw new Error("Please bid higher than the minimum bidding price!");
+        }
+        else if (enteredbidPrice >= productdetails.product.buyPrice) {
+            throw new Error("Please bid lower than the maximum bidding price!");
+        }   
+        else {
+            console.log(enteredbuyerId);
+            console.log(enteredownerId);
+            console.log(enteredbidPrice);
+            console.log(enteredbidderanonname);
+            toggleModal2();
+        }
+    }
     
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
@@ -331,7 +371,8 @@ const Buyerbidding = ({route, navigation}) => {
 
                 ListFooterComponent =
                 {
-                    productdetails &&
+                    productdetails && 
+                    <View>
                     <View style = {styles.buttoncontainer}>
                     <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
                        //alert("Buy item")
@@ -341,12 +382,116 @@ const Buyerbidding = ({route, navigation}) => {
                        <Text style ={styles.BUYOUTcustomBtnText}>Buy Item</Text>
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
-                       alert("Bid item")
-                       
+                       //alert("Bid item")
+                       toggleModal2();
                        }}>
                        <Text style ={styles.BIDcustomBtnText}>Place a Bid</Text>
                    </TouchableOpacity>
                     </View>
+
+                    <View style={styles.container}>
+                    <Modal 
+                        isVisible={isModalVisible}
+                        animationIn="zoomInDown"
+                        animationOut="zoomOutUp"
+                        animationInTiming={1000}
+                        animationOutTiming={1000}
+                        backdropTransitionInTiming={600}
+                        backdropTransitionOutTiming={600}>
+                  
+                    <View style={styles.popupmenu}>
+                        <Text style = {styles.currentbid}>Are you sure you want to buy this item?</Text>
+                        <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
+                        <Text style = {styles.title}>{productdetails.product.name}</Text>
+                        <Text style = {styles.currentprice}>${productdetails.product.buyPrice}</Text>
+                        <Text style = {styles.termsandcondition}>
+                            By tapping on 'Confirm', I agree that my details will be 
+                            revealed to the Seller for further transactions. Also, I will
+                            accept any penalties if I back out after submitting the bid.    
+                        </Text>
+                        <View style = {styles.buyoutcontainer}>
+                        <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
+                            //alert("Confirm Buy item")
+                            sendbuyoutvalues(auth.currentUser.uid, productdetails.product.ownerId, randomName)
+                            .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, randomName})})
+                            .catch((error) => {alert(error.message)})
+                        }}> 
+                        <Text style ={styles.CONFIRMcustomBtnText}>Confirm</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
+                            toggleModal();
+                        }}>
+                        <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal 
+                        isVisible={isModalVisible2}
+                        animationIn="zoomInDown"
+                        animationOut="zoomOutUp"
+                        animationInTiming={1000}
+                        animationOutTiming={1000}
+                        backdropTransitionInTiming={600}
+                        backdropTransitionOutTiming={600}>
+                  
+                    <View style={styles.popupmenu}>
+                        <Text style = {styles.currentbid}>How much are you willing to bid?</Text>
+                        <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
+                        <Text style = {styles.title}>{productdetails.product.name}</Text>
+                        <View style = {styles.bidinput}>
+                            <TextInput 
+                                style = {styles.bidamount}
+                                placeholder='Tap to submit your Bid ($)' 
+                                keyboardType='numeric'
+                                value = {userbidprice} 
+                                onChangeText={(value) => setUserbidprice(value)}
+                                placeholderTextColor={colors.white}>
+                            </TextInput>
+                        </View>
+                        <View>
+                            <View style = {{flexDirection: 'row'}}>
+                                <Text style = {styles.minbidtext}>Minimum Bid: </Text>
+                                <Text style = {styles.minbid}>
+                                    ${productdetails.currPrice}
+                                </Text>
+                            </View>
+                            <View style = {{flexDirection: 'row'}}>
+                                <Text style = {styles.maxbidtext}>Maximum Bid: </Text>
+                                <Text style = {styles.maxbid}>
+                                    ${productdetails.product.buyPrice}
+                                </Text>
+                            </View>
+                        </View>
+                        <Text style = {styles.termsandcondition}>
+                        By tapping on Bid Item, I agree that my bidding amount will be 
+                        notified to the Seller. In the event that I won the bid, my details 
+                        will be revealed to the Seller for further transaction, Also, I will
+                        accept any penalties if I back out after agreeing the deal.   
+                        </Text>
+                        <View style = {styles.buyoutcontainer}>
+                        <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
+                            //alert("Bid is placed!")
+                            senduserbidvalues(auth.currentUser.uid, productdetails.product.ownerId, userbidprice, randomName)
+                            .then((success) =>  {navigation.navigate('BidSuccess', {aId, randomName});})
+                            .catch((error) => {alert(error.message)})
+                    
+                        }}> 
+                        <Text style ={styles.CONFIRMcustomBtnText}>Place a Bid</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
+                            toggleModal2();
+                        }}>
+                        <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                </View>
+                </View>
+                    
                     
                 }
 
@@ -356,22 +501,7 @@ const Buyerbidding = ({route, navigation}) => {
                 ItemSeparatorComponent={ItemDivider}
                 keyExtractor={item =>  item.id.toString()}
                 renderItem={({item}) => renderList(item)} />    
-
-
-<View style={{ flex: 1 }}>
-
-      <Modal isVisible={isModalVisible}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style = {styles.currentprice}>Hello Word!</Text>
-          <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
-                      toggleModal();
-                       }}>
-                       <Text style ={styles.BIDcustomBtnText}>Close Box</Text>
-                   </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
-             </View>
     )
 }
 
@@ -393,6 +523,22 @@ const styles = StyleSheet.create({
         fontFamily: "Montserrat-Black",
         marginTop: 20
     
+    },
+
+    bidinput: {
+        backgroundColor: colors.textinput,
+        width: '80%',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        marginVertical: 10,
+        color: colors.white,
+    },
+
+    bidamount : {
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: colors.white,
     },
 
     list: {
@@ -612,6 +758,77 @@ const styles = StyleSheet.create({
         color: colors.white,
         textAlign: "center",
     },
+
+    popupmenu: {
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: colors.white,
+        borderRadius: 10,
+        padding: 20,
+    },
+
+    termsandcondition : {
+        fontSize: 12,
+        color: colors.darkbrown,
+        marginTop: 20,
+    },
+
+    buyoutcontainer: {
+        flexDirection: 'row',  
+        margin: 20,
+        
+    },
+
+    CONFIRMcustomBtnBG: {
+        backgroundColor: colors.red,
+        padding: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+
+    },
+
+    CONFIRMcustomBtnText: {
+        fontSize: 24,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    CANCELcustomBtnBG: {
+        backgroundColor: colors.black,
+        borderRadius: 5,
+        padding: 15,
+        marginHorizontal: 20,
+    },
+
+    CANCELcustomBtnText: {
+        fontSize: 24,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+    },
+
+    minbidtext : {
+        fontFamily: 'Montserrat-Black',
+        color: colors.gold,
+    },
+
+    minbid : {
+        color: colors.orange,
+        fontWeight: 'bold',
+    },
+
+    maxbidtext : {
+        fontFamily: 'Montserrat-Black',
+        color: colors.gold,
+    },
+
+    maxbid : { 
+        color: colors.orange,
+        fontWeight: 'bold',
+    },
+
+
 })
 
 export default Buyerbidding;

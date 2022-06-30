@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     list: {
         width: '100%',
         flexDirection: 'column',
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
         marginBottom: 20,
         borderWidth: 0.2,
         borderColor: colors.darkbrown,
