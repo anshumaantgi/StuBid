@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
 
     descriptionContainer: {
         color: colors.darkbrown,
-        alignItems: 'top',
+        alignItems: 'stretch',
         height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
