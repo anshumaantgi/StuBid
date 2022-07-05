@@ -11,6 +11,7 @@ export default class AuctionView {
     }
 
     async uploadImage (uri , pictureName) {
+        // Uploading Image to Storage and then retiriving the Downlaod link
         const response = await fetch(uri);
         const blob = await response.blob();
         const storage = getStorage();
@@ -21,12 +22,14 @@ export default class AuctionView {
     }
 
     async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName) {
-        //console.log(anomName)
+
+        // Adding Product Feilds
         this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, new Date().toLocaleString());
         const storage = getStorage();
         try {
         const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + auctionId + '.png');
         
+        // Adding thr Download link to Product class
         this.product.pictureUri = url;
         
 
@@ -35,8 +38,10 @@ export default class AuctionView {
         newAuction = new Auction(auctionId,minPrice, true, new Date().toLocaleString(),anomName, this.product.toFirestore());
         await addDoc(collection(db, "auctions") , newAuction.toFirestore());
     } catch (e) {
+        // Deleted the product , assocaited with the auction if Auction not sotred in database
         const deleteRef = ref(storage, "products-image/" + auctionId + '.png');
         await deleteObject(deleteRef);
+        // Error thrown to be show to the user
         throw new Error(e.message);
     }
     }

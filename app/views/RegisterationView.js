@@ -10,6 +10,14 @@ export default class RegisterationView {
     }
     
     async createUser(name, email, originUni, password,repassword ) {
+        /**
+         * Creates a User used FireBase Authentication Module 
+         * Also , sends User email Verification Link and stores user object inside FireStore
+         * 
+         * @Params : name, email, originUni, password,repassword
+         * @Return : None
+         * @Throw : Firebase Errors
+         */
         if (password != repassword ) {
             throw new Error("Passwords Do Not Match ! ");
         }

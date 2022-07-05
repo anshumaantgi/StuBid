@@ -8,6 +8,8 @@ import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
+import Bid from '../models/Bid.js';
+import BidCreateView from '../views/BidCreateView.js';
 
 const bidderitem = [
 
@@ -124,24 +126,25 @@ const Buyerbidding = ({route, navigation}) => {
     
     //initialise state hook
     const [productdetails, setProductdetails] = useState('');
+    const [auctionId, setAuctionId] = useState('');
     const [bidding, setBidding] = useState([]);
     const [userbidprice, setUserbidprice] = useState('');
 
     // Firestore setup
     const db = getFirestore();
-    const biddingRef = collection(db, 'auctions');
+    const biddingRef = collection(db, 'auctions'); 
     
     //Send buyout details to Firestore
-    async function sendbuyoutvalues(enteredbuyerId, enteredownerId, enteredbuyeranonname) {
+    async function sendbuyoutvalues(enteredbuyerId, enteredauctionId ,enteredbuyeranonname) {
         console.log(enteredbuyerId);
-        console.log(enteredownerId);
+        console.log(enteredauctionId);
         console.log(enteredbuyeranonname);
-        toggleModal();
+        
         
     }
 
     //Send user bid details to Firestore
-    async function senduserbidvalues(enteredbuyerId, enteredownerId, enteredbidPrice, enteredbidderanonname) {
+    async function senduserbidvalues(enteredbuyerId, enteredauctionId, enteredbidPrice, enteredbidderanonname) {
         if (!enteredbidPrice) {
             throw new Error("Please enter your bidding price!");
         }
@@ -153,24 +156,28 @@ const Buyerbidding = ({route, navigation}) => {
         }   
         else {
             console.log(enteredbuyerId);
-            console.log(enteredownerId);
+            console.log(enteredauctionId);
             console.log(enteredbidPrice);
             console.log(enteredbidderanonname);
-            toggleModal2();
+            return await new BidCreateView(auth).createBid(new Bid(enteredbuyerId , enteredauctionId,enteredbidPrice, enteredbidderanonname, new Date().toLocaleString()))
         }
     }
     
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
         var itemdetails = null;
+        var auctId = null;
         const q = query(biddingRef, where("auctionId", "==", aId));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           //console.log(doc.id, " => ", doc.data());
           itemdetails = doc.data();
+          auctId = doc.id;
         });
         setProductdetails(itemdetails);
+        setAuctionId(auctId)
+
     }
 
     useEffect(() => {
@@ -473,7 +480,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Bid is placed!")
-                            senduserbidvalues(auth.currentUser.uid, productdetails.product.ownerId, userbidprice, randomName)
+                            senduserbidvalues(auth.currentUser.uid, auctionId, userbidprice, randomName)
                             .then((success) =>  {navigation.navigate('BidSuccess', {aId, randomName});})
                             .catch((error) => {alert(error.message)})
                     

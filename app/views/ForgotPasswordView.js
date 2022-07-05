@@ -6,6 +6,11 @@ export default class ForgotPasswordView {
     }
 
     async resetPassword(email) {
+        /**
+         * Resets User's Password , by sending a rest password link to the email Provided
+         * 
+         * @Params : email
+         */
         await sendPasswordResetEmail(this.auth, email)
         .then(() => {
             console.log(email);

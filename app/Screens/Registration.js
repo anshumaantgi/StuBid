@@ -31,6 +31,9 @@ const Registration = ({navigation}) => {
     ]);
 
     async function sendValues(enteredfullname, selectuniname, enteredemail, enteredpassword, enteredrepassword) {
+        /** 
+         * Functions Sends Values to the Functional Class Registeration View
+         */
         return await new RegisterationView(db, auth).createUser(enteredfullname, enteredemail,selectuniname, enteredpassword, enteredrepassword);
     };
 
