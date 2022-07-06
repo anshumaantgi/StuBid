@@ -10,6 +10,7 @@ import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
+import BuyProductView from '../views/BuyProductView.js';
 
 const bidderitem = [
 
@@ -136,11 +137,8 @@ const Buyerbidding = ({route, navigation}) => {
     
     //Send buyout details to Firestore
     async function sendbuyoutvalues(enteredbuyerId, enteredauctionId ,enteredbuyeranonname) {
-        console.log(enteredbuyerId);
-        console.log(enteredauctionId);
-        console.log(enteredbuyeranonname);
-        
-        
+
+        return new BuyProductView().terminateProduct(enteredbuyerId, auctionId,productdetails.product.buyPrice )
     }
 
     //Send user bid details to Firestore

@@ -41,10 +41,9 @@ export default class BidCreateView {
                 (success) => {
                     // Update Auction Current Price
                     return updateDoc(doc(db ,'auctions' ,bid.auctionId ) , { 
-                        currPrice: bid.bidPrice
+                        currPrice: bid.bidPrice,
+                        leadBuyer: bid.bidderId
                     })
-
-                    
 
                 }
 
