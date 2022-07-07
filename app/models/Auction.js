@@ -2,6 +2,8 @@
 export default class Auction {
 
     constructor(auctionId,currPrice ,ong, createdAt,anomName, product) {
+       this.leadBuyerId = null;
+       this.allBiddersId = null;
        this.auctionId = auctionId,
        this.anomName = anomName;
        this.currPrice = currPrice;
@@ -13,6 +15,8 @@ export default class Auction {
 
     toFirestore() {
         return {
+            leadBuyerId: this.leadBuyerId,
+            allBiddersId: this.allBiddersId,
             auctionId: this.auctionId,
             anomName: this.anomName,
             product: this.product,

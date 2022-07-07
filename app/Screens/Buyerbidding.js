@@ -3,105 +3,14 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndica
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where} from "firebase/firestore"; 
+import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where, onSnapshot, updateDoc} from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
-
-const bidderitem = [
-
-    {
-        id : 1,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'big dog',
-        biddingPrice: 100,
-        createdAt: "29/06/2022, 03:18:58",
-    },
-
-    {
-        id : 2,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'small cat',
-        biddingPrice: 120,
-        createdAt: "30/06/2022, 03:18:58",
-    },
-
-    {
-        id : 3,
-        auctionId: 1,
-        buyerId: 'GjASd1svuhSZG4xdpifvWCD4y652',
-        anomName: 'fat c0w',
-        biddingPrice: 130,
-        createdAt: "01/07/2022, 03:18:58",
-    },
-
-    {
-        id : 4,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'hungry dragon',
-        biddingPrice: 140,
-        createdAt: "02/07/2022, 03:18:58",
-    },
-
-    {
-        id : 5,
-        auctionId: 1,
-        buyerId: 'GjASd1svuhSZG4xdpifvWCD4y652',
-        anomName: 'sleepy pig',
-        biddingPrice: 150,
-        createdAt: "03/07/2022, 03:18:58",
-    },
-
-    {
-        id : 6,
-        auctionId: 1,
-        buyerId: 'GjASd1svuhSZG4xdpifvWCD4y652',
-        anomName: 'quick mouse',
-        biddingPrice: 160,
-        createdAt: "05/07/2022, 03:18:58",
-    },
-    {
-        id : 7,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'angry duck',
-        biddingPrice: 180,
-        createdAt: "07/07/2022, 03:18:58",
-    },
-
-    {
-        id : 8,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'sad tiger',
-        biddingPrice: 190,
-        createdAt: "10/07/2022, 03:18:58",
-    },
-
-    {
-        id : 9,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'happy elephant',
-        biddingPrice: 220,
-        createdAt: "12/07/2022, 03:18:58",
-    },
-
-    {
-        id : 10,
-        auctionId: 1,
-        buyerId: 'asd',
-        anomName: 'enormous cobra',
-        biddingPrice: 250,
-        createdAt: "13/07/2022, 03:18:58",
-    },
-];
+import moment from "moment";
 
 const Buyerbidding = ({route, navigation}) => {
 
@@ -126,93 +35,155 @@ const Buyerbidding = ({route, navigation}) => {
     
     //initialise state hook
     const [productdetails, setProductdetails] = useState('');
-    const [auctionId, setAuctionId] = useState('');
-    const [bidding, setBidding] = useState([]);
+    const [docId, setDocId] = useState('');
+    const [bidders, setBidders] = useState([]);
     const [userbidprice, setUserbidprice] = useState('');
+    const [id, setId] = useState(null);
+    const [latestbidder, setLatestbidder] =  useState(null);
 
     // Firestore setup
     const db = getFirestore();
-    const biddingRef = collection(db, 'auctions'); 
+    const biddingRef = collection(db, 'bids'); 
+    const productRef = collection(db, 'auctions'); 
     
     //Send buyout details to Firestore
-    async function sendbuyoutvalues(enteredbuyerId, enteredauctionId ,enteredbuyeranonname) {
-        console.log(enteredbuyerId);
-        console.log(enteredauctionId);
-        console.log(enteredbuyeranonname);
-        
-        
+    async function sendbuyoutvalues(enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
+        toggleModal(); // close the dialog box
+        //in auction, update currprice to buyout price, leading buyer to buyout buyer, ongoing to false, update time
+        return updateDoc(doc(db ,'auctions',entereddocId), { 
+            currPrice: enteredbuyoutprice,
+            leadBuyerId: enteredbuyerId,
+            ongoing: false,
+            updatedAt: moment().format('DD/MM/YYYY, HH:mm:ss'),
+        })
     }
 
     //Send user bid details to Firestore
-    async function senduserbidvalues(enteredbuyerId, enteredauctionId, enteredbidPrice, enteredbidderanonname) {
+    async function senduserbidvalues(enteredbidId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
+        var allBiddersId = [];
+        if (productdetails.allBiddersId)
+        {
+            allBiddersId = productdetails.allBiddersId;
+        }
+
         if (!enteredbidPrice) {
             throw new Error("Please enter your bidding price!");
         }
-        else if (enteredbidPrice <= productdetails.product.minPrice) {
-            throw new Error("Please bid higher than the minimum bidding price!");
+        else if (enteredbidPrice <= productdetails.currPrice) {
+            throw new Error("Please bid higher than the current minimum bidding price!");
         }
         else if (enteredbidPrice >= productdetails.product.buyPrice) {
             throw new Error("Please bid lower than the maximum bidding price!");
         }   
         else {
-            console.log(enteredbuyerId);
-            console.log(enteredauctionId);
-            console.log(enteredbidPrice);
-            console.log(enteredbidderanonname);
-            return await new BidCreateView(auth).createBid(new Bid(enteredbuyerId , enteredauctionId,enteredbidPrice, enteredbidderanonname, new Date().toLocaleString()))
+            allBiddersId.push(enteredbuyerId);
+            toggleModal2();
+            return await new BidCreateView(auth).createBid(new Bid(parseInt(enteredbidId), enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, moment().format('DD/MM/YYYY, HH:mm:ss')), entereddocId, allBiddersId)
         }
     }
     
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
         var itemdetails = null;
-        var auctId = null;
-        const q = query(biddingRef, where("auctionId", "==", aId));
-        const querySnapshot = await getDocs(q);
+        var dId = '';
+        const q = query(productRef, where("auctionId", "==", aId));
+        //const querySnapshot = await getDocs(q);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           //console.log(doc.id, " => ", doc.data());
           itemdetails = doc.data();
-          auctId = doc.id;
+          dId = doc.id;
         });
         setProductdetails(itemdetails);
-        setAuctionId(auctId)
-
+        setDocId(dId);
+    });
+    }
+    
+    // Retrieve current latest bidder information from firestore via AuctionId
+    const getlatestbidder = async() => {
+        var latestanon = [];
+        const q = query(biddingRef, orderBy("createdAt", "desc"), where("auctionId", "==", aId));
+        //const querySnapshot = await getDocs(q);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //console.log(doc.id, " => ", doc.data());
+          latestanon.push(doc.data()); // push all current bidder id to array
+        });
+        setLatestbidder(latestanon[0]); //extract the most recent bidder anon name
+        //console.log(latestanon[0], "WOOOWW");
+        latestanon = [] // reason for setting array empty here is because this is realtime querying and we need to reset it
+    });
     }
 
+    //Bid Id auto-accumulator
+    const getId = async()=> {
+    var count = 0;
+    const db = getFirestore();
+    const q = query(biddingRef, where("auctionId", "==", aId));
+    //console.log(aId, 'WEEEE');
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        //console.log(doc.id, " => ", doc.data());
+        count = count + 1
+        }
+        )
+        setId(count);
+        count = 0; // reason for setting count = 0  here is because this is realtime querying and we need to reset it
+        // console.log("CAAAADDD", count)
+        // console.log("CAAAADDD", id)
+     });
+
+        };
+    
+        
+    //Execute and get products, etc
     useEffect(() => {
         getproductlisting();
-        //getBidding();
-       
+        getId();
+        getBidding();
+        getlatestbidder();
+        return () => {
+            setProductdetails(''); // Reset changes
+            setId(null);
+            setLatestbidder(null);
+          };
+        
     }, []);
 
     
 
     const getBidding = async () => {
     // Query the first page of docs
-    const first = query(biddingRef, orderBy("createdAt", "desc"));
-    const documentSnapshots = await getDocs(first);
+    const first = query(biddingRef, orderBy("createdAt", "desc"),  where("auctionId", "==", aId));
 
-        if (!documentSnapshots.empty) {
+    const unsubscribe = onSnapshot(first, (querySnapshot) => {
+    //const documentSnapshots = await getDocs(first);
+
+        if (!querySnapshot.empty) {
             let newBidding = [];
 
-            for (let i = 0; i < documentSnapshots.docs.length; i++) {
-                newBidding.push(documentSnapshots.docs[i].data());
+            for (let i = 0; i < querySnapshot.docs.length; i++) {
+                newBidding.push(querySnapshot.docs[i].data());
                // console.log(newBidding);
             }
 
-            setBidding(newBidding);
+            setBidders(newBidding);
         } else {
-            setBidding([]);
+            setBidders([]);
             alert('There are currently no bids for this product.');
         }
+        });
     }
 
     //render list from all buyer biddings (fields from figma prototype in "Current Bids")
-    const renderList = ({anomName, biddingPrice, createdAt, buyerId}) => {
+    const renderList = ({bidderAnomname, bidPrice, createdAt, bidderId}) => {
           
         return (
-        <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
+        <View style = {styles.overallBiddingContainer}>
              <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
              <View>
                 <View style = {{flexDirection: 'row'}}>
@@ -222,9 +193,9 @@ const Buyerbidding = ({route, navigation}) => {
                     }}> 
                     <Text style = {styles.buyeranonymousname}>
                     {
-                        (auth.currentUser.uid == buyerId)
+                        (auth.currentUser.uid == bidderId)
                         ? ' Me'
-                        :  ' ' + anomName
+                        :  ' ' + bidderAnomname
                     }
                     </Text>
                 </TouchableOpacity>
@@ -233,7 +204,7 @@ const Buyerbidding = ({route, navigation}) => {
             </View>
              <View style = {styles.currentpriceContainer}>
                 <Text style = {styles.dollarsign}>$</Text>
-                <Text style = {styles.currentprice}>{biddingPrice}</Text>
+                <Text style = {styles.currentprice}>{bidPrice}</Text>
                 <Ionicons style={styles.lockIcon} name={'caret-up-circle-outline'} size={27} color={colors.red} />
             </View>
         </View>
@@ -310,6 +281,7 @@ const Buyerbidding = ({route, navigation}) => {
 
     return (<View>
             <FlatList
+                removeClippedSubviews={false}
                 ListHeaderComponent =
                 {productdetails &&
                     <View style={styles.container}>
@@ -371,7 +343,16 @@ const Buyerbidding = ({route, navigation}) => {
                 
             </View>
            <View>
+                <View style = {styles.overallLeadingbiddercontainer}>
+                    <View style = {styles.leadingbiddercontainer}>
+                        <Ionicons style={styles.lockIcon} name={'trophy'} size={20} color={colors.gold} />
+                        <Text style = {styles.currentbid}> Leading Bidder </Text>
+                        <Ionicons style={styles.lockIcon} name={'trophy'} size={20} color={colors.gold} />
+                    </View>
+                    <Text style = {styles.leadingbidder}>{latestbidder && (latestbidder.bidderId == auth.currentUser.uid ? 'Me' : latestbidder.bidderAnomname)}</Text>
+                </View>
                 <Text style = {styles.currentbid}>Current Bids: </Text>
+                <Text style = {styles.numofbidsplaced}>Number of Bids: {id}</Text>
            </View>
            </View>
                 }
@@ -390,7 +371,13 @@ const Buyerbidding = ({route, navigation}) => {
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
                        //alert("Bid item")
-                       toggleModal2();
+                       if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
+                            alert("Please note that you can only bid again if another buyer bids higher than your current price: " + "\n\n" + "$" + productdetails.currPrice)
+                        }
+                        else {
+                            toggleModal2();
+                        }
+                     
                        }}>
                        <Text style ={styles.BIDcustomBtnText}>Place a Bid</Text>
                    </TouchableOpacity>
@@ -419,8 +406,8 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Confirm Buy item")
-                            sendbuyoutvalues(auth.currentUser.uid, productdetails.product.ownerId, randomName)
-                            .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, randomName})})
+                            sendbuyoutvalues(auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
+                            .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, randomName});})
                             .catch((error) => {alert(error.message)})
                         }}> 
                         <Text style ={styles.CONFIRMcustomBtnText}>Confirm</Text>
@@ -452,6 +439,7 @@ const Buyerbidding = ({route, navigation}) => {
                                 style = {styles.bidamount}
                                 placeholder='Tap to submit your Bid ($)' 
                                 keyboardType='numeric'
+                                multiline={true}
                                 value = {userbidprice} 
                                 onChangeText={(value) => setUserbidprice(value)}
                                 placeholderTextColor={colors.white}>
@@ -480,10 +468,9 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Bid is placed!")
-                            senduserbidvalues(auth.currentUser.uid, auctionId, userbidprice, randomName)
+                            senduserbidvalues(id, auth.currentUser.uid, aId, docId, userbidprice, randomName)
                             .then((success) =>  {navigation.navigate('BidSuccess', {aId, randomName});})
                             .catch((error) => {alert(error.message)})
-                    
                         }}> 
                         <Text style ={styles.CONFIRMcustomBtnText}>Place a Bid</Text>
                         </TouchableOpacity>
@@ -504,9 +491,9 @@ const Buyerbidding = ({route, navigation}) => {
 
                 style = {styles.buyerbidcontainer}
                 contentContainerStyle={{ paddingBottom: 70}}
-                data={bidderitem}
+                data={bidders}
                 ItemSeparatorComponent={ItemDivider}
-                keyExtractor={item =>  item.id.toString()}
+                keyExtractor={item =>  item.bidId.toString()}
                 renderItem={({item}) => renderList(item)} />    
         </View>
     )
@@ -833,6 +820,46 @@ const styles = StyleSheet.create({
     maxbid : { 
         color: colors.orange,
         fontWeight: 'bold',
+    },
+
+    overallBiddingContainer : {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: colors.lightbrown,
+        borderWidth: 0.2,
+    },
+
+    numofbidsplaced : {
+        color: colors.white,
+        fontWeight: 'bold',
+        textAlign: "center",
+        marginBottom: 10,
+        backgroundColor: colors.activeday,
+    },
+
+    overallLeadingbiddercontainer: {
+      borderWidth: 1,
+      borderRadius: 20,
+      paddingTop: 10,
+      borderStyle: 'dashed',
+      width: '60%',
+      alignSelf: 'center',
+      marginBottom: 10,
+    },
+
+    leadingbiddercontainer : {
+        flexDirection: 'row',
+        alignSelf: 'center',
+    },
+
+    leadingbidder : {
+        color: colors.orange,
+        fontWeight: 'bold',
+        textAlign: "center",
+        fontFamily: 'Montserrat-Black',
+        marginBottom: 10,
+        fontSize: 20,
     },
 
 

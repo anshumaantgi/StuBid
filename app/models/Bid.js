@@ -1,6 +1,7 @@
 export default class Bid {
 
-    constructor(bidderId, auctionId, bidPrice, bidderanonname , createdTime) {
+    constructor(bidId, bidderId, auctionId, bidPrice, bidderanonname , createdTime) {
+       this.bidId = bidId;
        this.bidderId = bidderId;
        this.auctionId = auctionId;
        this.bidPrice = bidPrice;
@@ -12,6 +13,7 @@ export default class Bid {
 
     toFirestore() {
         return {
+            bidId : this.bidId,
             bidderId : this.bidderId,
             auctionId  : this.auctionId,
             bidPrice :  this.bidPrice, 

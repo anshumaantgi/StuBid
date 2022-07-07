@@ -1,6 +1,7 @@
 import User from "../models/User"
 import {createUserWithEmailAndPassword, sendEmailVerification} from 'firebase/auth'
 import { doc, setDoc} from "firebase/firestore"; 
+import moment from "moment";
 
 export default class RegisterationView {
     constructor(db, auth) {
@@ -22,7 +23,7 @@ export default class RegisterationView {
             throw new Error("Passwords Do Not Match ! ");
         }
         else {
-            this.user = new User(name, email, originUni, new Date().toLocaleString());
+            this.user = new User(name, email, originUni, moment().format('DD/MM/YYYY, HH:mm:ss'));
             await createUserWithEmailAndPassword(this.auth, email, password)
             .then((userCredential) => {
             // Signed in 
