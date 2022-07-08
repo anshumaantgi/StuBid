@@ -10,7 +10,7 @@ import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
-import moment from "moment";
+import moment from "moment-timezone";
 
 
    
@@ -46,7 +46,7 @@ const Sellerbidding = ({route, navigation}) => {
         //in auction, update ongoing to false, update time
         return updateDoc(doc(db ,'auctions',entereddocId), { 
             ongoing: false,
-            updatedAt: moment().format('DD/MM/YYYY, HH:mm:ss'),
+            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
         })
         
     }
@@ -72,7 +72,7 @@ const Sellerbidding = ({route, navigation}) => {
     // Retrieve current latest bidder information from firestore via AuctionId
     const getlatestbidder = async() => {
         var latestanon = [];
-        const q = query(biddingRef, orderBy("createdAt", "desc"), where("auctionId", "==", aId));
+        const q = query(biddingRef, orderBy("bidPrice", "desc"), where("auctionId", "==", aId));
         //const querySnapshot = await getDocs(q);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -124,7 +124,7 @@ const Sellerbidding = ({route, navigation}) => {
 
     const getBidding = async () => {
         // Query the first page of docs
-        const first = query(biddingRef, orderBy("createdAt", "desc"),  where("auctionId", "==", aId));
+        const first = query(biddingRef, orderBy("bidPrice", "desc"),  where("auctionId", "==", aId));
     
         const unsubscribe = onSnapshot(first, (querySnapshot) => {
         //const documentSnapshots = await getDocs(first);
@@ -327,14 +327,21 @@ const Sellerbidding = ({route, navigation}) => {
                     <View>
                         <View style = {styles.buttoncontainer}>
                         <TouchableOpacity style = {styles.EDITcustomBtnBG} onPress={() => {
-                        alert("Edit item")
-                        
+                        if (!(productdetails.ongoing)) {
+                            alert("Someone has just bought out your item! You can now exchange contact with the buyer!")
+                        }
+                        else { 
+                            alert("Edit item")
+                        }
                         }}> 
                         <Text style ={styles.EDITcustomBtnText}>Edit Item</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style = {styles.ACCBIDcustomBtnBG} onPress={() => {
                         //alert("Accept a Bid")
-                        if (!latestbidder) {
+                        if (!(productdetails.ongoing)) {
+                            alert("Someone has just bought out your item! You can now exchange contact with the buyer!")
+                        }
+                        else if (!latestbidder) {
                             alert("There are currently no bids to be accepted.");
                         }
                         else {

@@ -10,7 +10,7 @@ import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
-import moment from "moment";
+import moment from "moment-timezone";
 
 const Buyerbidding = ({route, navigation}) => {
 
@@ -54,7 +54,7 @@ const Buyerbidding = ({route, navigation}) => {
             currPrice: enteredbuyoutprice,
             leadBuyerId: enteredbuyerId,
             ongoing: false,
-            updatedAt: moment().format('DD/MM/YYYY, HH:mm:ss'),
+            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
         })
     }
 
@@ -78,7 +78,7 @@ const Buyerbidding = ({route, navigation}) => {
         else {
             allBiddersId.push(enteredbuyerId);
             toggleModal2();
-            return await new BidCreateView(auth).createBid(new Bid(parseInt(enteredbidId), enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, moment().format('DD/MM/YYYY, HH:mm:ss')), entereddocId, allBiddersId)
+            return await new BidCreateView(auth).createBid(new Bid(parseInt(enteredbidId), enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')), entereddocId, allBiddersId)
         }
     }
     
@@ -103,7 +103,7 @@ const Buyerbidding = ({route, navigation}) => {
     // Retrieve current latest bidder information from firestore via AuctionId
     const getlatestbidder = async() => {
         var latestanon = [];
-        const q = query(biddingRef, orderBy("createdAt", "desc"), where("auctionId", "==", aId));
+        const q = query(biddingRef, orderBy("bidPrice", "desc"), where("auctionId", "==", aId));
         //const querySnapshot = await getDocs(q);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -158,7 +158,7 @@ const Buyerbidding = ({route, navigation}) => {
 
     const getBidding = async () => {
     // Query the first page of docs
-    const first = query(biddingRef, orderBy("createdAt", "desc"),  where("auctionId", "==", aId));
+    const first = query(biddingRef, orderBy("bidPrice", "desc"),  where("auctionId", "==", aId));
 
     const unsubscribe = onSnapshot(first, (querySnapshot) => {
     //const documentSnapshots = await getDocs(first);
@@ -364,14 +364,22 @@ const Buyerbidding = ({route, navigation}) => {
                     <View style = {styles.buttoncontainer}>
                     <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
                        //alert("Buy item")
-                       toggleModal();
+                       if (!(productdetails.ongoing)) {
+                        alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
+                       }
+                       else {
+                        toggleModal();
+                       }
                        
                        }}> 
                        <Text style ={styles.BUYOUTcustomBtnText}>Buy Item</Text>
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
                        //alert("Bid item")
-                       if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
+                       if (!(productdetails.ongoing)) {
+                        alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
+                       }
+                       else if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
                             alert("Please note that you can only bid again if another buyer bids higher than your current price: " + "\n\n" + "$" + productdetails.currPrice)
                         }
                         else {

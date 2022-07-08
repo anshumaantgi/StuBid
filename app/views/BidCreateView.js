@@ -1,7 +1,7 @@
 import { getDoc, addDoc,doc, collection, updateDoc } from "firebase/firestore";
 import { NumberDictionary } from "unique-names-generator";
 import { db } from "../config/config";
-import moment from "moment";
+import moment from "moment-timezone";
 
 export default class BidCreateView {
     /**
@@ -45,7 +45,7 @@ export default class BidCreateView {
                         currPrice: bid.bidPrice,
                         leadBuyerId: bid.bidderId,
                         allBiddersId: allBiddersId,
-                        updatedAt: moment().format('DD/MM/YYYY, HH:mm:ss'),
+                        updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
 
                     })
 
