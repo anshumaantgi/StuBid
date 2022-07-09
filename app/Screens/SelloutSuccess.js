@@ -3,7 +3,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
 const SelloutSuccess = ({route, navigation}) => {
-    const buyeranonname = route.params.buyerfakename;
+    const buyeranonname = route.params.latestbidder.bidderAnomname;
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 

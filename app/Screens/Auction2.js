@@ -6,6 +6,7 @@ import colors from '../config/colors.js';
 import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { doc, getDocs, getFirestore, collection} from "firebase/firestore"; 
+import moment from "moment";
 
 
 const Auction2 = ({route, navigation}) => {

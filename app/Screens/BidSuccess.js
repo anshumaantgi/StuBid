@@ -4,7 +4,7 @@ import colors from '../config/colors.js';
 
 const BidSuccess = ({route, navigation}) => {
     const buyeranonname = route.params.randomName;
-    const aId = route.params.aId;
+    const auctionId = route.params.aId;
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
@@ -27,7 +27,7 @@ const BidSuccess = ({route, navigation}) => {
                 <Text style={styles.returnlogintext}>Return to Product Listing? </Text>
                 <TouchableOpacity onPress={() =>
                 {
-                    navigation.navigate("BuyerBid", {aId});
+                    navigation.navigate("BuyerBid", {auctionId});
                 }}>
                     <Text style ={styles.logintext}>Go Back</Text>
                 </TouchableOpacity>

@@ -2,6 +2,7 @@ import { collection, deleteDoc, addDoc, setDoc, Timestamp, doc} from "firebase/f
 import { db } from "../config/config";
 import Auction from "../models/Auction";
 import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebase/storage';
+import moment from "moment-timezone";
 
 export default class AuctionView {
     constructor(auth,db, product) {
@@ -24,7 +25,7 @@ export default class AuctionView {
     async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName) {
 
         // Adding Product Feilds
-        this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, new Date().toLocaleString());
+        this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
         const storage = getStorage();
         try {
         const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + auctionId + '.png');
@@ -35,7 +36,7 @@ export default class AuctionView {
 
         
 
-        newAuction = new Auction(auctionId,minPrice, true, new Date().toLocaleString(),anomName, this.product.toFirestore());
+        newAuction = new Auction(auctionId,minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore());
         await addDoc(collection(db, "auctions") , newAuction.toFirestore());
     } catch (e) {
         // Deleted the product , assocaited with the auction if Auction not sotred in database

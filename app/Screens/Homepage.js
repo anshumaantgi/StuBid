@@ -114,8 +114,11 @@ const Homepage = ({route, navigation}) => {
 
 
     useEffect(() => {
-        getProducts();
-    }, []);
+        const unsubscribe = navigation.addListener('focus', () => {
+            getProducts();
+        });
+       return unsubscribe;
+    }, [navigation]);
 
     const getProducts = async () => {
         setIsLoading(true);
@@ -239,7 +242,12 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, isNew}) => {
+    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId}) => {
+        //check for any bidders in auction. If none, set it to empty array.
+        if (!allBiddersId) {
+            allBiddersId = [];
+        }
+        //rename category to full
         var category = '';
         switch (product.category) {
             case "CA" :
@@ -336,7 +344,9 @@ const Homepage = ({route, navigation}) => {
                                 // will add in 'Continue Bidding' once database is done
                                 (auth.currentUser.uid == product.ownerId && ongoing)
                                 ? styles.ABcustomBtnBG
-                                : (auth.currentUser.uid != product.ownerId && ongoing)
+                                : (auth.currentUser.uid != product.ownerId && allBiddersId.includes(auth.currentUser.uid) && ongoing)
+                                ? styles.CBcustomBtnBG
+                                : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                 ? styles.PABcustomBtnBG
                                 : styles.LARcustomBtnBG
                             } 
@@ -345,17 +355,20 @@ const Homepage = ({route, navigation}) => {
                                  // will add in 'Continue Bidding' once database is done
                                  (auth.currentUser.uid == product.ownerId && ongoing)
                                  ? navigation.navigate("SellerBid", {auctionId})
-                                 : (auth.currentUser.uid != product.ownerId && ongoing)
+                                 : (auth.currentUser.uid != product.ownerId && allBiddersId.includes(auth.currentUser.uid) && ongoing)
                                  ? navigation.navigate("BuyerBid", {auctionId})
-                                 : alert('Leave Review')
-                            
+                                 : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
+                                 ? navigation.navigate("BuyerBid", {auctionId})
+                                 : alert('Leave a Review')
                             }}>
                             <Text style ={styles.customBtnText}>
                                 {
                                     // will add in 'Continue Bidding' once database is done
                                     (auth.currentUser.uid == product.ownerId && ongoing)
                                     ? 'Accept Bid'
-                                    : (auth.currentUser.uid != product.ownerId && ongoing)
+                                    : (auth.currentUser.uid != product.ownerId && allBiddersId.includes(auth.currentUser.uid) && ongoing)
+                                    ? 'Continue Bid'
+                                    : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                     ? 'Place a Bid'
                                     : 'Leave Review'
 
@@ -635,6 +648,13 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 50,
     },
+
+    CBcustomBtnBG: {
+        backgroundColor: colors.red,
+        padding: 15,
+        borderRadius: 50,
+    },
+
 
     bidcontainer: {
         alignItems: 'center',
