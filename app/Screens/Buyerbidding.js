@@ -174,8 +174,25 @@ const Buyerbidding = ({route, navigation}) => {
           auctId = doc.id;
         });
         setProductdetails(itemdetails);
-        setAuctionId(auctId)
-
+        setDocId(dId);
+    }
+    }
+    
+    // Retrieve current latest bidder information from firestore via AuctionId
+    const getlatestbidder = async() => {
+        var latestanon = [];
+        const q = query(biddingRef, orderBy("bidPrice", "desc"), where("auctionId", "==", aId));
+        //const querySnapshot = await getDocs(q);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //console.log(doc.id, " => ", doc.data());
+          latestanon.push(doc.data()); // push all current bidder id to array
+        });
+        setLatestbidder(latestanon[0]); //extract the most recent bidder anon name
+        //console.log(latestanon[0], "WOOOWW");
+        latestanon = [] // reason for setting array empty here is because this is realtime querying and we need to reset it
+    });
     }
 
     useEffect(() => {
@@ -188,8 +205,7 @@ const Buyerbidding = ({route, navigation}) => {
 
     const getBidding = async () => {
     // Query the first page of docs
-    const first = query(biddingRef, orderBy("createdAt", "desc"));
-    const documentSnapshots = await getDocs(first);
+    const first = query(biddingRef, orderBy("bidPrice", "desc"),  where("auctionId", "==", aId));
 
         if (!documentSnapshots.empty) {
             let newBidding = [];
@@ -508,7 +524,7 @@ const Buyerbidding = ({route, navigation}) => {
                 renderItem={({item}) => renderList(item)} />    
         </View>
     )
-}
+
 
 const styles = StyleSheet.create({
 
