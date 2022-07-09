@@ -1,6 +1,7 @@
 import { getDoc, addDoc,doc, collection, updateDoc } from "firebase/firestore";
 import { NumberDictionary } from "unique-names-generator";
 import { db } from "../config/config";
+import moment from "moment-timezone";
 
 export default class BidCreateView {
     /**
@@ -19,9 +20,9 @@ export default class BidCreateView {
         this.auth = auth;
     }
     
-    async createBid(bid) {
+    async createBid(bid, docId, allBiddersId) {
         // Auction Information is pulled
-        currAuction = await getDoc(doc(db ,'auctions' ,bid.auctionId ))
+        currAuction = await getDoc(doc(db ,'auctions' ,docId))
         //Get All Bids on Auction
         allBids = currAuction.bids // This is an array
         // Get Current Price
@@ -40,9 +41,14 @@ export default class BidCreateView {
             .then (
                 (success) => {
                     // Update Auction Current Price
-                    return updateDoc(doc(db ,'auctions' ,bid.auctionId ) , { 
+
+                    return updateDoc(doc(db, 'auctions', docId) , { 
                         currPrice: bid.bidPrice,
-                        leadBuyer: bid.bidderId
+                        leadBuyerId: bid.bidderId,
+                        allBiddersId: allBiddersId,
+                        updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
+
+
                     })
 
                 }
