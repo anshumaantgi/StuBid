@@ -2,10 +2,11 @@ import { getDoc, addDoc,doc, collection, updateDoc, where, query, getDocs } from
 import { NumberDictionary } from "unique-names-generator";
 import Notification from "../models/Notification";
 import { db } from "../config/config";
+import moment from "moment";
 
 export default class TerminateAuctionView {
-    contructor(auctionId) {
-        this.auctionId = auctionId;
+    contructor() {
+        this.auctionId = null;
         console.log(auctionId)
         this.sellerSoldMessage = null
         this.sellerNotSoldMessage = null
@@ -26,7 +27,6 @@ export default class TerminateAuctionView {
     }
     async createNotification(userId, message) {
         var notif = new Notification(userId, message, false, new Date().toLocaleString())
-        console.log(notif.toFirestore())
         return await await addDoc(collection(db,'notifications'), notif.toFirestore())
     }
 
@@ -37,12 +37,19 @@ export default class TerminateAuctionView {
             await this.createNotification(auctionObject.product.ownerId, this.sellerSoldMessage)
 
             //send to successful Buyer
-            await this.createNotification(auctionObject.leadBuyer, this.buyerSuccessfulMessage)
+            await this.createNotification(auctionObject.leadBuyerId, this.buyerSuccessfulMessage)
 
             // send to All other Bidders
+            var seen = {}
             for (bidder in bidders) {
-                if (bidder != auctionObject.leadBuyer) {
-                await this.createNotification(bidder, this.buyerNotSuccessfulMessage)
+                if (bidders[bidder] !== auctionObject.leadBuyerId) {
+                
+                    if (bidders[bidder]  in seen) {
+                        continue;
+                    } else {
+                    await this.createNotification(bidders[bidder], this.buyerNotSuccessfulMessage)
+                    seen[bidders[bidder]] = 1;
+                    }
                 }
             }
         }
@@ -55,46 +62,46 @@ export default class TerminateAuctionView {
             await this.createNotification(auctionObject.product.ownerId, this.sellerProductListingClosedMessage)
 
             //send to successful Buyer
-            await this.createNotification(auctionObject.leadBuyer, this.buyerSuccessfulMessage)
+            await this.createNotification(auctionObject.leadBuyerId, this.buyerSuccessfulMessage)
 
-            // send to All other Bidders
+            var seen = {}
             for (bidder in bidders) {
-                if (bidder != auctionObject.leadBuyer) {
-                await this.createNotification(bidder, this.buyerNotSuccessfulMessage)
+                if (bidders[bidder] !== auctionObject.leadBuyerId) {
+                
+                    if (bidders[bidder]  in seen) {
+                        continue;
+                    } else {
+                    await this.createNotification(bidders[bidder], this.buyerNotSuccessfulMessage)
+                    seen[bidders[bidder]] = 1;
+                    }
                 }
             }
         
         }
         return await updateDoc(doc(db ,'auctions' , this.auctionId ) , { 
-            ongoing :false
+            ongoing :false,
+            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
     }
-    async getBidders (auctionObject) {
-        const bidRef = collection(db, 'bids');
-        const documentSnapshots = await getDocs(query(bidRef, where("auctionId" , "==" ,auctionObject.auctionId)));
-        let bidders = []
-        for (documemt in documentSnapshots.docs) {
-            bidders.push(document.data().bidderId)
-        }
-        return bidders
+    async getBidders (auctionObject) {       
+        return auctionObject.allBiddersId
     }
-    async closeListing(aId) {
+    async closeListing(docId) {
         // Check why the listing has closed
-        this.auctionId = aId
+        this.auctionId = docId
         auctionObject = await getDoc(doc(db ,'auctions' ,this.auctionId ))
         auctionObject = auctionObject.data()
-        console.log(auctionObject)
         var isExpired = false;
         var isBiddedOn = false;
         var bidders = []
         if (auctionObject.activeDays == 0) {
             isExpired = true;
         }
-        if (auctionObject.leadBuyer != null) {
+        if (auctionObject.leadBuyerId != null) {
             isBiddedOn = true;
             bidders = await this.getBidders(auctionObject);
         }
-
+        console.log(bidders)
         await this.manageNotifications(isExpired, isBiddedOn,auctionObject, bidders)
         .then ( succ => console.log(succ))
         .catch ((err) => { throw new Error(err.message)})

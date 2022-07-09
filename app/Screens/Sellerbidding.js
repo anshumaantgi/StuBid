@@ -11,6 +11,7 @@ import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import moment from "moment-timezone";
+import TerminateAuctionView from '../views/TerminateAuctionView.js';
 
 
    
@@ -43,11 +44,8 @@ const Sellerbidding = ({route, navigation}) => {
      async function sendselloutvalues(entereddocId) {
         toggleModal();// close the dialog box
 
-        //in auction, update ongoing to false, update time
-        return updateDoc(doc(db ,'auctions',entereddocId), { 
-            ongoing: false,
-            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
-        })
+        //Terminate Auction , cuz seller is accepting the Bid
+        return new TerminateAuctionView().closeListing(docId)
         
     }
 
