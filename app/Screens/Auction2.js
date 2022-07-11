@@ -6,7 +6,7 @@ import colors from '../config/colors.js';
 import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { doc, getDocs, getFirestore, collection} from "firebase/firestore"; 
-import moment from "moment";
+import moment from "moment-timezone";
 
 
 const Auction2 = ({route, navigation}) => {
@@ -153,7 +153,7 @@ const Auction2 = ({route, navigation}) => {
                     console.log(value);
                   }}
                 placeholder="Choose Category"
-                containerStyle={{width: '80%', marginVertical: 10}}
+                containerStyle={{width: '80%', marginVertical: 10, alignSelf: 'center'}}
                 style={{backgroundColor: colors.textinput, paddingVertical: 20, borderColor: '#fff',}}
                 placeholderStyle={{color: colors.white}}
                 dropDownStyle = {{backgroundColor: colors.textinput}}
@@ -180,7 +180,7 @@ const Auction2 = ({route, navigation}) => {
                     console.log(value2);
                   }}
                 placeholder="Select Bid Duration"
-                containerStyle={{width: '80%', marginVertical: 10}}
+                containerStyle={{width: '80%', marginVertical: 10, alignSelf: 'center'}}
                 style={{backgroundColor: colors.textinput, paddingVertical: 20, borderColor: '#fff',}}
                 placeholderStyle={{color: colors.white}}
                 dropDownStyle = {{backgroundColor: colors.textinput}}
@@ -189,8 +189,10 @@ const Auction2 = ({route, navigation}) => {
             <Text style={styles.textdaysleft}> Start Bid Date: {startdate} </Text>
             <Text style={styles.textdaysleft}> End Bid Date: {displayendbiddate()} </Text>
             <Text style={styles.text}>Select your preferred Bid Duration. 'End Bid Date' will automatically specify the due date for the Auction.</Text>
-             <Text style={styles.title}>Set Bidding/Buyout Price</Text>
+             <Text style={[styles.title,{ marginBottom: 20}]}>Set Bidding/Buyout Price</Text>
+             <Text style={styles.titleinput} >Starting Bid Price ($)</Text>
              <TextInput style = {styles.textinput} placeholder='Starting Bid Price ($)' placeholderTextColor={colors.white} value = {startingprice} onChangeText={(value) => setStartingprice(value)} keyboardType='numeric' />
+             <Text style={styles.titleinput} >Buyout Bid Price ($)</Text>
              <TextInput style = {styles.textinput} placeholder='Buyout Bid Price ($)' placeholderTextColor={colors.white} value = {buyoutprice} onChangeText={(value) => setBuyoutprice(value)} keyboardType='numeric'/>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(value, endbiddate, value2, startingprice, buyoutprice, randomName)
@@ -212,8 +214,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
       },
     
       title: {
@@ -224,12 +224,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
       },
 
+      titleinput : {
+        fontWeight: 'bold',
+        fontSize: 12,
+        marginLeft: '10%',
+      },
+
       text: {
         color: colors.darkbrown,
         fontSize: 12,
         width: '80%',
         textAlign: 'left',
         marginVertical: 5,
+        alignSelf: 'center',
       },
 
       textdaysleft: {
@@ -239,6 +246,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         marginVertical: 5,
+        alignSelf: 'center',
       },
 
       textinput: {
@@ -249,6 +257,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         marginVertical: 10,
         color: colors.white,
+        alignSelf: 'center',
       },
 
       customBtnText: {
@@ -263,7 +272,8 @@ const styles = StyleSheet.create({
         marginVertical: '5%',
         backgroundColor: colors.darkbrown,
         paddingVertical: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        alignSelf: 'center',
     },
 
     datePicker: {
@@ -272,6 +282,7 @@ const styles = StyleSheet.create({
 
     datePickercontainer: {
         marginVertical: 10,
+        
         
     },
     selleranonymousname : {

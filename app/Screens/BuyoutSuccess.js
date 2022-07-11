@@ -1,9 +1,11 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
+import { StackActions } from '@react-navigation/native';
 
 const BuyoutSuccess = ({route, navigation}) => {
-    const buyeranonname = route.params.randomName;
+    const buyerbuyout = route.params.buyout;
+    const auctionId = route.params.aId;
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
@@ -11,10 +13,10 @@ const BuyoutSuccess = ({route, navigation}) => {
            Congratulations!
           </Text>
           <Text style={styles.text}> 
-           You have successfully bought the item as :
+           You have successfully bought the item for :
           </Text>
-          <Text style={styles.buyeranon}> 
-            {buyeranonname}
+          <Text style={styles.buyerbuyout}> 
+            ${buyerbuyout}
           </Text>
           <Text style={styles.text}> 
             You may now exchange contact
@@ -22,9 +24,14 @@ const BuyoutSuccess = ({route, navigation}) => {
           </Text>
           
           <View style={{flexDirection: 'row'}}>
-                <Text style={styles.returnlogintext}>Return to Homepage? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("MainContainer")}>
-                    <Text style ={styles.logintext}>Homepage</Text>
+                <TouchableOpacity onPress={() => 
+                    {
+                    const popAction = StackActions.pop(2);
+                    navigation.dispatch(popAction);
+                    navigation.navigate("ExchangeContact", {auctionId})
+                    }
+                    }>
+                    <Text style ={styles.logintext}>Click here to proceed to exchange contact.</Text>
                 </TouchableOpacity>
             </View>
           
@@ -65,9 +72,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    buyeranon : {
-        fontSize: 15,
-        color: colors.red,
+    buyerbuyout : {
+        fontSize: 30,
+        color: colors.orange,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
         marginHorizontal: 60,

@@ -3,7 +3,7 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
 const BidSuccess = ({route, navigation}) => {
-    const buyeranonname = route.params.randomName;
+    const buyerbidprice = route.params.userbidprice;
     const auctionId = route.params.aId;
     return (
         <View style={styles.container}>
@@ -12,10 +12,10 @@ const BidSuccess = ({route, navigation}) => {
            Hurray!
           </Text>
           <Text style={styles.text}> 
-           You have successfully bidded the item as :
+           You have successfully bidded the item for : 
           </Text>
-          <Text style={styles.buyeranon}> 
-            {buyeranonname}
+          <Text style={styles.buyerbid}> 
+            ${buyerbidprice}
           </Text>
           <Text style={styles.text}> 
             Your bidding details will be notified
@@ -70,9 +70,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    buyeranon : {
-        fontSize: 15,
-        color: colors.red,
+    buyerbid : {
+        fontSize: 30,
+        color: colors.orange,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
         marginHorizontal: 60,

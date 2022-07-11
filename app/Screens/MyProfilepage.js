@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, useWindowDimensions} from 'react-native';
 import colors from '../config/colors.js';
 import { doc, getDoc, getFirestore} from "firebase/firestore"; 
-import { auth } from '../config/config.js';
+import { auth , db} from '../config/config.js';
 import { TextInput } from 'react-native-gesture-handler';
 import { StackActions } from '@react-navigation/native';
 

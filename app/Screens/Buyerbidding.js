@@ -174,7 +174,7 @@ const Buyerbidding = ({route, navigation}) => {
             setBidders(newBidding);
         } else {
             setBidders([]);
-            alert('There are currently no bids for this product.');
+            //alert('There are currently no bids for this product.');
         }
         });
     }
@@ -287,6 +287,15 @@ const Buyerbidding = ({route, navigation}) => {
                     <View style={styles.container}>
                     <View style = {styles.list}>
                         <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
+                        <View style = {styles.listingContainer}>
+                            <View style = {styles.container}>
+                                <Text style= {styles.name}>{productdetails.product.name}</Text>
+                            </View>
+                        </View>
+                        <View style = {styles.descriptionContainer}>
+                            <Text style = {styles.description}>Description:</Text>
+                            <Text style = {styles.descriptiontext}>{productdetails.product.description}</Text>
+                        </View>
                         <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
                         <View>
                             <View style = {styles.selleranonymouscontainer}>
@@ -331,15 +340,7 @@ const Buyerbidding = ({route, navigation}) => {
                         </View>
                         </View>
                     </View>
-                <View style = {styles.listingContainer}>
-                    <View style = {styles.container}>
-                        <Text style= {styles.name}>{productdetails.product.name}</Text>
-                    </View>
-                </View>
-                <View style = {styles.descriptionContainer}>
-                    <Text style = {styles.description}>Description:</Text>
-                    <Text style = {styles.descriptiontext}>{productdetails.product.description}</Text>
-                </View>
+                
                 
             </View>
            <View>
@@ -353,6 +354,7 @@ const Buyerbidding = ({route, navigation}) => {
                 </View>
                 <Text style = {styles.currentbid}>Current Bids: </Text>
                 <Text style = {styles.numofbidsplaced}>Number of Bids: {id}</Text>
+                <Text style = {styles.nobidsnotice}>{bidders.length ? '' : 'There are currently no bids for this product.'}</Text>
            </View>
            </View>
                 }
@@ -415,7 +417,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Confirm Buy item")
                             sendbuyoutvalues(auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
-                            .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, randomName});})
+                            .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, buyout : productdetails.product.buyPrice});})
                             .catch((error) => {alert(error.message)})
                         }}> 
                         <Text style ={styles.CONFIRMcustomBtnText}>Confirm</Text>
@@ -477,7 +479,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Bid is placed!")
                             senduserbidvalues(id, auth.currentUser.uid, aId, docId, userbidprice, randomName)
-                            .then((success) =>  {navigation.navigate('BidSuccess', {aId, randomName});})
+                            .then((success) =>  {navigation.navigate('BidSuccess', {aId, userbidprice});})
                             .catch((error) => {alert(error.message)})
                         }}> 
                         <Text style ={styles.CONFIRMcustomBtnText}>Place a Bid</Text>
@@ -869,6 +871,13 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontSize: 20,
     },
+
+    nobidsnotice :{
+        color: colors.red,
+        fontFamily: 'Montserrat-Black',
+        textAlign: 'center',
+
+    }
 
 
 })
