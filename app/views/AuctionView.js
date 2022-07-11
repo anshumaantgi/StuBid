@@ -36,7 +36,7 @@ export default class AuctionView {
 
         
 
-        newAuction = new Auction(auctionId,minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore());
+        newAuction = new Auction(auctionId,minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(),this.product.activeDays);
         await addDoc(collection(db, "auctions") , newAuction.toFirestore());
     } catch (e) {
         // Deleted the product , assocaited with the auction if Auction not sotred in database
