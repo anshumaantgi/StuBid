@@ -350,7 +350,7 @@ const Homepage = ({route, navigation}) => {
                                 ? styles.CBcustomBtnBG
                                 : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                 ? styles.PABcustomBtnBG
-                                : styles.LARcustomBtnBG
+                                : styles.VCcustomBtnBG
                             } 
                             onPress={() => 
                             {
@@ -361,7 +361,7 @@ const Homepage = ({route, navigation}) => {
                                  ? navigation.navigate("BuyerBid", {auctionId})
                                  : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                  ? navigation.navigate("BuyerBid", {auctionId})
-                                 : alert('Leave a Review')
+                                 : navigation.navigate("ExchangeContact", {auctionId})
                             }}>
                             <Text style ={styles.customBtnText}>
                                 {
@@ -372,7 +372,7 @@ const Homepage = ({route, navigation}) => {
                                     ? 'Continue Bid'
                                     : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                     ? 'Place a Bid'
-                                    : 'Leave Review'
+                                    : 'View Contact'
 
                                 }
                                 </Text>
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
 
-    LARcustomBtnBG: {
+    VCcustomBtnBG: {
         backgroundColor: colors.gold,
         padding: 15,
         borderRadius: 50,

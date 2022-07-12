@@ -25,6 +25,9 @@ import SelloutSuccess from './app/Screens/SelloutSuccess';
 import * as BackgroundFetch from "expo-background-fetch"
 import * as TaskManager from "expo-task-manager"
 import MidnightChangesView from './app/views/MidnightChangesView';
+import ExchangeContact from './app/Screens/ExchangeContact';
+import EditProduct from './app/Screens/EditProduct';
+import DeleteItemSuccess from './app/Screens/DeleteItemSuccess';
 
 
 const Stack = createNativeStackNavigator();
@@ -94,6 +97,9 @@ const App = () => {
               <Stack.Screen options={{headerShown: false}} name = "BuyoutSuccess" component={BuyoutSuccess} />
               <Stack.Screen options={{headerShown: false}} name = "BidSuccess" component={BidSuccess} />
               <Stack.Screen options={{headerShown: false}} name = "SelloutSuccess" component={SelloutSuccess} />
+              <Stack.Screen options={{title: 'Exchange Contact',}} name = "ExchangeContact" component={ExchangeContact} />
+              <Stack.Screen options={{title: 'Edit Item',}} name = "EditItem" component={EditProduct} />
+              <Stack.Screen options={{headerShown: false}} name = "DeleteItemSuccess" component={DeleteItemSuccess} />
       
             </Stack.Navigator>
           </NavigationContainer>

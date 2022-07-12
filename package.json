@@ -43,6 +43,7 @@
     "react-native-linear-gradient": "^2.5.6",
     "react-native-midnight": "github:ravnhq/react-native-midnight",
     "react-native-modal": "^13.0.1",
+    "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "~2.8.0",
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "~3.11.1",

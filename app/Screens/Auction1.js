@@ -21,6 +21,8 @@ const Auction1 = ({navigation}) => {
   const [itemname, setItemname] = useState('');
   const [itemdesc, setItemdesc] = useState('');
   const [useruni, setUseruni] = useState('');
+
+  //store uni name short form instead of full form into database
   var unicode = '';
   
 
@@ -40,7 +42,6 @@ const Auction1 = ({navigation}) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
     });
 
     console.log(result);
@@ -56,7 +57,7 @@ const Auction1 = ({navigation}) => {
     } else if (enteredimage === UploadItemPhotoURI) {
       throw new Error("Have you upload the item image?");
     } else {
-      newProduct = new Product(entereditemname,auth.currentUser.uid,entereditemdesc,enteredimage, entereduseruni);
+      const newProduct = new Product(entereditemname,auth.currentUser.uid,entereditemdesc,enteredimage, entereduseruni);
       
       return new AuctionView(auth, db , newProduct)
 
@@ -121,18 +122,20 @@ const Auction1 = ({navigation}) => {
       })
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
              <Text style={styles.title}> Upload new items*</Text>
              <Text style={styles.text}> Click on the image below to start uploading your images!</Text>
              <TouchableOpacity style = {styles.image} onPress = {pickImage}>
               {image && <Image source={{ uri: image }} style={{ width: 300, height: 300 }} />}
              </TouchableOpacity>
+             <Text style={[styles.titleinput,{ marginTop: 20}]} >Name of the item</Text>
              <TextInput style = {styles.textinput} placeholder='Name of the item' placeholderTextColor={colors.white} value = {itemname} onChangeText={(value) => setItemname(value)} />
+             <Text style={styles.titleinput} >Item Description</Text>
              <TextInput style = {styles.textinput} placeholder='Item Description' placeholderTextColor={colors.white} value = {itemdesc} onChangeText={(value) => setItemdesc(value)} />
-             <View style={styles.lockSection}>
-              <TextInput style = {styles.textinputuni} editable={false} placeholder='University name' placeholderTextColor={colors.white} value = {useruni} onChangeText={(value) => setUseruni(value)}/>
-              <Ionicons style={styles.lockIcon} name={'lock-closed-outline'} size={24} color={colors.darkbrown} />
-             </View>
+             <Text style={styles.titleinput} >University</Text>
+             <TextInput style = {styles.textinputuni} editable={false} placeholder='University name' placeholderTextColor={colors.white} value = {useruni} onChangeText={(value) => setUseruni(value)}/>
+             <Text style={styles.text}>Note: University is automatically extracted from your input during the registration phase. </Text>
+           
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 try  {
                 navigation.navigate( "Auction2", sendValues(image, itemname, itemdesc, unicode));
@@ -145,7 +148,7 @@ const Auction1 = ({navigation}) => {
                 }}>
                 <Text style ={styles.customBtnText}>Next</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -154,8 +157,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
       },
       
     title: {
@@ -165,14 +166,23 @@ const styles = StyleSheet.create({
       fontSize: 16,
     },
 
+    titleinput : {
+      fontWeight: 'bold',
+      fontSize: 12,
+      marginLeft: '10%',
+  },
+
     text: {
       color: colors.darkbrown,
+      width: '80%',
       fontSize: 12,
       marginVertical: 15,
+      alignSelf: 'center',
     },
 
     image: {
       marginVertical: 10,
+      alignSelf: 'center',
     },
 
     textinput: {
@@ -183,6 +193,7 @@ const styles = StyleSheet.create({
       paddingVertical: 20,
       marginVertical: 10,
       color: colors.white,
+      alignSelf: 'center',
     },
 
     textinputuni: {
@@ -194,6 +205,7 @@ const styles = StyleSheet.create({
       marginVertical: 10,
       color: colors.darkbrown,
       fontWeight: 'bold',
+      alignSelf: 'center',
     },
 
 
@@ -206,23 +218,12 @@ const styles = StyleSheet.create({
 
     customBtnBG: {
       width: '80%',
-      marginVertical: '10%',
       backgroundColor: colors.darkbrown,
       paddingVertical: 15,
-      borderRadius: 5
+      borderRadius: 5,
+      alignSelf: 'center',
     },
 
-    lockSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-    },
-
-    lockIcon : {
-      padding : 10,
-      position: 'absolute',
-      right: 10,
-    }
     
 })
 
