@@ -94,7 +94,7 @@ export default class TerminateAuctionView {
         var isExpired = false;
         var isBiddedOn = false;
         var bidders = []
-        if (auctionObject.activeDays == 0) {
+        if (auctionObject.isEnding == 0) {
             isExpired = true;
         }
         if (auctionObject.leadBuyerId != null) {

@@ -12,7 +12,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.2",
     "@expo/vector-icons": "^13.0.0",
-    "@expo/webpack-config": "~0.16.2",
+    "@expo/webpack-config": "~0.16.21",
     "@miblanchard/react-native-slider": "^2.1.0",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-community/datetimepicker": "6.1.2",
@@ -21,7 +21,7 @@
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.2.1",
     "expo": "~45.0.0",
-    "expo-app-loading": "^2.0.0",
+    "expo-app-loading": "~2.0.0",
     "expo-device": "~4.2.0",
     "expo-font": "~10.1.0",
     "expo-image-picker": "~13.1.1",
@@ -33,7 +33,6 @@
     "moment": "^2.29.3",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.34",
-    "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
     "react-native-app-intro-slider": "^4.0.4",
@@ -42,6 +41,7 @@
     "react-native-image-picker": "^4.8.4",
     "react-native-image-resizer": "^1.4.5",
     "react-native-linear-gradient": "^2.5.6",
+    "react-native-midnight": "github:ravnhq/react-native-midnight",
     "react-native-modal": "^13.0.1",
     "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "~2.8.0",
@@ -53,11 +53,14 @@
     "react-native-web": "0.17.7",
     "react-navigation": "^4.4.4",
     "unique-names-generator": "^4.7.1",
-    "webpack-dev-server": "~3.11.0"
+    "webpack-dev-server": "~3.11.0",
+    "expo-background-fetch": "~10.2.0",
+    "expo-task-manager": "~10.2.1",
+    "react": "17.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@types/react-native": "^0.67.8"
+    "@types/react-native": "~0.67.6"
   },
   "private": true
 }

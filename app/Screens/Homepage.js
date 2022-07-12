@@ -7,10 +7,10 @@ import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, s
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
+import MidnightChangesView from '../views/MidnightChangesView.js';
 
 
 const Homepage = ({route, navigation}) => {
-
     let onEndReachedCalledDuringMomentum = false;
 
     //Define filter storage
@@ -179,6 +179,8 @@ const Homepage = ({route, navigation}) => {
     }
 
     const getMore = async () => {
+        
+
         if (lastDoc) {
             setIsMoreLoading(true);
         
@@ -242,7 +244,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId}) => {
+    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId,endingIn}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];
@@ -334,7 +336,7 @@ const Homepage = ({route, navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {product.activeDays} Days
+                            {endingIn} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>

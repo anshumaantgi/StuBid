@@ -22,11 +22,16 @@ import Sellerbidding from './app/Screens/Sellerbidding';
 import BidSuccess from './app/Screens/BidSuccess';
 import BuyoutSuccess from './app/Screens/BuyoutSuccess';
 import SelloutSuccess from './app/Screens/SelloutSuccess';
+import * as BackgroundFetch from "expo-background-fetch"
+import * as TaskManager from "expo-task-manager"
+import MidnightChangesView from './app/views/MidnightChangesView';
 import ExchangeContact from './app/Screens/ExchangeContact';
 import EditProduct from './app/Screens/EditProduct';
 import DeleteItemSuccess from './app/Screens/DeleteItemSuccess';
 
+
 const Stack = createNativeStackNavigator();
+
 
 const MyTheme = {
   ...DefaultTheme,
@@ -35,8 +40,41 @@ const MyTheme = {
     background: 'white',
   },
 };
+const BACKGROUND_FETCH_TASK = 'midnight_task';
+  //Defining Background Task
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+
+  try {
+  //const data = await new MidnightChangesView().decrementActiveDays()
+
+  const num = await new MidnightChangesView().decrementActiveDays();
+  console.log(num)
+  // Be sure to return the successful result type!
+  return BackgroundFetch.BackgroundFetchResult.NewData;
+  } catch {
+    return BackgroundFetch.BackgroundFetchResult.Failed;
+  }
+});
+
+//Registering Task Function
+async function registerBackgroundFetchAsync() {
+  await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 60*60*6, // 15 minutes
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  });
+  return;
+}
 
 const App = () => {
+  //TaskManager.unregisterAllTasksAsync();
+  registerBackgroundFetchAsync()
+  .then (
+    succ => console.log("Task Registered")
+  )
+  TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK) 
+  .then( succ => console.log(succ))
+  
   return (
           <NavigationContainer theme={MyTheme}>
             <Stack.Navigator>
