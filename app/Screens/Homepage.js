@@ -179,10 +179,7 @@ const Homepage = ({route, navigation}) => {
     }
 
     const getMore = async () => {
-        await new MidnightChangesView().decrementActiveDays()
-        .then(succ => console.log("Done"))
-        .catch((err) => {console.log(err.message)
-            alert(err.message);})
+        
 
         if (lastDoc) {
             setIsMoreLoading(true);

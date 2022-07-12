@@ -40,6 +40,7 @@ export default class MidnightChangesView {
                 await new TerminateAuctionView().closeListing(docSnaps.docs[i].id)
             }
         }
+        return 200
 
     }
     
