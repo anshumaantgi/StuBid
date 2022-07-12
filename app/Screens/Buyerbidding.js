@@ -10,6 +10,8 @@ import {FilterContext} from './MainContainer.js';
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
+import TerminateAuctionView from '../views/TerminateAuctionView.js'
+
 import moment from "moment-timezone";
 
 const Buyerbidding = ({route, navigation}) => {
@@ -47,16 +49,21 @@ const Buyerbidding = ({route, navigation}) => {
     const productRef = collection(db, 'auctions'); 
     
     //Send buyout details to Firestore
+
     async function sendbuyoutvalues(enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
         toggleModal(); // close the dialog box
         //in auction, update currprice to buyout price, leading buyer to buyout buyer, ongoing to false, update time
-        return updateDoc(doc(db ,'auctions',entereddocId), { 
+        updateDoc(doc(db ,'auctions',entereddocId), { 
             currPrice: enteredbuyoutprice,
             leadBuyerId: enteredbuyerId,
-            ongoing: false,
-            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
+            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
+
+        return new TerminateAuctionView().closeListing(docId)
+
+
     }
+
 
     //Send user bid details to Firestore
     async function senduserbidvalues(enteredbidId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
@@ -507,7 +514,7 @@ const Buyerbidding = ({route, navigation}) => {
                 renderItem={({item}) => renderList(item)} />    
         </View>
     )
-}
+            }
 
 const styles = StyleSheet.create({
 

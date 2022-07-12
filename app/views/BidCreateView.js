@@ -41,15 +41,15 @@ export default class BidCreateView {
             .then (
                 (success) => {
                     // Update Auction Current Price
+
                     return updateDoc(doc(db, 'auctions', docId) , { 
                         currPrice: bid.bidPrice,
                         leadBuyerId: bid.bidderId,
                         allBiddersId: allBiddersId,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
 
-                    })
 
-                    
+                    })
 
                 }
 
