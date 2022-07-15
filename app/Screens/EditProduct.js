@@ -13,6 +13,7 @@ import Product from '../models/Product.js';
 import moment from "moment-timezone";
 import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebase/storage';
 import { StackActions } from '@react-navigation/native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 
 const EditProduct = ({route, navigation}) => {
@@ -99,8 +100,6 @@ const EditProduct = ({route, navigation}) => {
         {
           text: "Yes",
           onPress: () => {
-
-            
             
              sendDeleteValues(auctiondocId, biddingdocId)
                 .then((success) =>  {
@@ -258,13 +257,24 @@ const EditProduct = ({route, navigation}) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-    });
+      quality: 0.1,
+    }
+    );
 
-    console.log(result);
+    console.log(result, "Actual Image");
 
     if (!result.cancelled) {
-      setImage(result.uri);
+
+      const manipulateResult = await ImageManipulator.
+        manipulateAsync(result.localUri || result.uri, [
+        {resize: {width: 150, height: 150}},
+        ],
+        {compress: 0, format: ImageManipulator.SaveFormat.PNG});
+          
+        setImage(manipulateResult.uri);
+        console.log(manipulateResult, "Manipulated Image");
     }
+  
   };
 
   async function sendSavedValues(enteredimage, entereditemname, entereditemdesc, enteredcategory, enteredbidduration, enteredstartingprice, enteredbuyoutprice, enteredauctiondocId, enteredbiddingdocId) {
@@ -302,6 +312,7 @@ const EditProduct = ({route, navigation}) => {
         'product.minPrice' : parseInt(enteredstartingprice),
         'product.buyPrice' : parseInt(enteredbuyoutprice),
         'product.updatedAt' : moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
+        'product.createdAt' : moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
     })
 
     }   

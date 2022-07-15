@@ -9,7 +9,6 @@ export default class Auction {
        this.currPrice = currPrice;
        this.ongoing = ong;
        this.product = product;
-       this.leadBuyer = null;
        this.createdAt = createdAt;
        this.updatedAt = createdAt;
        this.endingIn = endingIn;
@@ -26,7 +25,6 @@ export default class Auction {
             ongoing: this.ongoing,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
-            leadBuyer: this.leadBuyer,
             endingIn : this.endingIn
              };
     }

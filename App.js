@@ -28,6 +28,9 @@ import MidnightChangesView from './app/views/MidnightChangesView';
 import ExchangeContact from './app/Screens/ExchangeContact';
 import EditProduct from './app/Screens/EditProduct';
 import DeleteItemSuccess from './app/Screens/DeleteItemSuccess';
+import EditProfile from './app/Screens/EditProfile';
+import ChangePassword from './app/Screens/ChangePassword';
+import ChangePasswordSuccess from './app/Screens/ChangePasswordSuccess';
 
 
 const Stack = createNativeStackNavigator();
@@ -100,7 +103,9 @@ const App = () => {
               <Stack.Screen options={{title: 'Exchange Contact',}} name = "ExchangeContact" component={ExchangeContact} />
               <Stack.Screen options={{title: 'Edit Item',}} name = "EditItem" component={EditProduct} />
               <Stack.Screen options={{headerShown: false}} name = "DeleteItemSuccess" component={DeleteItemSuccess} />
-      
+              <Stack.Screen options={{title: 'Edit Profile',}} name = "EditProfile" component={EditProfile} />
+              <Stack.Screen options={{title: 'Change New Password',}} name = "ChangePassword" component={ChangePassword} />
+              <Stack.Screen options={{headerShown: false}} name = "ChangePasswordSuccess" component={ChangePasswordSuccess} />
             </Stack.Navigator>
           </NavigationContainer>
 

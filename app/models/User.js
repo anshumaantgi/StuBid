@@ -4,6 +4,8 @@ export default class User{
     constructor(name, email, originUni, createdAt) {
         this.name = name;
         this.email = email;
+        this.handphone = '';
+        this.bio = '';
         this.originUni = originUni;
         this.createdAt = createdAt;
         this.updatedAt = createdAt; 
@@ -14,6 +16,8 @@ export default class User{
         return { id: this.id,  
             name: this.name,
             email: this.email,
+            handphone: this.handphone,
+            bio: this.bio,
             originUni: this.originUni,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt

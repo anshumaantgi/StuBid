@@ -56,7 +56,8 @@
     "webpack-dev-server": "~3.11.0",
     "expo-background-fetch": "~10.2.0",
     "expo-task-manager": "~10.2.1",
-    "react": "17.0.2"
+    "react": "17.0.2",
+    "expo-image-manipulator": "~10.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

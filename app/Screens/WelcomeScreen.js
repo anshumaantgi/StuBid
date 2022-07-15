@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
 
@@ -7,7 +7,7 @@ const WelcomeScreen = ({navigation}) => {
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <Image style = {styles.logo} source= {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain"/> 
           <Text style={styles.title}> 
            Welcome to StuBid!
@@ -21,7 +21,7 @@ const WelcomeScreen = ({navigation}) => {
             <Text style ={styles.customBtnText}>Sign up / Login</Text>
         </TouchableOpacity>
           
-        </View>
+        </ScrollView>
       );
 }
 
@@ -29,16 +29,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
       },
     
     logo: {
-        marginVertical: '-30%',
+        width: '100%',
+        alignSelf: 'center',
+        marginBottom: -150,
+        marginTop: -30,
     },
 
     image: {
-        marginVertical: '5%',
+        marginTop: '5%',
+        alignSelf: 'center',
     },
 
     title: {
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
         color: colors.darkbrown,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
-        marginHorizontal: 60,
+        alignSelf: 'center',
     },
 
     text: {
@@ -54,8 +56,9 @@ const styles = StyleSheet.create({
         color: colors.darkbrown,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
-        marginHorizontal: 60,
+        width: '80%',
         marginVertical: '5%',
+        alignSelf: 'center',
     },
 
     customBtnText: {
@@ -67,10 +70,12 @@ const styles = StyleSheet.create({
 
     customBtnBG: {
         width: '80%',
-        marginVertical: '5%',
+        marginTop: '5%',
+        marginBottom: 70,
         backgroundColor: colors.darkbrown,
         paddingVertical: 15,
-        borderRadius: 30
+        borderRadius: 30,
+        alignSelf: 'center',
     },
 
 })

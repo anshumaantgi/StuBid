@@ -9,6 +9,7 @@ import { auth,db } from '../config/config.js';
 import UploadItemPhoto from '../assets/UploadItemPhoto_resize.png';
 import AuctionView from '../views/AuctionView.js';
 import Product from '../models/Product.js';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 
 
@@ -42,13 +43,24 @@ const Auction1 = ({navigation}) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-    });
+      quality: 0.1,
+    }
+    );
 
-    console.log(result);
+    console.log(result, "Actual Image");
 
     if (!result.cancelled) {
-      setImage(result.uri);
+
+      const manipulateResult = await ImageManipulator.
+        manipulateAsync( result.localUri || result.uri, [
+        {resize: {width: 150, height: 150}},
+        ],
+        {compress: 0, format: ImageManipulator.SaveFormat.PNG});
+          
+        setImage(manipulateResult.uri);
+        console.log(manipulateResult, "Manipulated Image");
     }
+  
   };
 
   function sendValues(enteredimage, entereditemname, entereditemdesc, entereduseruni) {
@@ -131,7 +143,7 @@ const Auction1 = ({navigation}) => {
              <Text style={[styles.titleinput,{ marginTop: 20}]} >Name of the item</Text>
              <TextInput style = {styles.textinput} placeholder='Name of the item' placeholderTextColor={colors.white} value = {itemname} onChangeText={(value) => setItemname(value)} />
              <Text style={styles.titleinput} >Item Description</Text>
-             <TextInput style = {styles.textinput} placeholder='Item Description' placeholderTextColor={colors.white} value = {itemdesc} onChangeText={(value) => setItemdesc(value)} />
+             <TextInput style = {styles.itemdesc} multiline = {true}  placeholder='Enter Item Description' placeholderTextColor={colors.white} value = {itemdesc} onChangeText={(value) => setItemdesc(value)} />
              <Text style={styles.titleinput} >University</Text>
              <TextInput style = {styles.textinputuni} editable={false} placeholder='University name' placeholderTextColor={colors.white} value = {useruni} onChangeText={(value) => setUseruni(value)}/>
              <Text style={styles.text}>Note: University is automatically extracted from your input during the registration phase. </Text>
@@ -185,6 +197,19 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
     },
 
+    itemdesc: {
+      backgroundColor: colors.textinput,
+      width: '80%',
+      height: 150,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 20,
+      marginVertical: 10,
+      color: colors.white,
+      textAlignVertical: 'top' ,
+      alignSelf: "center",
+    },
+
     textinput: {
       backgroundColor: colors.textinput,
       width: '80%',
@@ -222,6 +247,7 @@ const styles = StyleSheet.create({
       paddingVertical: 15,
       borderRadius: 5,
       alignSelf: 'center',
+      marginBottom: 70,
     },
 
     

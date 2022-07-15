@@ -31,8 +31,9 @@ const ExchangeContact= ({route, navigation}) => {
     const [userfullname, setUserfullname] = useState('');
     const [useremail, setUseremail] = useState('');
     const [useruni, setUseruni] = useState('');
+    const [userhp, setUserhp] = useState('');
+    const [userbio, setUserBio] = useState('');
     const [userid, setUserid] = useState('');
-    const [userpersinfo, setUserpersinfo] = useState('');
     const [userrating, setUserrating] = useState('');
     const [usercomments, setUsercomments] = useState('');
 
@@ -95,13 +96,15 @@ const ExchangeContact= ({route, navigation}) => {
           const originUni = data.originUni;
           const fullname = data.name;
           const email = data.email;
-          const userpersinfo = data.persinfo;
+          const hp = data.handphone;
+          const bio = data.bio;
           const userid = data.id;
 
           //setting user profile
           setUserfullname(fullname);
           setUseremail(email);
-          setUserpersinfo(userpersinfo)
+          setUserhp(hp);
+          setUserBio(bio);
           setUserid(userid);
           switch (originUni) {
             case "NUS" :
@@ -273,8 +276,12 @@ const ExchangeContact= ({route, navigation}) => {
                             <Text style = {styles.contactinfotext}>{useruni}</Text>
                         </View>
                         <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
-                            <Text style = {styles.contactinfodesc}>Personal Info: </Text>
-                            <Text style = {styles.contactinfotext}>{userpersinfo}</Text>
+                            <Text style = {styles.contactinfodesc}>{'Handphone (if provided):'} </Text>
+                            <Text style = {styles.contactinfotext}>{userhp}</Text>
+                        </View>
+                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+                            <Text style = {styles.contactinfodesc}>{'Personal Bio (if provided):'} </Text>
+                            <Text style = {styles.contactinfotext}>{userbio}</Text>
                         </View>
                     </View>
                     <TouchableOpacity style = {styles.LARcustomBtnBG} onPress={() => {

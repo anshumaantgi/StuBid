@@ -62,53 +62,53 @@ const Homepage = ({route, navigation}) => {
     const productsRef = collection(db, 'auctions');
 
     //Retrieval by search field
-    searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), limit(3));
-    searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), startAfter(lastDoc), limit(3));
+    searchnamefirst = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), where("ongoing", "==", true), limit(3));
+    searchnamelast = query(productsRef, orderBy("product.name"), where('product.name', '>=', search), where('product.name', '<=', search + '\uf8ff'), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     
     //Retrieval by Default 
-    defaultfirst = query(productsRef, orderBy("createdAt", "desc"), limit(3));
-    defaultlast = query(productsRef, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(3));
+    defaultfirst = query(productsRef, orderBy("createdAt", "desc"), where("ongoing", "==", true), limit(3));
+    defaultlast = query(productsRef, orderBy("createdAt", "desc"), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     
     //Retrieval by Filter uni
     if (filterchecker && uniSelected.length) {
-        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), limit(3));
-        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), startAfter(lastDoc), limit(3));
+        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), limit(3));
+        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter category
     if (filterchecker && catSelected.length) {
-        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), limit(3));
-        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
+        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
+        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter price range
     if (filterchecker && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
-        filterpricefirst = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
-        filterpricelast = query(productsRef, orderBy("currPrice"), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+        filterpricefirst = query(productsRef, orderBy("currPrice"), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterpricelast = query(productsRef, orderBy("currPrice"), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter uni and category
     if (filterchecker && uniSelected.length && catSelected.length) {
-        filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), limit(3));
-        filterunicatlast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAfter(lastDoc), limit(3));
+        filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
+        filterunicatlast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
      //Retrieval by Filter uni and price range
      if (filterchecker && uniSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
-        filterunipricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
-        filterunipricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+        filterunipricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunipricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter category and price range
     if (filterchecker && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
-        filtercatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
-        filtercatpricelast = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected),  startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
+        filtercatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filtercatpricelast = query(productsRef,  orderBy("currPrice"), where('product.category', '==', catSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter uni and category and price range
     if (filterchecker && uniSelected.length && catSelected.length && !(priceSelected[0] == startpricefilter && priceSelected[1] == endpricefilter)) {
-        filterunicatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
-        filterunicatpricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
+        filterunicatpricefirst = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]), limit(3));
+        filterunicatpricelast = query(productsRef,  orderBy("currPrice"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), startAt(priceSelected[0]), endAt(priceSelected[1]),  startAfter(lastDoc), limit(3));
     }
 
 
@@ -172,7 +172,7 @@ const Homepage = ({route, navigation}) => {
         } else {
             setLastDoc(null);
             setProducts([]);
-            alert('No Products are Found. Please Refresh/Clear Filter and try again.');
+            //alert('No Products are Found. Please Refresh/Clear Filter and try again.');
         }
 
         setIsLoading(false);
@@ -396,6 +396,14 @@ const Homepage = ({route, navigation}) => {
           }, 1000);
     }
 
+    const alertemptylist = () => {
+        return (
+            <View>
+                <Text style = {styles.alertnotice}>There are currently no products found. Please Refresh or Clear Filter and try again.</Text>
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
             <View style = {styles.header}>
@@ -433,6 +441,7 @@ const Homepage = ({route, navigation}) => {
             <FlatList 
                 contentContainerStyle={{ paddingBottom: 70 }}
                 ListFooterComponent={renderFooter}
+                ListEmptyComponent={alertemptylist}
                 refreshControl = {
                     <RefreshControl
                     refreshing={isLoading}
@@ -680,6 +689,13 @@ const styles = StyleSheet.create({
         color: colors.white,
         textAlign: 'center',
     },
+
+    alertnotice :{
+        color: colors.red,
+        fontFamily: 'Montserrat-Black',
+        textAlign: 'center',
+        marginTop: 150,
+    }
 })
 
 export default Homepage;
