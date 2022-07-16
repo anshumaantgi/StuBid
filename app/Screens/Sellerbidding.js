@@ -153,7 +153,8 @@ const Sellerbidding = ({route, navigation}) => {
                 <View style = {{flexDirection: 'row'}}>
                 <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
                 <TouchableOpacity onPress={() => {
-                    alert("Bidder/Buyer Review Page")  
+                    //alert("Bidder/Buyer Review Page")  
+                    navigation.navigate('ViewReviews', {reviewerId : bidderId, reviewerName : bidderAnomname});  
                     }}> 
                     <Text style = {styles.buyeranonymousname}>
                     {
@@ -264,7 +265,8 @@ const Sellerbidding = ({route, navigation}) => {
                             <View style = {styles.selleranonymouscontainer}>
                                 <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
                                 <TouchableOpacity onPress={() => {
-                                    alert("Seller Review Page")
+                                    //alert("Seller Review Page")
+                                    navigation.navigate('ViewReviews', {reviewerId : productdetails.product.ownerId, reviewerName : productdetails.anomName});
                        
                                 }}> 
                                 <Text style = {styles.selleranonymous}> {productdetails.anomName} </Text>
@@ -373,7 +375,9 @@ const Sellerbidding = ({route, navigation}) => {
                                     <View style = {{flexDirection: 'row'}}>
                                     <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
                                     <TouchableOpacity onPress={() => {
-                                        alert("Bidder/Buyer Review Page")  
+                                        //alert("Bidder/Buyer Review Page")  
+                                        toggleModal();
+                                        navigation.navigate('ViewReviews', {reviewerId : latestbidder.bidderId, reviewerName : latestbidder.bidderAnomname});
                                         }}> 
                                         <Text style = {styles.buyeranonymousname}>
                                         {

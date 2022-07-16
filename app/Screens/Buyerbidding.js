@@ -196,7 +196,10 @@ const Buyerbidding = ({route, navigation}) => {
                 <View style = {{flexDirection: 'row'}}>
                 <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
                 <TouchableOpacity onPress={() => {
-                    alert("Bidder/Buyer Review Page")  
+                    //alert("Bidder/Buyer Review Page")
+                    navigation.navigate('ViewReviews', {reviewerId : bidderId, reviewerName : (auth.currentUser.uid == bidderId)
+                        ? ' Me'
+                        :  ' ' + bidderAnomname});  
                     }}> 
                     <Text style = {styles.buyeranonymousname}>
                     {
@@ -308,8 +311,9 @@ const Buyerbidding = ({route, navigation}) => {
                             <View style = {styles.selleranonymouscontainer}>
                                 <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
                                 <TouchableOpacity onPress={() => {
-                                    alert("Seller Review Page")
-                       
+                                    //alert("Seller Review Page")
+                                    navigation.navigate('ViewReviews', {reviewerId : productdetails.product.ownerId, reviewerName : productdetails.anomName});
+            
                                 }}> 
                                 <Text style = {styles.selleranonymous}> {productdetails.anomName} </Text>
                                 </TouchableOpacity>

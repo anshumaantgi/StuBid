@@ -94,8 +94,6 @@ const MyProfilepage = ({navigation}) => {
         });
     }
 
-         
-    
 
     useEffect(() => {
         getprofileinfo();
@@ -297,8 +295,8 @@ const MyProfilepage = ({navigation}) => {
                         <View style = {styles.selleranonymouscontainer}>
                         <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
                         <TouchableOpacity onPress={() => {
-                            alert("Seller Review Page")
-                       
+                            //alert("Seller Review Page")
+                            navigation.navigate('ViewReviews', {reviewerId : product.ownerId, reviewerName : anomName});
                             }}> 
                             <Text style = {styles.selleranonymous}> {anomName} </Text>
                             </TouchableOpacity>
@@ -408,6 +406,13 @@ const MyProfilepage = ({navigation}) => {
         <Text style={styles.userinfo}> {useremail}</Text>
         </View>
         <View style={styles.userBtnWrapper}>
+                <TouchableOpacity
+                style={styles.userReviewBtn}
+                onPress={() => {
+                  navigation.navigate('ViewReviews', {reviewerId : auth.currentUser.uid, reviewerName : 'Me'});
+                }}>
+                <Text style={styles.userBtnTxt}>View Reviews</Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={styles.userBtn}
                 onPress={() => {
@@ -530,6 +535,16 @@ const styles = StyleSheet.create({
         color: colors.darkbrown,
       },
 
+      userReviewBtn: {
+        backgroundColor: colors.gold,
+        borderWidth: 2,
+        borderRadius: 3,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        marginHorizontal: 5,
+        borderColor: colors.activeday,
+      },
+
       userBtn: {
         backgroundColor: colors.red,
         borderWidth: 2,
@@ -539,6 +554,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         borderColor: colors.activeday,
       },
+
       userBtnTxt: {
         color: colors.white,
         fontWeight: 'bold',

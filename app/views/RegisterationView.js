@@ -20,7 +20,7 @@ export default class RegisterationView {
          * @Throw : Firebase Errors
          */
         if (password != repassword ) {
-            throw new Error("Passwords Do Not Match ! ");
+            throw new Error("Passwords Do Not Match!");
         }
         else {
             this.user = new User(name, email, originUni, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));

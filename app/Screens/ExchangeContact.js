@@ -12,6 +12,8 @@ import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import moment from "moment-timezone";
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import Review from '../models/Review.js';
+import ReviewView from '../views/ReviewView.js';
 
    
 const ExchangeContact= ({route, navigation}) => {
@@ -28,13 +30,14 @@ const ExchangeContact= ({route, navigation}) => {
 
     //initialise state hook
     const [productdetails, setProductdetails] = useState('');
+    const [reviewdetails, setReviewdetails] = useState('');
     const [userfullname, setUserfullname] = useState('');
     const [useremail, setUseremail] = useState('');
     const [useruni, setUseruni] = useState('');
     const [userhp, setUserhp] = useState('');
     const [userbio, setUserBio] = useState('');
     const [userid, setUserid] = useState('');
-    const [userrating, setUserrating] = useState('');
+    const [userrating, setUserrating] = useState(0);
     const [usercomments, setUsercomments] = useState('');
 
     const [docId, setDocId] = useState('');
@@ -42,6 +45,7 @@ const ExchangeContact= ({route, navigation}) => {
     // Firestore setup
     const db = getFirestore();
     const productRef = collection(db, 'auctions'); 
+    const reviewRef = collection(db, 'reviews');
 
      //Send Sellout details to Firestore
      async function sendReviewvalues(aId, sender, receiver, entereduserrating, enteredusercomments) {
@@ -59,6 +63,11 @@ const ExchangeContact= ({route, navigation}) => {
         console.log(sender)
         console.log(receiver)
         console.log(aId)
+
+         /** 
+         * Functions Sends Values to the Functional Class Review View
+         */
+          return await new ReviewView(db, auth).createReview(aId, sender, receiver, entereduserrating, enteredusercomments, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
         
     }
 
@@ -82,7 +91,21 @@ const ExchangeContact= ({route, navigation}) => {
     });
     }
 
+    // Retrieve review details from firestore via AuctionId (Purpose is to check if user have done review yet)
+      const getreviews = async() => {
+        var reviewinfo = null;
+        const q = query(reviewRef, where("auctionId", "==", aId), where("senderId", "==", auth.currentUser.uid));
+        //const querySnapshot = await getDocs(q);
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          //console.log(doc.id, " => ", doc.data());
+          reviewinfo = doc.data();
+        });
+        setReviewdetails(reviewinfo);
 
+        });
+        }
 
      // Retrieve user details from firestore via AuctionId to display contact later
      const getuserinfo = (userid) => {
@@ -156,6 +179,12 @@ const ExchangeContact= ({route, navigation}) => {
     //Execute and get products, etc
     useEffect(() => {
         getproductlisting();
+        getreviews();
+
+        return () => {
+            setProductdetails(''); // Reset changes
+            setReviewdetails('');
+          };
     }, []);
 
 
@@ -286,8 +315,12 @@ const ExchangeContact= ({route, navigation}) => {
                     </View>
                     <TouchableOpacity style = {styles.LARcustomBtnBG} onPress={() => {
                         //alert("Leave a Review")
-                      
+                        if (reviewdetails) {
+                            alert("You have already left a review!")
+                        }
+                        else {
                             toggleModal();
+                        }
                         }}>
                         <Text style ={styles.LARcustomBtnText}>Leave a Review</Text>
                     </TouchableOpacity>
@@ -314,7 +347,7 @@ const ExchangeContact= ({route, navigation}) => {
                                     ratingCount={5}
                                     imageSize={30}
                                     showRating
-                                    startingValue = {0}
+                                    startingValue = {userrating}
                                     onFinishRating = {setUserrating}
                                 />
                             <TextInput 
@@ -333,7 +366,7 @@ const ExchangeContact= ({route, navigation}) => {
                             <TouchableOpacity style = {styles.ACCEPTcustomBtnBG} onPress={() => {
                                 //alert("Accept Bid")
                                  sendReviewvalues(aId, auth.currentUser.uid, userid, userrating, usercomments)
-                                .then((success) =>  {alert('Leave a Review')})
+                                .then((success) =>  {navigation.navigate("ReviewSuccess")})
                                 .catch((error) => {alert(error.message)})
                             }}> 
                             <Text style ={styles.ACCEPTcustomBtnText}>Confirm</Text>

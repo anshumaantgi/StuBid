@@ -312,7 +312,8 @@ const Homepage = ({route, navigation}) => {
                         <View style = {styles.selleranonymouscontainer}>
                         <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
                         <TouchableOpacity onPress={() => {
-                            alert("Seller Review Page")
+                            //alert("Seller Review Page")
+                            navigation.navigate('ViewReviews', {reviewerId : product.ownerId, reviewerName : anomName});
                        
                             }}> 
                             <Text style = {styles.selleranonymous}> {anomName} </Text>
