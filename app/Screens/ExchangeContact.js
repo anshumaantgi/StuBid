@@ -48,7 +48,7 @@ const ExchangeContact= ({route, navigation}) => {
     const reviewRef = collection(db, 'reviews');
 
      //Send Sellout details to Firestore
-     async function sendReviewvalues(aId, sender, receiver, entereduserrating, enteredusercomments) {
+     async function sendReviewvalues(aId, sender, receiver, entereduserrating, enteredusercomments, entereditemName, enteredpictureUri) {
         if (!entereduserrating) {
             throw new Error("Please provide a rating score!");
         }
@@ -67,7 +67,7 @@ const ExchangeContact= ({route, navigation}) => {
          /** 
          * Functions Sends Values to the Functional Class Review View
          */
-          return await new ReviewView(db, auth).createReview(aId, sender, receiver, entereduserrating, enteredusercomments, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
+          return await new ReviewView(db, auth).createReview(aId, sender, receiver, entereduserrating, enteredusercomments, entereditemName, enteredpictureUri);
         
     }
 
@@ -364,8 +364,8 @@ const ExchangeContact= ({route, navigation}) => {
                             </Text>
                             <View style = {styles.SELLcontainer}>
                             <TouchableOpacity style = {styles.ACCEPTcustomBtnBG} onPress={() => {
-                                //alert("Accept Bid")
-                                 sendReviewvalues(aId, auth.currentUser.uid, userid, userrating, usercomments)
+                                //alert("Confirm Leave Review")
+                                 sendReviewvalues(aId, auth.currentUser.uid, userid, userrating, usercomments, productdetails.product.name, productdetails.product.pictureUri)
                                 .then((success) =>  {navigation.navigate("ReviewSuccess")})
                                 .catch((error) => {alert(error.message)})
                             }}> 

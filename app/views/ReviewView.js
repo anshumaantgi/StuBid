@@ -12,7 +12,7 @@ export default class ReviewView {
         this.review = null;
     }
     
-    async createReview(auctionId, senderId, receiverId, rating, comment) {
+    async createReview(auctionId, senderId, receiverId, rating, comment, itemName, pictureUri) {
         /**
          * Creates a User Review based on auction ID 
          * Every Auction ID will have 2 sets. (Sender and Receiver) x 2
@@ -28,7 +28,7 @@ export default class ReviewView {
             throw new Error("Please provide a comment/feedback for the user!");
         }
         else {
-            this.review = new Review(auctionId, senderId, receiverId, rating, comment, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
+            this.review = new Review(auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
            //Creating a bid instance
            console.log(this.review.toFirestore())
            await addDoc(collection(db,'reviews'), this.review.toFirestore())

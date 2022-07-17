@@ -75,24 +75,33 @@ const ViewReviews = ({route, navigation}) => {
 
 
     //render list from all buyer biddings (fields from figma prototype in "Current Bids")
-    const renderList = ({rating, comment, createdAt}) => {
+    const renderList = ({rating, comment, itemName, pictureUri, createdAt}) => {
           
         return (
         <View style = {styles.overallReviewContainer}>
-             <View style = {styles.dateofreview}>
-                <Text style = {styles.text}>Date of Review : </Text>
-                <Text style = {styles.text}>{createdAt}</Text>
-             </View>
-             <View style = {styles.ratingscore}>
-                <Text style = {styles.text}>Rating : </Text>
-                <Rating
-                    ratingCount={5}
-                    imageSize={15}
-                    startingValue = {rating}
-                    readonly = {true}
-                    tintColor = {colors.brown}
-                />
-                <Text style = {styles.text}> {'(' + rating + '/5)'} </Text>
+            <View style = {styles.productinfocontainter}>
+                <Image source = {{uri : pictureUri}} style = {styles.image}/>
+                <View>
+                    <View style = {styles.itemName}>
+                        <Text style = {styles.text}>Name of item : </Text>
+                        <Text style = {styles.text}>{itemName}</Text>
+                    </View>
+                    <View style = {styles.dateofreview}>
+                        <Text style = {styles.text}>Date of Review : </Text>
+                        <Text style = {styles.text}>{createdAt}</Text>
+                    </View>
+                    <View style = {styles.ratingscore}>
+                        <Text style = {styles.text}>Rating : </Text>
+                        <Rating
+                            ratingCount={5}
+                            imageSize={15}
+                            startingValue = {rating}
+                            readonly = {true}
+                            tintColor = {colors.brown}
+                        />
+                        <Text style = {styles.text}> {'(' + rating + '/5)'} </Text>
+                    </View>
+                </View>
             </View>
             <Text style = {styles.textcomment}>Comments :</Text>
              <TextInput style = {styles.commentbox} editable={false} multiline = {true} placeholder='Comment' placeholderTextColor={colors.white} value = {comment}/>
@@ -206,9 +215,23 @@ const styles = StyleSheet.create({
         fontFamily: "Montserrat-Black",
         textAlign: 'center',
     },
+
+    productinfocontainter : {
+        flexDirection: 'row',
+    },
     
     dateofreview : {
         flexDirection: 'row',
+    },
+
+    itemName : {
+        flexDirection: 'row',
+    },
+
+    image : {
+        width: 50,
+        height: 50,
+        marginRight: 5,
     },
 
     ratingscore : {
@@ -237,6 +260,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'Montserrat-Black',
         color: colors.white,
+        marginBottom: 3,
     },
 
     avgRatingBox: {

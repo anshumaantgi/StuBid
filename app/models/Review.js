@@ -1,11 +1,13 @@
 export default class Review {
 
-    constructor(auctionId, senderId, receiverId, rating, comment, createdTime) {
+    constructor(auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, createdTime) {
        this.auctionId = auctionId;
        this.senderId = senderId;
        this.receiverId = receiverId;
        this.rating = rating;
        this.comment = comment;
+       this.itemName = itemName;
+       this.pictureUri = pictureUri;
        this.createdAt = createdTime;
        this.updatedAt = createdTime;
 
@@ -18,6 +20,8 @@ export default class Review {
             receiverId : this.receiverId,
             rating : this.rating,
             comment: this.comment,
+            itemName: this.itemName,
+            pictureUri: this.pictureUri,
             createdAt : this.createdAt,
             updatedAt : this.updatedAt,
              };
