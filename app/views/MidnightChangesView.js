@@ -24,7 +24,7 @@ export default class MidnightChangesView {
         for (let i = 0; i < docSnaps.docs.length; i++) {
             const auction = docSnaps.docs[i].data()
             // Decreasing Active days by 1
-            createdAtMoment = moment(auction.createdAt , 'DD/MM/YYYY, HH:mm:ss')
+            createdAtMoment = moment(auction.product.createdAt , 'DD/MM/YYYY, HH:mm:ss')
             currMoment = moment(moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'), 'DD/MM/YYYY, HH:mm:ss')
             console.log(currMoment)
             console.log(createdAtMoment)

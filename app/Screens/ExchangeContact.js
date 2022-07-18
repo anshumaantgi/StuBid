@@ -25,7 +25,7 @@ const ExchangeContact= ({route, navigation}) => {
 
      //Auction ID from previous screen
      const aId = route.params.auctionId;
-
+    console.log(aId)
     //initialise state hook
     const [productdetails, setProductdetails] = useState('');
     const [userfullname, setUserfullname] = useState('');

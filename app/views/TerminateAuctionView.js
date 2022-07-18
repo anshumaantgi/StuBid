@@ -16,23 +16,24 @@ export default class TerminateAuctionView {
     }
 
     setMessages() {
-        this.sellerSoldMessage = "Congratualtions ! Your Product is succesully sold! ,  click here to check buyer details ! "+ 
+        this.sellerSoldMessage = "Congratualtions ! Your Product is succesully sold! Click here to check buyer details ! "+ 
         " or check the product listing on your profile page.";
-        this.sellerNotSoldMessage = "We're sorry we could not help you , your prodcut listing is successfully closed.";
-        this.sellerProductListingClosedMessage = "Your product listing is closed , and so auotmatically the Maximum Bidder is succesful .So, click here to check buyer details ! "+ 
+        this.sellerNotSoldMessage = "We're sorry we could not help you , your product listing is successfully closed.";
+        this.sellerProductListingClosedMessage = "Your product listing is closed , and so automatically the maximum bidder is succesful .Click here to check buyer details ! "+ 
         " or check the product listing on your profile page.";
-        this.buyerNotSuccessfulMessage = "Sorry to inform you but the product lisitng is closed , you've been outbidded.";
-        this.buyerSuccessfulMessage = "Congratulations ! You have successfully outbid Everyone , product is yours . Click here to check seller details " +
+        this.buyerNotSuccessfulMessage = "Sorry to inform you but the product listing is closed and you've been outbidded.";
+        this.buyerSuccessfulMessage = "Congratulations ! You have successfully outbid Everyone. Click here to check seller details " +
         " Or navigate to the product card on your profile page.";
     }
     async createNotification(userId, message) {
-        var notif = new Notification(userId, message, false, new Date().toLocaleString())
+        var notif = new Notification(userId, message, false, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'), this.auctionId)
         return await await addDoc(collection(db,'notifications'), notif.toFirestore())
     }
 
     async manageNotifications(isExpired, isBiddedOn , auctionObject, bidders) {
         this.setMessages()
         if ((!isExpired) && (isBiddedOn)) {
+            console.log("1")
             // send to Sender
             await this.createNotification(auctionObject.product.ownerId, this.sellerSoldMessage)
 
@@ -54,10 +55,12 @@ export default class TerminateAuctionView {
             }
         }
         else if (isExpired && !isBiddedOn) {
+            console.log("Here")
             // send to Sender
             await this.createNotification(auctionObject.product.ownerId, this.sellerNotSoldMessage)
 
         } else {
+            console.log("3")
             // send to Sender
             await this.createNotification(auctionObject.product.ownerId, this.sellerProductListingClosedMessage)
 
@@ -91,17 +94,17 @@ export default class TerminateAuctionView {
         this.auctionId = docId
         auctionObject = await getDoc(doc(db ,'auctions' ,this.auctionId ))
         auctionObject = auctionObject.data()
-        var isExpired = false;
-        var isBiddedOn = false;
+        let isExpired = false;
+        let isBiddedOn = false;
         var bidders = []
-        if (auctionObject.isEnding == 0) {
+        if (auctionObject.endingIn === 0) {
             isExpired = true;
         }
-        if (auctionObject.leadBuyerId != null) {
+        if (![undefined, null].includes(auctionObject.leadBuyerId)) {
             isBiddedOn = true;
             bidders = await this.getBidders(auctionObject);
         }
-        console.log(bidders)
+        
         await this.manageNotifications(isExpired, isBiddedOn,auctionObject, bidders)
         .then ( succ => console.log(succ))
         .catch ((err) => { throw new Error(err.message)})

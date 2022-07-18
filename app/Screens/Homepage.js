@@ -3,14 +3,17 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndic
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, } from "firebase/firestore"; 
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, documentId, } from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
 import MidnightChangesView from '../views/MidnightChangesView.js';
+import TerminateAuctionView from '../views/TerminateAuctionView.js';
 
 
 const Homepage = ({route, navigation}) => {
+    
+    
     let onEndReachedCalledDuringMomentum = false;
 
     //Define filter storage
@@ -179,6 +182,9 @@ const Homepage = ({route, navigation}) => {
     }
 
     const getMore = async () => {
+        await new TerminateAuctionView().closeListing("pnOy2vNfhlePIpJVQq9g")
+        await new TerminateAuctionView().closeListing("1RsP5lgfq3QQopw2TI37")
+        await new TerminateAuctionView().closeListing("PvbyolSx1w3W7ZtBCdAt")
         
 
         if (lastDoc) {
