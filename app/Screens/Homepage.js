@@ -173,8 +173,18 @@ const Homepage = ({route, navigation}) => {
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
-                newProducts.push(documentSnapshots.docs[i].data());
-               // console.log(newProducts);
+
+                //Do not push and display if bids duration exceeded
+                if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                        ongoing: false,
+                        updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+                    })
+                }
+                else {
+                    newProducts.push(documentSnapshots.docs[i].data());
+                }
+                //console.log(newProducts);
             }
 
             setProducts(newProducts);
@@ -234,7 +244,17 @@ const Homepage = ({route, navigation}) => {
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
-                newProducts.push(documentSnapshots.docs[i].data());
+            
+                //Do not push and display if bids duration exceeded
+                if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                        ongoing: false,
+                        updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+                    })
+                }
+                else {
+                    newProducts.push(documentSnapshots.docs[i].data());
+                }
                 //console.log(newProducts);
             }
 
@@ -346,7 +366,7 @@ const Homepage = ({route, navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt, auctionDocId, ongoing)} Days
+                            {checkDaysLeft(endingAt)} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -414,7 +434,7 @@ const Homepage = ({route, navigation}) => {
         )
     }
 
-    const checkDaysLeft = (endingDate, auctionDocId, ongoing) => {
+    const checkDaysLeft = (endingDate) => {
 
         var given = moment(endingDate, 'DD/MM/YYYY') ;
         var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
@@ -422,22 +442,7 @@ const Homepage = ({route, navigation}) => {
         //Difference in number of days
         var diffDays = moment.duration(given.diff(current)).asDays();
         //console.log(diffDays);
-        if (diffDays) {
-            return diffDays;
-        }
-        else
-        {
-            //Close and terminate auction
-            //return new TerminateAuctionView().closeListing(auctionDocId);
-            if(ongoing) {
-            updateDoc(doc(db ,'auctions', auctionDocId), { 
-                ongoing: false,
-                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
-            })
-            onRefresh();
-            }
-        
-        }
+        return diffDays;
     }
 
     return (
