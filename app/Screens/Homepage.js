@@ -119,6 +119,7 @@ const Homepage = ({route, navigation}) => {
             getProducts();
         });
        unsubscribe;
+
        return () => {
         setProducts([])// Reset changes
         setIsLoading(false);
@@ -345,7 +346,7 @@ const Homepage = ({route, navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt, auctionDocId)} Days
+                            {checkDaysLeft(endingAt, auctionDocId, ongoing)} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -413,7 +414,7 @@ const Homepage = ({route, navigation}) => {
         )
     }
 
-    const checkDaysLeft = (endingDate, auctionDocId) => {
+    const checkDaysLeft = (endingDate, auctionDocId, ongoing) => {
 
         var given = moment(endingDate, 'DD/MM/YYYY') ;
         var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
@@ -428,11 +429,14 @@ const Homepage = ({route, navigation}) => {
         {
             //Close and terminate auction
             //return new TerminateAuctionView().closeListing(auctionDocId);
+            if(ongoing) {
             updateDoc(doc(db ,'auctions', auctionDocId), { 
                 ongoing: false,
                 updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
             })
-            return onRefresh();
+            onRefresh();
+            }
+        
         }
     }
 

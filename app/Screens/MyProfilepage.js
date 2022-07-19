@@ -7,6 +7,7 @@ import { auth , db} from '../config/config.js';
 import { TextInput } from 'react-native-gesture-handler';
 import moment from "moment-timezone";
 import { StackActions } from '@react-navigation/native';
+import { AsyncStorage } from 'react-native';
 
 const MyProfilepage = ({navigation}) => {
     let onEndReachedCalledDuringMomentum = false;
@@ -19,8 +20,7 @@ const MyProfilepage = ({navigation}) => {
     const [userbio, setUserBio] = useState('');
 
     //initialise tabchange
-    const [tabchange, setTabchange] = useState([true,false,false,false]);
-    const [checkchange, setCheckchange] = useState(null); // purpose is to update the page without lagging the step by 1
+    const [tabchange, setTabchange] = useState( tabchange || [true,false,false,false]);
 
      //initialise loading state hook
      const [isLoading, setIsLoading] = useState(false);
@@ -95,18 +95,26 @@ const MyProfilepage = ({navigation}) => {
         });
     }
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            AsyncStorage.getItem('tabchanges', (err, value) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    setTabchange(JSON.parse(value)) // boolean false
+                }
+            })
+        
+            getProducts();
+        });
+       unsubscribe;
+
+    }, [navigation]);
 
     useEffect(() => {
         getprofileinfo();
-        setCheckchange(tabchange)
         getProducts();
-
-        return () => {
-            setProducts([])// Reset changes
-            setIsLoading(false);
-            setIsMoreLoading(false);
-            setLastDoc(null);
-          };
+        AsyncStorage.setItem('tabchanges', JSON.stringify(tabchange))
     }, [tabchange]);
 
     
@@ -326,10 +334,10 @@ const MyProfilepage = ({navigation}) => {
                     </View>
                     <View style = {styles.activedaycontainer}>
                         <Text style = {styles.activeday}>
-                           {checkDaysLeft(endingAt, auctionDocId) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
+                           {checkDaysLeft(endingAt, auctionDocId, ongoing) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt, auctionDocId) && ongoing ? checkDaysLeft(endingAt, auctionDocId) + ' Days': updatedAt.substring(0,10)} 
+                            {checkDaysLeft(endingAt, auctionDocId, ongoing) && ongoing ? checkDaysLeft(endingAt, auctionDocId, ongoing) + ' Days': updatedAt.substring(0,10)} 
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -397,7 +405,7 @@ const MyProfilepage = ({navigation}) => {
         )
     }
 
-    const checkDaysLeft = (endingDate, auctionDocId) => {
+    const checkDaysLeft = (endingDate, auctionDocId, ongoing) => {
 
         var given = moment(endingDate, 'DD/MM/YYYY') ;
         var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
@@ -405,6 +413,7 @@ const MyProfilepage = ({navigation}) => {
         //Difference in number of days
         var diffDays = moment.duration(given.diff(current)).asDays();
         //console.log(diffDays);
+           
         if (diffDays) {
             return diffDays;
         }
@@ -412,13 +421,15 @@ const MyProfilepage = ({navigation}) => {
         {
             //Close and terminate auction
             //return new TerminateAuctionView().closeListing(auctionDocId);
-            updateDoc(doc(db ,'auctions', auctionDocId), { 
-                ongoing: false,
-                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
-            })
-
-            
+            if (ongoing) {
+                updateDoc(doc(db ,'auctions', auctionDocId), { 
+                    ongoing: false,
+                    updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+                })
+                onRefresh();
+            }
         }
+        
     }
 
     return (

@@ -293,13 +293,13 @@ const EditProduct = ({route, navigation}) => {
 
         //in auction, update curr price ONLY if users has not bid yet.
         if (!enteredbiddingdocId.length) {
-          updateDoc(doc(db ,'auctions',enteredauctiondocId), { 
+          await updateDoc(doc(db ,'auctions',enteredauctiondocId), { 
             'currPrice' : parseInt(enteredstartingprice),
           })
         }
       
         //in auction, update rest of the fields
-      return updateDoc(doc(db ,'auctions',enteredauctiondocId), { 
+      return await updateDoc(doc(db ,'auctions',enteredauctiondocId), { 
         'product.pictureUri' : url,
         'product.name' : entereditemname,
         'product.description' : entereditemdesc,
@@ -318,20 +318,20 @@ const EditProduct = ({route, navigation}) => {
     async function sendDeleteValues(enteredauctiondocId, enteredbiddingdocId) {
         console.log('item deleted from auction', enteredauctiondocId);
         console.log('item deleted from bids', enteredbiddingdocId, enteredbiddingdocId.length);
-        deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
+        await deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
         if (enteredbiddingdocId.length) {
             for (let i = 0; i < enteredbiddingdocId.length; i++) {
-                deleteDoc(doc(db ,'bids', enteredbiddingdocId[i])); //Delete from bids
+                await deleteDoc(doc(db ,'bids', enteredbiddingdocId[i])); //Delete from bids
               }
         }
          // Deleted the product image from storage
          const deleteRef = ref(storage, "products-image/" + aId + '.png');
           // Delete the file
-          deleteObject(deleteRef).then(() => {
+          await deleteObject(deleteRef).then(() => {
             // File deleted successfully
           }).catch((error) => {
             // Error thrown to be show to the user
-            throw new Error(e.message);
+            throw new Error(error.message);
     });
     }
 

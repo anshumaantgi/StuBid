@@ -77,23 +77,24 @@ const ExchangeContact= ({route, navigation}) => {
     //Send delete values to delete item if product terminated prematurely without any bidders
     async function sendDeleteValues(enteredauctiondocId) {
         console.log('item deleted from auction', enteredauctiondocId);
-        deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
+
+        await deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
 
          // Deleted the product image from storage
          const deleteRef = ref(storage, "products-image/" + aId + '.png');
           // Delete the file
-          deleteObject(deleteRef).then(() => {
+         await deleteObject(deleteRef).then(() => {
             // File deleted successfully
           }).catch((error) => {
             // Error thrown to be show to the user
-            throw new Error(e.message);
+            throw new Error(error.message);
     });
     }
 
 
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
-        var itemdetails = null;
+        var itemdetails = '';
         var dId = '';
         const q = query(productRef, where("auctionId", "==", aId));
         //const querySnapshot = await getDocs(q);
