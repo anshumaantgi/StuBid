@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     customBtnBG: {
       width: '80%',
       marginTop: 20,
-      backgroundColor: colors.darkbrown,
+      backgroundColor: colors.red,
       paddingVertical: 15,
       borderRadius: 5,
       alignSelf: "center",
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
         width: '80%',
         marginTop: 10,
         marginBottom: 100,
-        backgroundColor: colors.green,
+        backgroundColor: colors.darkbrown,
         paddingVertical: 15,
         borderRadius: 5,
         alignSelf: "center",

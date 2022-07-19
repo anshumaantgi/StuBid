@@ -17,7 +17,7 @@ const DeleteItemSuccess = ({navigation}) => {
           
           <View style={{flexDirection: 'row'}}>
                 <Text style={styles.returnlogintext}>Return to Homepage? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("MainContainer")}>
+                <TouchableOpacity onPress={() => navigation.replace("MainContainer")}>
                     <Text style ={styles.logintext}>Homepage</Text>
                 </TouchableOpacity>
             </View>

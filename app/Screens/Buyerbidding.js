@@ -7,12 +7,12 @@ import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where, 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
+import moment from "moment-timezone";
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import TerminateAuctionView from '../views/TerminateAuctionView.js'
 
-import moment from "moment-timezone";
 
 const Buyerbidding = ({route, navigation}) => {
 
@@ -56,10 +56,11 @@ const Buyerbidding = ({route, navigation}) => {
         updateDoc(doc(db ,'auctions',entereddocId), { 
             currPrice: enteredbuyoutprice,
             leadBuyerId: enteredbuyerId,
+            ongoing: false,
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
 
-        return new TerminateAuctionView().closeListing(docId)
+       //return new TerminateAuctionView().closeListing(docId)
 
 
     }
@@ -289,6 +290,28 @@ const Buyerbidding = ({route, navigation}) => {
         );
       }
 
+      const checkDaysLeft = (endingDate, auctionDocId) => {
+
+        var given = moment(endingDate, 'DD/MM/YYYY') ;
+        var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
+        
+        //Difference in number of days
+        var diffDays = moment.duration(given.diff(current)).asDays();
+        //console.log(diffDays);
+        if (diffDays) {
+            return diffDays;
+        }
+        else
+        {
+            //Close and terminate auction
+            //return new TerminateAuctionView().closeListing(auctionDocId);
+            updateDoc(doc(db ,'auctions', auctionDocId), { 
+                ongoing: false,
+                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+            })
+        }
+    }
+
     return (<View>
             <FlatList
                 removeClippedSubviews={false}
@@ -343,10 +366,10 @@ const Buyerbidding = ({route, navigation}) => {
                         </View>
                         <View style = {styles.activedaycontainer}>
                             <Text style = {styles.activeday}>
-                                Bid Ending in:
+                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
                             </Text>
                             <Text style = {styles.activedaytext}>
-                                {productdetails.product.activeDays} Days
+                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing ? checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) + ' Days': productdetails.updatedAt} 
                             </Text>
                         </View>
                         </View>
@@ -377,7 +400,11 @@ const Buyerbidding = ({route, navigation}) => {
                     <View style = {styles.buttoncontainer}>
                     <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
                        //alert("Buy item")
-                       if (!(productdetails.ongoing)) {
+
+                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                        alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
+                       }
+                       else if (!(productdetails.ongoing)) {
                         alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
                        }
                        else {
@@ -389,7 +416,11 @@ const Buyerbidding = ({route, navigation}) => {
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
                        //alert("Bid item")
-                       if (!(productdetails.ongoing)) {
+                       
+                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                        alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
+                       }
+                       else if (!(productdetails.ongoing)) {
                         alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
                        }
                        else if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
@@ -497,6 +528,7 @@ const Buyerbidding = ({route, navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
                             toggleModal2();
+                            setUserbidprice('');
                         }}>
                         <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
                         </TouchableOpacity>

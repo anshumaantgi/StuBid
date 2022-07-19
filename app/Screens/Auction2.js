@@ -72,11 +72,10 @@ const Auction2 = ({route, navigation}) => {
       const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, animals] }); // big_donkey
 
       //Retrieve start date
-      const startdate = new Date().toLocaleDateString();
+      const startdate =  moment().tz('Singapore').format('DD/MM/YYYY')
 
       //Retrieve end date
-      const newdate = new Date(new Date().getTime()+(value2*24*60*60*1000));
-      const endbiddate = newdate.toLocaleDateString();
+      const endbiddate =  moment().add(value2, 'days').tz('Singapore').format('DD/MM/YYYY') //to display on app
 
       const displayendbiddate = () => {
         if (value2 === null) {
@@ -126,7 +125,7 @@ const Auction2 = ({route, navigation}) => {
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
-            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,counter,parseInt(enteredbidduration),SellerAnonymousName)
+            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,counter,parseInt(enteredbidduration),SellerAnonymousName, enteredendbid)
           }
     };
     

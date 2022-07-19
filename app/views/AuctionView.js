@@ -22,7 +22,7 @@ export default class AuctionView {
         
     }
 
-    async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName) {
+    async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName, endbiddate) {
 
         // Adding Product Feilds
         this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
@@ -33,11 +33,10 @@ export default class AuctionView {
         // Adding thr Download link to Product class
         this.product.pictureUri = url;
         
+        let docRef = doc(collection(db, "auctions"))
+        newAuction = new Auction(auctionId, docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate);
+        await setDoc(docRef, newAuction.toFirestore());
 
-        
-
-        newAuction = new Auction(auctionId,minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(),this.product.activeDays);
-        await addDoc(collection(db, "auctions") , newAuction.toFirestore());
     } catch (e) {
         // Deleted the product , assocaited with the auction if Auction not sotred in database
         const deleteRef = ref(storage, "products-image/" + auctionId + '.png');

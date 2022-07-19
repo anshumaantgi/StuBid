@@ -2,9 +2,10 @@ import React, {useState, useEffect, Profiler} from 'react';
 import {View, ScrollView, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndicator, RefreshControl} from 'react-native';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, doc, getDoc, onSnapshot} from "firebase/firestore"; 
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore"; 
 import { auth , db} from '../config/config.js';
 import { TextInput } from 'react-native-gesture-handler';
+import moment from "moment-timezone";
 import { StackActions } from '@react-navigation/native';
 
 const MyProfilepage = ({navigation}) => {
@@ -99,7 +100,16 @@ const MyProfilepage = ({navigation}) => {
         getprofileinfo();
         setCheckchange(tabchange)
         getProducts();
+
+        return () => {
+            setProducts([])// Reset changes
+            setIsLoading(false);
+            setIsMoreLoading(false);
+            setLastDoc(null);
+          };
     }, [tabchange]);
+
+    
 
     async function mybidTabpressed() {
         setTabchange([true,false,false,false])
@@ -229,7 +239,7 @@ const MyProfilepage = ({navigation}) => {
 
     }
 
-      const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId,endingIn}) => {
+      const renderList = ({auctionId, auctionDocId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, updatedAt, endingAt}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];
@@ -316,10 +326,10 @@ const MyProfilepage = ({navigation}) => {
                     </View>
                     <View style = {styles.activedaycontainer}>
                         <Text style = {styles.activeday}>
-                            Bid Ending in:
+                           {checkDaysLeft(endingAt, auctionDocId) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {endingIn} Days
+                            {checkDaysLeft(endingAt, auctionDocId) && ongoing ? checkDaysLeft(endingAt, auctionDocId) + ' Days': updatedAt.substring(0,10)} 
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -355,7 +365,7 @@ const MyProfilepage = ({navigation}) => {
                                     ? 'Continue Bid'
                                     : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                     ? 'Place a Bid'
-                                    : 'View Contact'
+                                    : 'View Listing'
 
                                 }
                                 </Text>
@@ -385,6 +395,30 @@ const MyProfilepage = ({navigation}) => {
                 <Text style = {styles.alertnotice}>There are currently no products in this section.</Text>
             </View>
         )
+    }
+
+    const checkDaysLeft = (endingDate, auctionDocId) => {
+
+        var given = moment(endingDate, 'DD/MM/YYYY') ;
+        var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
+        
+        //Difference in number of days
+        var diffDays = moment.duration(given.diff(current)).asDays();
+        //console.log(diffDays);
+        if (diffDays) {
+            return diffDays;
+        }
+        else
+        {
+            //Close and terminate auction
+            //return new TerminateAuctionView().closeListing(auctionDocId);
+            updateDoc(doc(db ,'auctions', auctionDocId), { 
+                ongoing: false,
+                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+            })
+
+            
+        }
     }
 
     return (

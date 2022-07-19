@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndicator, RefreshControl} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndicator, RefreshControl, Alert} from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where, onSnapshot, updateDoc,} from "firebase/firestore"; 
+import { collection, query, orderBy, getDoc, getDocs, getFirestore, doc, where, onSnapshot, updateDoc, deleteDoc} from "firebase/firestore"; 
+import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebase/storage';
+import { StackActions } from '@react-navigation/native';
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
@@ -44,6 +46,7 @@ const ExchangeContact= ({route, navigation}) => {
 
     // Firestore setup
     const db = getFirestore();
+    const storage = getStorage();
     const productRef = collection(db, 'auctions'); 
     const reviewRef = collection(db, 'reviews');
 
@@ -71,6 +74,23 @@ const ExchangeContact= ({route, navigation}) => {
         
     }
 
+    //Send delete values to delete item if product terminated prematurely without any bidders
+    async function sendDeleteValues(enteredauctiondocId) {
+        console.log('item deleted from auction', enteredauctiondocId);
+        deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
+
+         // Deleted the product image from storage
+         const deleteRef = ref(storage, "products-image/" + aId + '.png');
+          // Delete the file
+          deleteObject(deleteRef).then(() => {
+            // File deleted successfully
+          }).catch((error) => {
+            // Error thrown to be show to the user
+            throw new Error(e.message);
+    });
+    }
+
+
     // Retrieve product details from firestore via AuctionId
     const getproductlisting = async() => {
         var itemdetails = null;
@@ -87,7 +107,11 @@ const ExchangeContact= ({route, navigation}) => {
         setProductdetails(itemdetails);
         setDocId(dId);
        //check if product selling is buyer or seller. If seller, get userinfo for buyers. If buyer, get userinfo for sellers
+
+       if (itemdetails.leadBuyerId) { // assign only if there is leadBuyer NOT when there are termination prematurely without bidders if bid duration ends
         itemdetails.product.ownerId == auth.currentUser.uid ? getuserinfo(itemdetails.leadBuyerId) : getuserinfo(itemdetails.product.ownerId)
+       }
+
     });
     }
 
@@ -184,6 +208,15 @@ const ExchangeContact= ({route, navigation}) => {
         return () => {
             setProductdetails(''); // Reset changes
             setReviewdetails('');
+            setUserfullname('');
+            setUseremail('');
+            setUseruni('');
+            setUserhp('');
+            setUserBio('');
+            setUserid('');
+            setUserrating(0);
+            setUsercomments('');
+            setDocId('');
           };
     }, []);
 
@@ -237,6 +270,32 @@ const ExchangeContact= ({route, navigation}) => {
         return category; 
     }
 
+    //Delete confirmation Dialogue Box
+   const showConfirmDialog = () => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to delete this item from the listing?",
+      [
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: () => {
+            
+             sendDeleteValues(docId)
+                .then((success) =>  {
+                    navigation.navigate('DeleteItemSuccess');
+                })
+                .catch((error) => {alert(error.message)})
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+      ]
+    );
+  };
     
 
     return (
@@ -284,11 +343,24 @@ const ExchangeContact= ({route, navigation}) => {
                         </View>
                         </View>
                     </View>
+                    {!productdetails.leadBuyerId ?
+                    <>
+                         <Text style = {styles.alertnotice}>Product has terminated as Bid Duration has ended and there are no ongoing bidders. Please delete the item and upload a brand new auction.</Text>
+                         <TouchableOpacity style = {styles.DELETEcustomBtnBG} onPress={() => {
+                           
+                                //alert("DELETE item")
+                                showConfirmDialog();
 
+                            }}> 
+                            <Text style ={styles.DELETEcustomBtnText}>Delete Item</Text>
+                    </TouchableOpacity>
+                    </> 
+                    :
+                    <>
                     <Text style = {styles.currentbid}>Contact Information:</Text>
                     <View style = {styles.contactinfocontainer}>
                         <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
-                            <Text style = {styles.contactinfodesc}>Status: </Text>
+                            <Text style = {styles.contactinfodesc}>Role: </Text>
                             <Text style = {styles.contactinfotext}>{productdetails.product.ownerId == auth.currentUser.uid ? 'Buyer/Bidder' : 'Seller'}</Text>
                         </View>
                         <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
@@ -312,7 +384,8 @@ const ExchangeContact= ({route, navigation}) => {
                             <Text style = {styles.contactinfodesc}>{'Personal Bio (if provided):'} </Text>
                             <Text style = {styles.contactinfotext}>{userbio}</Text>
                         </View>
-                    </View>
+                    </View> 
+
                     <TouchableOpacity style = {styles.LARcustomBtnBG} onPress={() => {
                         //alert("Leave a Review")
                         if (reviewdetails) {
@@ -378,9 +451,9 @@ const ExchangeContact= ({route, navigation}) => {
                             </TouchableOpacity>
                             </View>
                         </ScrollView>
-                    </Modal>
-                
-            </View>
+                    </Modal> 
+                    </> }
+            </View>  
           
                     </ScrollView> 
 
@@ -772,6 +845,30 @@ const styles = StyleSheet.create({
         color: colors.white,
         alignSelf: 'center',
     },
+
+    DELETEcustomBtnText: {
+        fontSize: 24,
+        fontFamily: 'Montserrat-Black',
+        color: colors.white,
+        textAlign: "center",
+      },
+  
+    DELETEcustomBtnBG: {
+        width: '80%',
+        marginTop: 20,
+        marginBottom: 50,
+        backgroundColor: colors.black,
+        paddingVertical: 15,
+        borderRadius: 5,
+        alignSelf: "center",
+      },
+
+    alertnotice :{
+        color: colors.red,
+        fontFamily: 'Montserrat-Black',
+        textAlign: 'center',
+        marginTop: 100,
+    }
 })
 
 export default ExchangeContact;

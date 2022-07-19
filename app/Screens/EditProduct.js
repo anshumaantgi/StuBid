@@ -103,8 +103,6 @@ const EditProduct = ({route, navigation}) => {
             
              sendDeleteValues(auctiondocId, biddingdocId)
                 .then((success) =>  {
-                    const popAction = StackActions.pop(2);
-                    navigation.dispatch(popAction);
                     navigation.navigate('DeleteItemSuccess');
                 })
                 .catch((error) => {alert(error.message)})
@@ -217,11 +215,10 @@ const EditProduct = ({route, navigation}) => {
     }
 
      //Retrieve start date
-     const startdate = new Date().toLocaleDateString();
+     const startdate =  moment().tz('Singapore').format('DD/MM/YYYY')
 
      //Retrieve end date
-     const newdate = new Date(new Date().getTime()+(value2*24*60*60*1000));
-     const endbiddate = newdate.toLocaleDateString();
+     const endbiddate =  moment().add(value2, 'days').tz('Singapore').format('DD/MM/YYYY') //to display on app
 
      const displayendbiddate = () => {
        if (value2 === null) {
@@ -230,7 +227,6 @@ const EditProduct = ({route, navigation}) => {
          return endbiddate;
        }
      }
-
   
 
   useEffect(() => {
@@ -313,6 +309,7 @@ const EditProduct = ({route, navigation}) => {
         'product.buyPrice' : parseInt(enteredbuyoutprice),
         'product.updatedAt' : moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
         'product.createdAt' : moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
+        'endingAt' : endbiddate,
     })
 
     }   

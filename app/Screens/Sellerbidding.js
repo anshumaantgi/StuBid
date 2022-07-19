@@ -45,7 +45,12 @@ const Sellerbidding = ({route, navigation}) => {
         toggleModal();// close the dialog box
 
         //Terminate Auction , cuz seller is accepting the Bid
-        return new TerminateAuctionView().closeListing(docId)
+        updateDoc(doc(db ,'auctions',entereddocId), { 
+            ongoing: false,
+            updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+        })
+        
+        //return new TerminateAuctionView().closeListing(docId)
         
     }
 
@@ -242,6 +247,28 @@ const Sellerbidding = ({route, navigation}) => {
         );
       }
 
+      const checkDaysLeft = (endingDate, auctionDocId) => {
+
+        var given = moment(endingDate, 'DD/MM/YYYY') ;
+        var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
+        
+        //Difference in number of days
+        var diffDays = moment.duration(given.diff(current)).asDays();
+        //console.log(diffDays);
+        if (diffDays) {
+            return diffDays;
+        }
+        else
+        {
+            //Close and terminate auction
+            //return new TerminateAuctionView().closeListing(auctionDocId);
+            updateDoc(doc(db ,'auctions', auctionDocId), { 
+                ongoing: false,
+                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+            })
+        }
+    }
+
     
 
     return (
@@ -297,10 +324,10 @@ const Sellerbidding = ({route, navigation}) => {
                         </View>
                         <View style = {styles.activedaycontainer}>
                             <Text style = {styles.activeday}>
-                                Bid Ending in:
+                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
                             </Text>
                             <Text style = {styles.activedaytext}>
-                                {productdetails.product.activeDays} Days
+                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing ? checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) + ' Days': productdetails.updatedAt} 
                             </Text>
                         </View>
                         </View>
@@ -328,7 +355,11 @@ const Sellerbidding = ({route, navigation}) => {
                     <View>
                         <View style = {styles.buttoncontainer}>
                         <TouchableOpacity style = {styles.EDITcustomBtnBG} onPress={() => {
-                        if (!(productdetails.ongoing)) {
+
+                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                            alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
+                        }
+                        else if (!(productdetails.ongoing)) {
                             alert("Someone has just bought out your item! You can now exchange contact with the buyer!")
                         }
                         else { 
@@ -340,7 +371,10 @@ const Sellerbidding = ({route, navigation}) => {
                     </TouchableOpacity>
                     <TouchableOpacity style = {styles.ACCBIDcustomBtnBG} onPress={() => {
                         //alert("Accept a Bid")
-                        if (!(productdetails.ongoing)) {
+                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                            alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
+                        }
+                        else if (!(productdetails.ongoing)) {
                             alert("Someone has just bought out your item! You can now exchange contact with the buyer!")
                         }
                         else if (!latestbidder) {

@@ -3,11 +3,12 @@ import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList, ActivityIndic
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, } from "firebase/firestore"; 
+import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, startAt, endAt, where, doc, updateDoc} from "firebase/firestore"; 
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
-import MidnightChangesView from '../views/MidnightChangesView.js';
+import TerminateAuctionView from '../views/TerminateAuctionView.js'
+import moment from "moment-timezone";
 
 
 const Homepage = ({route, navigation}) => {
@@ -117,7 +118,14 @@ const Homepage = ({route, navigation}) => {
         const unsubscribe = navigation.addListener('focus', () => {
             getProducts();
         });
-       return unsubscribe;
+       unsubscribe;
+       return () => {
+        setProducts([])// Reset changes
+        setIsLoading(false);
+        setIsMoreLoading(false);
+        setLastDoc(null);
+        setSearch('');
+      };
     }, [navigation]);
 
     const getProducts = async () => {
@@ -244,7 +252,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId,endingIn}) => {
+    const renderList = ({auctionId, auctionDocId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, endingAt}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];
@@ -337,7 +345,7 @@ const Homepage = ({route, navigation}) => {
                             Bid Ending in:
                         </Text>
                         <Text style = {styles.activedaytext}>
-                            {endingIn} Days
+                            {checkDaysLeft(endingAt, auctionDocId)} Days
                         </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
@@ -373,7 +381,7 @@ const Homepage = ({route, navigation}) => {
                                     ? 'Continue Bid'
                                     : (auth.currentUser.uid != product.ownerId && !(allBiddersId.includes(auth.currentUser.uid)) && ongoing)
                                     ? 'Place a Bid'
-                                    : 'View Contact'
+                                    : 'View Listing'
 
                                 }
                                 </Text>
@@ -403,6 +411,29 @@ const Homepage = ({route, navigation}) => {
                 <Text style = {styles.alertnotice}>There are currently no products found. Please Refresh or Clear Filter and try again.</Text>
             </View>
         )
+    }
+
+    const checkDaysLeft = (endingDate, auctionDocId) => {
+
+        var given = moment(endingDate, 'DD/MM/YYYY') ;
+        var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
+        
+        //Difference in number of days
+        var diffDays = moment.duration(given.diff(current)).asDays();
+        //console.log(diffDays);
+        if (diffDays) {
+            return diffDays;
+        }
+        else
+        {
+            //Close and terminate auction
+            //return new TerminateAuctionView().closeListing(auctionDocId);
+            updateDoc(doc(db ,'auctions', auctionDocId), { 
+                ongoing: false,
+                updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
+            })
+            return onRefresh();
+        }
     }
 
     return (
