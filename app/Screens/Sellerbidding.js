@@ -40,7 +40,7 @@ const Sellerbidding = ({route, navigation}) => {
     const productRef = collection(db, 'auctions'); 
 
      //Send Sellout details to Firestore
-     async function sendselloutvalues(entereddocId, enteredbuyerId) {
+     async function sendselloutvalues(entereddocId, enteredbuyerId, enteredallbidders) {
         toggleModal();// close the dialog box
 
         //Terminate Auction , cuz seller is accepting the Bid
@@ -49,7 +49,18 @@ const Sellerbidding = ({route, navigation}) => {
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
 
-        return new NotificationView().createNotification(enteredbuyerId, "Congratulations! You have successfully won the auction. Click here to view Seller's Contact Information", docId);
+        //Send Buyer successful auction message
+        new NotificationView().createNotification(enteredbuyerId, "Congratulations! Seller has accepted your bid and you have successfully won the auction. Click here to view Seller's Contact Information", docId);
+
+        //Send to all other unsuccessful buyers (if there are other bidders)
+        if (enteredallbidders) {
+            for (let i = 0; i < enteredallbidders.length; i++) {
+                if (enteredallbidders[i] != enteredbuyerId) {
+                new NotificationView().createNotification(enteredallbidders[i], "We're sorry to inform you that the product listing is closed and you've been outbidded.", docId);
+                }
+            }
+        }
+
     }
 
     // Retrieve product details from firestore via AuctionId
@@ -434,7 +445,7 @@ const Sellerbidding = ({route, navigation}) => {
                             <View style = {styles.SELLcontainer}>
                             <TouchableOpacity style = {styles.ACCEPTcustomBtnBG} onPress={() => {
                                 //alert("Accept Bid")
-                                sendselloutvalues(docId, latestbidder.bidderId)
+                                sendselloutvalues(docId, latestbidder.bidderId, productdetails.allBiddersId)
                                 .then((success) =>  {navigation.navigate('SelloutSuccess', {aId, latestbidder})})
                                 .catch((error) => {alert(error.message)})
                             }}> 

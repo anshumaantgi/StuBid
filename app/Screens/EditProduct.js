@@ -14,6 +14,7 @@ import moment from "moment-timezone";
 import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebase/storage';
 import { StackActions } from '@react-navigation/native';
 import * as ImageManipulator from 'expo-image-manipulator';
+import NotificationView from '../views/NotificationView.js';
 
 
 const EditProduct = ({route, navigation}) => {
@@ -101,7 +102,7 @@ const EditProduct = ({route, navigation}) => {
           text: "Yes",
           onPress: () => {
             
-             sendDeleteValues(auctiondocId, biddingdocId)
+             sendDeleteValues(auctiondocId, biddingdocId, productdetails.allBiddersId, productdetails.anomName, productdetails.product.name)
                 .then((success) =>  {
                     navigation.navigate('DeleteItemSuccess');
                 })
@@ -315,7 +316,7 @@ const EditProduct = ({route, navigation}) => {
     }   
 };
 
-    async function sendDeleteValues(enteredauctiondocId, enteredbiddingdocId) {
+    async function sendDeleteValues(enteredauctiondocId, enteredbiddingdocId, enteredallbidders, enteredanomSeller, entereditemname) {
         console.log('item deleted from auction', enteredauctiondocId);
         console.log('item deleted from bids', enteredbiddingdocId, enteredbiddingdocId.length);
         await deleteDoc(doc(db ,'auctions', enteredauctiondocId)); //Delete from auctions
@@ -332,7 +333,16 @@ const EditProduct = ({route, navigation}) => {
           }).catch((error) => {
             // Error thrown to be show to the user
             throw new Error(error.message);
-    });
+          });
+
+
+        //Notify deleted product to other buyers (if there are current ongoing existing bidders)
+        if (enteredallbidders) {
+          for (let i = 0; i < enteredallbidders.length; i++) {
+              new NotificationView().createNotification(enteredallbidders[i], "We're sorry to inform you that " + enteredanomSeller + " has closed the product listing of " + entereditemname + ".", enteredauctiondocId);
+          }
+        }
+
     }
 
     async function uploadImage (uri , pictureName) {

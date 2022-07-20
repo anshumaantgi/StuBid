@@ -1,4 +1,4 @@
-import { getDoc, addDoc,doc, collection, updateDoc, where, query, getDocs } from "firebase/firestore";
+import { getDoc, addDoc,doc, collection, updateDoc, where, setDoc, getDocs } from "firebase/firestore";
 import { NumberDictionary } from "unique-names-generator";
 import Notification from "../models/Notification";
 import { db } from "../config/config";
@@ -10,9 +10,12 @@ export default class NotificationView {
     }
 
     async createNotification(userId, message, auctionDocId) {
-        this.auctionId = auctionDocId;
-        var notif = new Notification(userId, message, false, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'), this.auctionId)
-        return await addDoc(collection(db,'notifications'), notif.toFirestore()).then (
+
+       
+        this.auctionId = auctionDocId; 
+        let docRef = doc(collection(db, "notifications"))
+        var notif = new Notification(docRef.id, userId, message, false, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'), this.auctionId)
+        return await setDoc(docRef, notif.toFirestore()).then (
             (success) => {
                 // Update Notification to firestore
             }

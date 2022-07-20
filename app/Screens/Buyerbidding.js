@@ -50,7 +50,7 @@ const Buyerbidding = ({route, navigation}) => {
     
     //Send buyout details to Firestore
 
-    async function sendbuyoutvalues(enteredsellerId, enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
+    async function sendbuyoutvalues(enteredallbidders, enteredsellerId, enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
         toggleModal(); // close the dialog box
         //in auction, update currprice to buyout price, leading buyer to buyout buyer, ongoing to false, update time
         updateDoc(doc(db ,'auctions',entereddocId), { 
@@ -60,13 +60,23 @@ const Buyerbidding = ({route, navigation}) => {
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
 
-        return new NotificationView().createNotification(enteredsellerId, "Congratulations! Your Product has been sold! Click here to view Buyer's Contact Information.", docId);
+        //Send Seller successful buyout message
+        new NotificationView().createNotification(enteredsellerId, "Congratulations! Your Product has been bought out by a bidder! Click here to view Buyer's Contact Information.", docId);
+
+        //Send to all other unsuccessful buyers (if there are other bidders)
+        if (enteredallbidders) {
+            for (let i = 0; i < enteredallbidders.length; i++) {
+                if (enteredallbidders[i] != enteredbuyerId) {
+                new NotificationView().createNotification(enteredallbidders[i], "We're sorry to inform you that the product listing is closed and you've been outbidded.", docId);
+                }
+            }
+        }
 
     }
 
 
     //Send user bid details to Firestore
-    async function senduserbidvalues(enteredbidId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
+    async function senduserbidvalues(enteredbidId, enteredsellerId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
         var allBiddersId = [];
         if (productdetails.allBiddersId)
         {
@@ -83,8 +93,19 @@ const Buyerbidding = ({route, navigation}) => {
             throw new Error("Please bid lower than the maximum bidding price!");
         }   
         else {
-            allBiddersId.push(enteredbuyerId);
+
+            //check if bidder ID already inside allbiddersId. Prevent duplication of ID in allbiddersId
+            if (!allBiddersId.includes(enteredbuyerId))
+            {
+                allBiddersId.push(enteredbuyerId);
+            }
+           
             toggleModal2();
+
+            //Send Seller successful bidding message
+            new NotificationView().createNotification(enteredsellerId, "Congratulations! Someone has bidded your item for $" + enteredbidPrice + "! Click here to view the bids placed.", docId);
+
+            //Send bids to firestore
             return await new BidCreateView(auth).createBid(new Bid(parseInt(enteredbidId), enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')), entereddocId, allBiddersId)
         }
     }
@@ -457,7 +478,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Confirm Buy item")
-                            sendbuyoutvalues(productdetails.product.ownerId, auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
+                            sendbuyoutvalues(productdetails.allBiddersId, productdetails.product.ownerId, auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
                             .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, buyout : productdetails.product.buyPrice});})
                             .catch((error) => {alert(error.message)})
                         }}> 
@@ -519,7 +540,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Bid is placed!")
-                            senduserbidvalues(id, auth.currentUser.uid, aId, docId, userbidprice, randomName)
+                            senduserbidvalues(id, productdetails.product.ownerId, auth.currentUser.uid, aId, docId, userbidprice, randomName)
                             .then((success) =>  {navigation.navigate('BidSuccess', {aId, userbidprice});})
                             .catch((error) => {alert(error.message)})
                         }}> 

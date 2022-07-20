@@ -16,6 +16,7 @@ import moment from "moment-timezone";
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import Review from '../models/Review.js';
 import ReviewView from '../views/ReviewView.js';
+import NotificationView from '../views/NotificationView.js';
 
    
 const ExchangeContact= ({route, navigation}) => {
@@ -67,10 +68,13 @@ const ExchangeContact= ({route, navigation}) => {
         console.log(receiver)
         console.log(aId)
 
+        //Send the other party receiver that you have left a review
+        new NotificationView().createNotification(receiver, "Hurray! Someone has left you a review for this item!", docId);
+
          /** 
          * Functions Sends Values to the Functional Class Review View
          */
-          return await new ReviewView(db, auth).createReview(aId, sender, receiver, entereduserrating, enteredusercomments, entereditemName, enteredpictureUri);
+        return await new ReviewView(db, auth).createReview(aId, sender, receiver, entereduserrating, enteredusercomments, entereditemName, enteredpictureUri);
         
     }
 

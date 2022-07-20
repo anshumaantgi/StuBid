@@ -11,7 +11,7 @@ const Notificationpage = ({navigation}) => {
 
     //notifications
     const [isLoading, setIsLoading] = useState(false);
-    const [notifications, setNotifications] = useState({});
+    const [notifications, setNotifications] = useState([]);
     const [products, setProducts] = useState({});
     const [notifDocIds, setNotifDocIds] = useState({});
     const {width, height} = Dimensions.get('window');
@@ -36,11 +36,11 @@ const Notificationpage = ({navigation}) => {
           }, 1000);
     }
     
-    const leftActions = (index) => {
+    const leftActions = (id) => {
         return (
         <View style = {styles.leftAction}>
             <TouchableOpacity onPress = { () => {
-                deleteNotif(index)
+                deleteNotif(id)
             }
             } >
             <Text style = {styles.actionText} >Clear</Text>
@@ -67,7 +67,7 @@ const Notificationpage = ({navigation}) => {
        .then( succ => {
             delete products[id];
 
-            setNotifications(notifications.filter(item => item.index !== id))
+            setNotifications(notifications.filter(item => item.notificationId !== id))
        })
        .catch( err => alert(err.message))
     }
@@ -81,20 +81,31 @@ const Notificationpage = ({navigation}) => {
     let docId = {}
     for (let i = 0; i < documentSnapshots.docs.length; i++) {
         notif.push(documentSnapshots.docs[i].data());
-        docId[documentSnapshots.docs[i].data().index] = documentSnapshots.docs[i].id
+        docId[documentSnapshots.docs[i].data().notificationId] = documentSnapshots.docs[i].id
         let product = await getAuction(documentSnapshots.docs[i].data().auctionDocId)
-        prods[documentSnapshots.docs[i].data().index] = product;
+        prods[documentSnapshots.docs[i].data().notificationId] = product;
        // console.log(newProducts);
     }
     setNotifDocIds(docId)
     setProducts(prods)
     setNotifications(notif.reverse());
+    console.log(notif)
 
     }
+
+    const alertemptylist = () => {
+      return (
+          <View>
+              <Text style = {styles.alertnotice}>There are currently no notifications received.</Text>
+          </View>
+      )
+    }
+
     return (
         <FlatList
           style={styles.root}
           data = {notifications}
+          ListEmptyComponent={alertemptylist}
 
           ItemSeparatorComponent={() => {
             return (
@@ -108,11 +119,12 @@ const Notificationpage = ({navigation}) => {
             onRefresh={onRefresh} />
         }
           keyExtractor={(item)=>{
-            return item.index
+            // return item.index -> can't use index because key need to be unique and may have multiple index. Will result in key error 
+            return item.notificationId
           }}
           renderItem={(item) => {
             const notification = item.item;
-            const auctionObject = products[notification.index]
+            const auctionObject = products[notification.notificationId]
             const hoursBefore = getHours(notification.createdAt)
             let mainContentStyle = styles.mainContent;
   
@@ -121,17 +133,30 @@ const Notificationpage = ({navigation}) => {
               <View style={styles.container}>
                 <View style={styles.content}>
                 <TouchableOpacity onPress= { () => {
-                if (auctionObject.leadBuyerId == auth.currentUser.uid || auctionObject.product.ownerId == auth.currentUser.uid) {
-                  navigation.navigate("ExchangeContact" ,{auctionId: auctionObject.auctionId});
-                } else {
-                    console.log("Not Eligible")
+                if (auctionObject) {
+                  // if product is not ongoing (either buyer buyout or seller accept bid)
+                  if ((auctionObject.leadBuyerId == auth.currentUser.uid || auctionObject.product.ownerId == auth.currentUser.uid) && !auctionObject.ongoing) {
+                    navigation.navigate("ExchangeContact" ,{auctionId: auctionObject.auctionId});
+                  }
+                  // if product is ongoing and I am the owner
+                  else if (auctionObject.ongoing && auctionObject.product.ownerId == auth.currentUser.uid) {
+                    navigation.navigate("SellerBid" ,{auctionId: auctionObject.auctionId});
+                  } 
+                  // if product is ongoing and I am a bidder
+                  else if (auctionObject.ongoing && auctionObject.leadBuyerId == auth.currentUser.uid)
+                  {
+                    navigation.navigate("BuyerBid" ,{auctionId: auctionObject.auctionId});
+                  }
+                  else {
+                      console.log("Not Applicable.")
+                  }
                 }
               }
                 }>
-                <Swipeable renderRightActions={ () => leftActions(notification.index)}>
+                <Swipeable renderRightActions={ () => leftActions(notification.notificationId)}>
                   <View style={mainContentStyle}>
                     <View >
-                      <Text style={styles.name}>{auctionObject.product.name} by {auctionObject.anomName} </Text>
+                      <Text style={styles.name}>{auctionObject ? auctionObject.product.name : 'Item is deleted'} by {auctionObject ? 'Anonymous User' : 'Seller'} </Text>
                       <Text style={styles.text}>{notification.message}</Text>
                     </View>
                     <Text style={styles.timeAgo}>
@@ -219,7 +244,14 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 3},
         shadowOpacity: 0.4,
         shadowRadius: 2,
-      }
+      },
+
+      alertnotice :{
+        color: colors.red,
+        fontFamily: 'Montserrat-Black',
+        textAlign: 'center',
+        marginTop: 20,
+     },
   }); 
 
 export default Notificationpage;
