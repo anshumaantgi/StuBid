@@ -7,7 +7,6 @@ import { collection, query, orderBy, startAfter, limit, getDocs, getFirestore, s
 import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
-import TerminateAuctionView from '../views/TerminateAuctionView.js'
 import moment from "moment-timezone";
 
 
@@ -244,7 +243,6 @@ const Homepage = ({route, navigation}) => {
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
-            
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
                     updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 

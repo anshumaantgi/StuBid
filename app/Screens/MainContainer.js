@@ -6,7 +6,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
 import Homepage from './Homepage';
-import Auctionpage from './Auctionpage';
 import Notificationpage from './Notificationpage';
 import MyProfilepage from './MyProfilepage';
 import colors from '../config/colors';

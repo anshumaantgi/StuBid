@@ -11,7 +11,7 @@ import moment from "moment-timezone";
 import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
-import TerminateAuctionView from '../views/TerminateAuctionView.js'
+import NotificationView from '../views/NotificationView.js';
 
 
 const Buyerbidding = ({route, navigation}) => {
@@ -50,7 +50,7 @@ const Buyerbidding = ({route, navigation}) => {
     
     //Send buyout details to Firestore
 
-    async function sendbuyoutvalues(enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
+    async function sendbuyoutvalues(enteredsellerId, enteredbuyerId, enteredbuyoutprice, entereddocId, enteredauctionId, enteredbuyeranonname) {
         toggleModal(); // close the dialog box
         //in auction, update currprice to buyout price, leading buyer to buyout buyer, ongoing to false, update time
         updateDoc(doc(db ,'auctions',entereddocId), { 
@@ -60,8 +60,7 @@ const Buyerbidding = ({route, navigation}) => {
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
 
-       //return new TerminateAuctionView().closeListing(docId)
-
+        return new NotificationView().createNotification(enteredsellerId, "Congratulations! Your Product has been sold! Click here to view Buyer's Contact Information.", docId);
 
     }
 
@@ -458,7 +457,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Confirm Buy item")
-                            sendbuyoutvalues(auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
+                            sendbuyoutvalues(productdetails.product.ownerId, auth.currentUser.uid, productdetails.product.buyPrice, docId, productdetails.auctionId, randomName)
                             .then((success) =>  {navigation.navigate('BuyoutSuccess', {aId, buyout : productdetails.product.buyPrice});})
                             .catch((error) => {alert(error.message)})
                         }}> 

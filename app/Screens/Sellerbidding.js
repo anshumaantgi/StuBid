@@ -11,8 +11,7 @@ import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import moment from "moment-timezone";
-import TerminateAuctionView from '../views/TerminateAuctionView.js';
-
+import NotificationView from '../views/NotificationView.js';
 
    
 const Sellerbidding = ({route, navigation}) => {
@@ -41,7 +40,7 @@ const Sellerbidding = ({route, navigation}) => {
     const productRef = collection(db, 'auctions'); 
 
      //Send Sellout details to Firestore
-     async function sendselloutvalues(entereddocId) {
+     async function sendselloutvalues(entereddocId, enteredbuyerId) {
         toggleModal();// close the dialog box
 
         //Terminate Auction , cuz seller is accepting the Bid
@@ -49,9 +48,8 @@ const Sellerbidding = ({route, navigation}) => {
             ongoing: false,
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
-        
-        //return new TerminateAuctionView().closeListing(docId)
-        
+
+        return new NotificationView().createNotification(enteredbuyerId, "Congratulations! You have successfully won the auction. Click here to view Seller's Contact Information", docId);
     }
 
     // Retrieve product details from firestore via AuctionId
@@ -436,7 +434,7 @@ const Sellerbidding = ({route, navigation}) => {
                             <View style = {styles.SELLcontainer}>
                             <TouchableOpacity style = {styles.ACCEPTcustomBtnBG} onPress={() => {
                                 //alert("Accept Bid")
-                                sendselloutvalues(docId)
+                                sendselloutvalues(docId, latestbidder.bidderId)
                                 .then((success) =>  {navigation.navigate('SelloutSuccess', {aId, latestbidder})})
                                 .catch((error) => {alert(error.message)})
                             }}> 
