@@ -8,6 +8,7 @@ import { auth,db } from '../config/config.js';
 import { async } from '@firebase/util';
 import {FilterContext} from './MainContainer.js';
 import moment from "moment-timezone";
+import NotificationView from '../views/NotificationView.js';
 
 
 const Homepage = ({route, navigation}) => {
@@ -179,11 +180,37 @@ const Homepage = ({route, navigation}) => {
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
+
+                //Send notifications if Bid Ends
+                if (documentSnapshots.docs[i].data().leadBuyerId) {
+                    console.log(2222222222222)
+                    //Send Seller Bid End Success message
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+            
+                    //Send Buyer Bid End Success message
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+            
+                    //Send to all other unsuccessful buyers (if there are other bidders)
+                    if (documentSnapshots.docs[i].data().allBiddersId) {
+                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                            }
+                        }
+                    }
                 }
                 else {
+                    console.log(33333333333333)
+                    //Send Seller unsuccessful auction (No Bidders but bid has ended)
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    }
+                console.log(444444444444)
+                }
+                else {
+                    //push products if there is still bid duration
                     newProducts.push(documentSnapshots.docs[i].data());
                 }
-                //console.log(newProducts);
+
             }
 
             setProducts(newProducts);
@@ -243,17 +270,44 @@ const Homepage = ({route, navigation}) => {
             setLastDoc(lastVisible);
 
             for (let i = 0; i < documentSnapshots.docs.length; i++) {
+
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
                     updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
+
+                //Send notifications if Bid Ends
+                if (documentSnapshots.docs[i].data().leadBuyerId) {
+                    console.log(2222222222222)
+                    //Send Seller Bid End Success message
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+            
+                    //Send Buyer Bid End Success message
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+            
+                    //Send to all other unsuccessful buyers (if there are other bidders)
+                    if (documentSnapshots.docs[i].data().allBiddersId) {
+                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                            }
+                        }
+                    }
                 }
                 else {
+                    console.log(33333333333333)
+                    //Send Seller unsuccessful auction (No Bidders but bid has ended)
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    }
+                console.log(444444444444)
+                }
+                else {
+                    //push products if there is still bid duration
                     newProducts.push(documentSnapshots.docs[i].data());
                 }
-                //console.log(newProducts);
+
             }
 
             setProducts(newProducts);
@@ -271,7 +325,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({auctionId, auctionDocId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, endingAt}) => {
+    const renderList = ({auctionId, auctionDocId, leadBuyerId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, endingAt}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];
@@ -439,7 +493,8 @@ const Homepage = ({route, navigation}) => {
         
         //Difference in number of days
         var diffDays = moment.duration(given.diff(current)).asDays();
-        //console.log(diffDays);
+        console.log(diffDays);
+
         return diffDays;
     }
 
@@ -729,7 +784,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 
-    alertnotice :{
+    alertnotice : {
         color: colors.red,
         fontFamily: 'Montserrat-Black',
         textAlign: 'center',
