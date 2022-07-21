@@ -106,12 +106,17 @@ const EditProfile = ({route, navigation}) => {
   
   async function sendSavedValues(entereduserfullname, entereduserhp, entereduserbio) {
 
-        updateDoc(doc(db ,'users', auth.currentUser.uid), { 
+       if (!entereduserfullname) {
+          throw new Error("Please do not leave your full name field empty!");
+       }
+       else {
+          updateDoc(doc(db ,'users', auth.currentUser.uid), { 
             name: entereduserfullname,
             handphone: entereduserhp,
             bio: entereduserbio, 
             updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
         })
+       }
     }   
 
     return (

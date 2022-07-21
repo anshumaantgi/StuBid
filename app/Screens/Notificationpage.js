@@ -134,7 +134,7 @@ const Notificationpage = ({navigation}) => {
                 <View style={styles.content}>
                 <TouchableOpacity onPress= { () => {
                 if (auctionObject) {
-                  // if product is not ongoing (either buyer buyout or seller accept bid)
+                  // if product is not ongoing (either buyer buyout or seller accept bid) AND either user is winning bidder or is Seller
                   if ((auctionObject.leadBuyerId == auth.currentUser.uid || auctionObject.product.ownerId == auth.currentUser.uid) && !auctionObject.ongoing) {
                     navigation.navigate("ExchangeContact" ,{auctionId: auctionObject.auctionId});
                   }
