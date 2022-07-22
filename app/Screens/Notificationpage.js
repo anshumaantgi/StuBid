@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import {View, Dimensions,Text, TouchableOpacity, Image, StyleSheet, useWindowDimensions, FlatList, RefreshControl, ActivityIndicatorBase } from 'react-native';
 import colors from '../config/colors.js';
 import { auth, db } from '../config/config.js';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
 
 
 const Notificationpage = ({navigation}) => {
@@ -132,6 +132,7 @@ const Notificationpage = ({navigation}) => {
             
               <View style={styles.container}>
                 <View style={styles.content}>
+                <GestureHandlerRootView>
                 <TouchableOpacity onPress= { () => {
                 if (auctionObject) {
                   // if product is not ongoing (either buyer buyout or seller accept bid) AND either user is winning bidder or is Seller
@@ -153,19 +154,21 @@ const Notificationpage = ({navigation}) => {
                 }
               }
                 }>
-                <Swipeable renderRightActions={ () => leftActions(notification.notificationId)}>
-                  <View style={mainContentStyle}>
-                    <View >
-                      <Text style={styles.name}>{auctionObject ? auctionObject.product.name : 'Item is deleted'} by {auctionObject ? auctionObject.anomName : 'Seller'} </Text>
-                      <Text style={styles.text}>{notification.message}</Text>
+            
+                  <Swipeable renderRightActions={ () => leftActions(notification.notificationId)}>
+                    <View style={mainContentStyle}>
+                      <View >
+                        <Text style={styles.name}>{auctionObject ? auctionObject.product.name : 'Item is deleted'} by {auctionObject ? auctionObject.anomName : 'Seller'} </Text>
+                        <Text style={styles.text}>{notification.message}</Text>
+                      </View>
+                      <Text style={styles.timeAgo}>
+                        {hoursBefore}
+                      </Text>
                     </View>
-                    <Text style={styles.timeAgo}>
-                      {hoursBefore}
-                    </Text>
-                  </View>
-                  </ Swipeable>
+                    </ Swipeable>
                  
                   </TouchableOpacity>
+                  </GestureHandlerRootView>
                 </View>
               </View>
             );

@@ -220,7 +220,6 @@ const Buyerbidding = ({route, navigation}) => {
           
         return (
         <View style = {styles.overallBiddingContainer}>
-             <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
              <View>
                 <View style = {{flexDirection: 'row'}}>
                 <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
@@ -633,7 +632,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         color: colors.white,
-        alignSelf: 'center',
     },
 
     list: {
@@ -813,25 +811,22 @@ const styles = StyleSheet.create({
 
     buyeranonymousdate : {
         color: colors.black,
-        textAlign: "center",
     },
 
     buttoncontainer : {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-        borderWidth: 0.2,
-        borderStyle: 'dashed',
-        borderColor: colors.darkbrown,
+       
         flexDirection: 'row',  
-        alignItems: 'center', 
+        alignSelf: 'center', 
         marginTop: 20,
-        justifyContent: 'space-between',
+  
     },
 
     BUYOUTcustomBtnBG: {
         backgroundColor: colors.red,
         padding: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        marginRight: 5,
+        
     },
 
     BUYOUTcustomBtnText: {
@@ -845,7 +840,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 5,
         padding: 15,
-        alignSelf: 'center',
+        marginLeft: 5,
     },
 
     BIDcustomBtnText: {
@@ -859,6 +854,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: 10,
         padding: 20,
+        maxHeight: 700,
     },
 
     termsandcondition : {
@@ -878,7 +874,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.red,
         padding: 15,
         borderRadius: 5,
-        marginHorizontal: 20,
+        marginRight: 5,
 
     },
 
@@ -893,7 +889,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 5,
         padding: 15,
-        marginHorizontal: 20,
+        marginLeft: 5,
     },
 
     CANCELcustomBtnText: {

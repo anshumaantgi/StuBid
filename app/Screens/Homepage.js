@@ -377,21 +377,14 @@ const Homepage = ({route, navigation}) => {
                 <View style = {styles.listingContainer}>
                         <Text style= {styles.name}>{product.name}</Text>
                 </View>
-                <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
+               
                     <View style = {styles.descriptionContainer}>
                         <Text style = {styles.description}>Description:</Text>
                         <Text style = {styles.descriptiontext}>{product.description}</Text>
                     </View>
-                    <View style = {styles.activedaycontainer}>
-                                <Text style = {styles.activeday}>
-                                    Bid Ending in:
-                                </Text>
-                                <Text style = {styles.activedaytext}>
-                                    {checkDaysLeft(endingAt)} Days
-                                </Text>
-                    </View>
-                </View>
-                <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
+                    
+           
+                <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between', marginBottom: 5,}}>
                     <View>
                         <View style = {styles.currentpriceContainer}>
                             <Text style = {styles.dollarsign}>$</Text>
@@ -420,6 +413,15 @@ const Homepage = ({route, navigation}) => {
                             <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
                             <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
+                    </View>
+                    <View>
+                    <View style = {styles.activedaycontainer}>
+                                <Text style = {styles.activeday}>
+                                    Bid Ending in:
+                                </Text>
+                                <Text style = {styles.activedaytext}>
+                                    {checkDaysLeft(endingAt)} Days
+                                </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
                         <TouchableOpacity 
@@ -459,6 +461,7 @@ const Homepage = ({route, navigation}) => {
                                 }
                                 </Text>
                         </TouchableOpacity>
+                    </View>
                     </View>
                 </View>
             </View>
@@ -579,43 +582,38 @@ const styles = StyleSheet.create({
     searchandfilter : {
         flexDirection: 'row',
         marginTop: -70,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignSelf: 'center',
     },
 
     searchinput: {
         backgroundColor: colors.darkbrown,
         width: '60%',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 20,
-  
+        fontSize: 16,
         color: colors.white,
-        
+        padding: 10,
+        borderRadius: 5,
     },
 
     customsearchBtnText: {
-        fontSize: 14,
-        fontFamily: 'Montserrat-Black',
+    
         color: colors.white,
         textAlign: "center",
+        fontSize: 16,
     },
 
     customsearchBtnBG: {
         width: '20%',
+        padding: 10,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 20,
         backgroundColor: colors.activeday,
     },
 
 
     customfilterBtnBG: {
         width: '10%',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 16,
+        padding: 10,
         backgroundColor: colors.gold,
+        borderRadius: 5,
     },
 
     title: {
@@ -662,7 +660,7 @@ const styles = StyleSheet.create({
         height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
-        width: '70%',
+      
     },
 
     description: {
@@ -775,6 +773,7 @@ const styles = StyleSheet.create({
         height: 55,
         borderRadius: 5,
         alignSelf: 'center',
+        marginVertical: 10,
     },
 
     activeday: {

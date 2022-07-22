@@ -364,31 +364,27 @@ const ExchangeContact= ({route, navigation}) => {
                     <>
                     <Text style = {styles.currentbid}>Contact Information:</Text>
                     <View style = {styles.contactinfocontainer}>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+                      
                             <Text style = {styles.contactinfodesc}>Role: </Text>
                             <Text style = {styles.contactinfotext}>{productdetails.product.ownerId == auth.currentUser.uid ? 'Buyer/Bidder' : 'Seller'}</Text>
-                        </View>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+               
                             <Text style = {styles.contactinfodesc}>Full Name: </Text>
                             <Text style = {styles.contactinfotext}>{userfullname}</Text>
                             
-                        </View>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+                   
                             <Text style = {styles.contactinfodesc}>Email: </Text>
                             <Text style = {styles.contactinfotext}>{useremail}</Text>
-                        </View>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+              
                             <Text style = {styles.contactinfodesc}>School: </Text>
                             <Text style = {styles.contactinfotext}>{useruni}</Text>
-                        </View>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+                      
                             <Text style = {styles.contactinfodesc}>{'Handphone (if provided):'} </Text>
                             <Text style = {styles.contactinfotext}>{userhp}</Text>
-                        </View>
-                        <View style = {{flexDirection: 'row',  alignItems: 'center'}}>
+                       
+                      
                             <Text style = {styles.contactinfodesc}>{'Personal Bio (if provided):'} </Text>
                             <Text style = {styles.contactinfotext}>{userbio}</Text>
-                        </View>
+                       
                     </View> 
 
                     <TouchableOpacity style = {styles.LARcustomBtnBG} onPress={() => {
@@ -703,6 +699,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: 10,
         padding: 20,
+        maxHeight: 700,
     },
 
     termsandcondition : {
@@ -714,7 +711,7 @@ const styles = StyleSheet.create({
 
     SELLcontainer: {
         flexDirection: 'row',  
-        margin: 20,
+        margin: 40,
         alignSelf: 'center',
         
     },
@@ -723,7 +720,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.gold,
         padding: 15,
         borderRadius: 5,
-        marginHorizontal: 20,
+        marginRight: 5,
 
     },
 
@@ -738,7 +735,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 5,
         padding: 15,
-        marginHorizontal: 20,
+        marginLeft: 5,
+        
     },
 
     CANCELcustomBtnText: {
@@ -822,6 +820,8 @@ const styles = StyleSheet.create({
 
       contactinfotext : {
         color: colors.blue,
+        width: '80%',
+        margin: 5,
       },
 
       userprofile : {

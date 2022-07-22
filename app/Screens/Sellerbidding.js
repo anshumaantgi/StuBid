@@ -162,7 +162,7 @@ const Sellerbidding = ({route, navigation}) => {
           
         return (
         <View style = {styles.overallBiddingContainer}>
-             <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
+          
              <View>
                 <View style = {{flexDirection: 'row'}}>
                 <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
@@ -413,7 +413,7 @@ const Sellerbidding = ({route, navigation}) => {
                             <Text style = {styles.title}>{productdetails.product.name}</Text>
                             <Text style = {styles.currenthighestbiddertext}>Current Highest Bidder: </Text>
                             <View style = {styles.highestbiddercontainer}>
-                                <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={20} color={colors.red} />
+                                
                                 <View>
                                     <View style = {{flexDirection: 'row'}}>
                                     <Text style = {styles.buyeranonymous}>Bid placed by: </Text>
@@ -429,7 +429,7 @@ const Sellerbidding = ({route, navigation}) => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                    <Text style = {styles.buyeranonymousdate}>{latestbidder && latestbidder.createdAt}</Text>
+                                    <Text style = {styles.latestbuyeranonymousdate}>{latestbidder && latestbidder.createdAt}</Text>
                                 </View>
                                 <View style = {styles.currentpriceContainer}>
                                     <Text style = {styles.dollarsign}>$</Text>
@@ -674,25 +674,26 @@ const styles = StyleSheet.create({
 
     buyeranonymousdate : {
         color: colors.black,
-        textAlign: "center",
+    },
+
+    latestbuyeranonymousdate : {
+        color: colors.black,
+        textAlign: 'center'
     },
 
     buttoncontainer : {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-        borderWidth: 0.2,
-        borderStyle: 'dashed',
-        borderColor: colors.darkbrown,
+      
         flexDirection: 'row',  
-        alignItems: 'center', 
+        alignSelf: 'center', 
         marginTop: 20,
-        justifyContent: 'space-between',
+       
     },
 
     EDITcustomBtnBG: {
         backgroundColor: colors.darkbrown,
         padding: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        marginRight: 5,
     },
 
     EDITcustomBtnText: {
@@ -706,6 +707,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green,
         borderRadius: 5,
         padding: 15,
+        marginLeft: 5,
     },
 
     ACCBIDcustomBtnText: {
@@ -719,6 +721,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: 10,
         padding: 20,
+        maxHeight: 700,
     },
 
     termsandcondition : {
@@ -738,7 +741,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green,
         padding: 15,
         borderRadius: 5,
-        marginHorizontal: 20,
+        marginRight: 5,
 
     },
 
@@ -753,7 +756,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 5,
         padding: 15,
-        marginHorizontal: 20,
+        marginLeft: 5,
     },
 
     CANCELcustomBtnText: {
@@ -772,7 +775,7 @@ const styles = StyleSheet.create({
     },
 
     highestbiddercontainer : {
-        flexDirection: 'row',  
+      
         alignItems: 'center',
         justifyContent: 'space-between' ,
         width: '100%',

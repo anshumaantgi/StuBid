@@ -372,21 +372,12 @@ const MyProfilepage = ({navigation}) => {
                     <View style = {styles.listingContainer}>
                             <Text style= {styles.name}>{product.name}</Text>
                     </View>
-                    <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
                     <View style = {styles.descriptionContainer}>
                         <Text style = {styles.description}>Description:</Text>
                         <Text style = {styles.descriptiontext}>{product.description}</Text>
                     </View>
-                    <View style = {styles.activedaycontainer}>
-                    <Text style = {styles.activeday}>
-                           {checkDaysLeft(endingAt) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
-                        </Text>
-                        <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt) && ongoing ? checkDaysLeft(endingAt) + ' Days': updatedAt.substring(0,10)} 
-                        </Text>
-                    </View>
-                </View>
-                <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
+    
+                <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between', marginBottom: 5,}}>
                     <View>
                         <View style = {styles.currentpriceContainer}>
                             <Text style = {styles.dollarsign}>$</Text>
@@ -414,6 +405,15 @@ const MyProfilepage = ({navigation}) => {
                             <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
                             <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
+                    </View>
+                    <View>
+                    <View style = {styles.activedaycontainer}>
+                    <Text style = {styles.activeday}>
+                           {checkDaysLeft(endingAt) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
+                        </Text>
+                        <Text style = {styles.activedaytext}>
+                            {checkDaysLeft(endingAt) && ongoing ? checkDaysLeft(endingAt) + ' Days': updatedAt.substring(0,10)} 
+                        </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
                         <TouchableOpacity 
@@ -453,6 +453,7 @@ const MyProfilepage = ({navigation}) => {
                                 }
                                 </Text>
                         </TouchableOpacity>
+                    </View>
                     </View>
                 </View>
             </View>
@@ -738,7 +739,6 @@ const styles = StyleSheet.create({
         height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
-        width: '68%',
     },
 
     description: {
@@ -852,6 +852,7 @@ const styles = StyleSheet.create({
         height: 55,
         borderRadius: 5,
         alignSelf: 'center',
+        marginVertical: 10,
     },
 
     activeday: {

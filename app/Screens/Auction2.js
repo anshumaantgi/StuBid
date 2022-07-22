@@ -7,6 +7,7 @@ import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { doc, getDocs, getFirestore, collection} from "firebase/firestore"; 
 import moment from "moment-timezone";
+import AuctionView from '../views/AuctionView.js';
 
 
 const Auction2 = ({route, navigation}) => {
@@ -196,7 +197,7 @@ const Auction2 = ({route, navigation}) => {
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(value, endbiddate, value2, startingprice, buyoutprice, randomName)
                 .then((success) =>  {navigation.navigate('ItemPublishSuccess', {randomName});})
-                .catch((error) => {alert(error.message)})
+                .catch((error) => {alert(error.message); console.log('ERRRORRRRRRRRRRRRRR')})
             }
         }
             >
