@@ -156,7 +156,7 @@ const Notificationpage = ({navigation}) => {
                 <Swipeable renderRightActions={ () => leftActions(notification.notificationId)}>
                   <View style={mainContentStyle}>
                     <View >
-                      <Text style={styles.name}>{auctionObject ? auctionObject.product.name : 'Item is deleted'} by {auctionObject.product.anomName} </Text>
+                      <Text style={styles.name}>{auctionObject ? auctionObject.product.name : 'Item is deleted'} by {auctionObject ? auctionObject.anomName : 'Seller'} </Text>
                       <Text style={styles.text}>{notification.message}</Text>
                     </View>
                     <Text style={styles.timeAgo}>
