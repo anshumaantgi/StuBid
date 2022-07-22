@@ -46,6 +46,7 @@ const Buyerbidding = ({route, navigation}) => {
     const [userbidprice, setUserbidprice] = useState('');
     const [id, setId] = useState(null);
     const [latestbidder, setLatestbidder] =  useState(null);
+    const [isDeleted, setIsDeleted] =  useState(false);
 
     // Firestore setup
     const db = getFirestore();
@@ -127,17 +128,12 @@ const Buyerbidding = ({route, navigation}) => {
           itemdetails = doc.data();
           dId = doc.id;
         });
+        if (itemdetails == null) {
+            setIsDeleted(true)
+        } else {
         setProductdetails(itemdetails);
-        if (!itemdetails) {
-            AsyncStorage.getItem('isItemDeleted', (err, value) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    setcheckDeleted(JSON.parse(value)) // boolean false
-                }
-            })
-        }
         setDocId(dId);
+        }
     });
     }
     
@@ -193,7 +189,7 @@ const Buyerbidding = ({route, navigation}) => {
             setLatestbidder(null);
           };
         
-    }, [checkDeleted]);
+    }, [isDeleted]);
 
     
 
@@ -450,9 +446,13 @@ const Buyerbidding = ({route, navigation}) => {
                        }}> 
                        <Text style ={styles.BUYOUTcustomBtnText}>Buy Item</Text>
                    </TouchableOpacity>
-                   <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
+                   <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={async () => {
                        //alert("Bid item")
-                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                        await getproductlisting()
+                       if (isDeleted) {
+                        alert("is Deleted, Please Return to Homepage")
+                       }
+                       else if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
                        else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
