@@ -15,7 +15,7 @@ import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebas
 import { StackActions } from '@react-navigation/native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import NotificationView from '../views/NotificationView.js';
-import { AsyncStorage } from 'react-native';
+
 
 
 const EditProduct = ({route, navigation}) => {
@@ -105,7 +105,6 @@ const EditProduct = ({route, navigation}) => {
         {
           text: "Yes",
           onPress: () => {
-            AsyncStorage.setItem('isItemDeleted',JSON.stringify(checkDeleted))
              sendDeleteValues(auctiondocId, biddingdocId, productdetails.allBiddersId, productdetails.anomName, productdetails.product.name)
                 .then((success) =>  {
                     navigation.navigate('DeleteItemSuccess');

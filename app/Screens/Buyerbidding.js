@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndicator, RefreshControl} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet, FlatList,ActivityIndicator, RefreshControl, Dimensions} from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,13 +12,11 @@ import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import NotificationView from '../views/NotificationView.js';
-import { AsyncStorage } from 'react-native';
+
 
 
 const Buyerbidding = ({route, navigation}) => {
 
-    //Check deleted
-    const [checkDeleted, setcheckDeleted] = useState(false);
 
     //Set up Modal (Pop-up screen) when bid/sell button is pressed, etc
     const [isModalVisible, setModalVisible] = useState(false);
@@ -341,7 +339,7 @@ const Buyerbidding = ({route, navigation}) => {
         }
     }
 
-    return (<View>
+    return (!isDeleted ? <View>
             <FlatList
                 removeClippedSubviews={false}
                 ListHeaderComponent =
@@ -430,6 +428,8 @@ const Buyerbidding = ({route, navigation}) => {
                     <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
                        //alert("Buy item")
 
+                       getproductlisting();
+
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
@@ -448,11 +448,9 @@ const Buyerbidding = ({route, navigation}) => {
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={async () => {
                        //alert("Bid item")
-                        await getproductlisting()
-                       if (isDeleted) {
-                        alert("is Deleted, Please Return to Homepage")
-                       }
-                       else if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                        getproductlisting();
+            
+                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
                        else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
@@ -589,6 +587,11 @@ const Buyerbidding = ({route, navigation}) => {
                 ItemSeparatorComponent={ItemDivider}
                 keyExtractor={item =>  item.bidId.toString()}
                 renderItem={({item}) => renderList(item)} />    
+        </View>
+        :
+        <View>
+              <Image  style = {styles.logo} source= {require('../assets/StuBid-Logo-Original-ver.png')} /> 
+            <Text style = {styles.itemDeleted}>Sorry, the item has been deleted by the Seller. Please return to the Homepage.</Text>
         </View>
     )
             }
@@ -969,6 +972,22 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat-Black',
         textAlign: 'center',
 
+    },
+
+    logo : {
+        alignSelf: 'center',
+        width: 300,
+        height: 300,
+        marginTop: 100,
+    },
+
+    itemDeleted : {
+        color: colors.red,
+        fontFamily: 'Montserrat-Black',
+        textAlign: 'center',
+        width: '80%',
+        alignSelf: 'center',
+    
     }
 
 
