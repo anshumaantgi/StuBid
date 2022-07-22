@@ -718,8 +718,10 @@ const styles = StyleSheet.create({
     },
 
     listingContainer: {
-        flexDirection: 'row',
-        marginTop: 10,
+        color: colors.darkbrown,
+        alignItems: 'stretch',
+        height: 30,
+        marginVertical: 10,
     },
 
     name: {

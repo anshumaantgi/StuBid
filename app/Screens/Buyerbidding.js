@@ -424,7 +424,10 @@ const Buyerbidding = ({route, navigation}) => {
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
-                       else if (!(productdetails.ongoing)) {
+                       else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
+                        alert("Congratulations! You have won the auction. You can now exchange contact information with the Seller.")
+                       }
+                       else if (!productdetails.ongoing && productdetails.leadBuyerId != auth.currentUser.uid) {
                         alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
                        }
                        else {
@@ -465,7 +468,7 @@ const Buyerbidding = ({route, navigation}) => {
                         backdropTransitionInTiming={600}
                         backdropTransitionOutTiming={600}>
                   
-                    <View style={styles.popupmenu}>
+                  <ScrollView style={styles.popupmenu} contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
                         <Text style = {styles.currentbid}>Are you sure you want to buy this item?</Text>
                         <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
                         <Text style = {styles.title}>{productdetails.product.name}</Text>
@@ -487,10 +490,10 @@ const Buyerbidding = ({route, navigation}) => {
                         <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
                             toggleModal();
                         }}>
-                        <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                        <Text style ={styles.CANCELcustomBtnText}>Cancel</Text>
                         </TouchableOpacity>
                         </View>
-                    </View>
+                    </ScrollView>
                 </Modal>
 
                 <Modal 
@@ -502,7 +505,7 @@ const Buyerbidding = ({route, navigation}) => {
                         backdropTransitionInTiming={600}
                         backdropTransitionOutTiming={600}>
                   
-                    <View style={styles.popupmenu}>
+                    <ScrollView style={styles.popupmenu} contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
                         <Text style = {styles.currentbid}>How much are you willing to bid?</Text>
                         <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
                         <Text style = {styles.title}>{productdetails.product.name}</Text>
@@ -518,13 +521,13 @@ const Buyerbidding = ({route, navigation}) => {
                             </TextInput>
                         </View>
                         <View>
-                            <View style = {{flexDirection: 'row'}}>
+                            <View style = {{flexDirection: 'row',  alignSelf: 'center',}}>
                                 <Text style = {styles.minbidtext}>Minimum Bid: </Text>
                                 <Text style = {styles.minbid}>
                                     ${productdetails.currPrice}
                                 </Text>
                             </View>
-                            <View style = {{flexDirection: 'row'}}>
+                            <View style = {{flexDirection: 'row',  alignSelf: 'center',}}>
                                 <Text style = {styles.maxbidtext}>Maximum Bid: </Text>
                                 <Text style = {styles.maxbid}>
                                     ${productdetails.product.buyPrice}
@@ -553,7 +556,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
                         </TouchableOpacity>
                         </View>
-                    </View>
+                    </ScrollView>
                 </Modal>
 
                 </View>
@@ -588,7 +591,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: colors.darkbrown,
         fontFamily: "Montserrat-Black",
-        marginTop: 20
+        marginTop: 20,
+        alignSelf: 'center',
     
     },
 
@@ -600,12 +604,14 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         marginVertical: 10,
         color: colors.white,
+        alignSelf: 'center',
     },
 
     bidamount : {
         textAlign: 'center',
         fontWeight: 'bold',
         color: colors.white,
+        alignSelf: 'center',
     },
 
     list: {
@@ -634,7 +640,6 @@ const styles = StyleSheet.create({
     descriptionContainer: {
         color: colors.darkbrown,
         alignItems: 'stretch',
-        height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
     },
@@ -658,6 +663,7 @@ const styles = StyleSheet.create({
         color: colors.orange,
         fontWeight: 'bold',
         fontSize: 25,
+        alignSelf: 'center',
     },
 
     dollarsign: {
@@ -817,6 +823,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 5,
         padding: 15,
+        alignSelf: 'center',
     },
 
     BIDcustomBtnText: {
@@ -827,8 +834,6 @@ const styles = StyleSheet.create({
     },
 
     popupmenu: {
-        alignItems: 'center', 
-        justifyContent: 'center',
         backgroundColor: colors.white,
         borderRadius: 10,
         padding: 20,
@@ -838,11 +843,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: colors.darkbrown,
         marginTop: 20,
+        alignSelf: 'center',
     },
 
     buyoutcontainer: {
         flexDirection: 'row',  
-        margin: 20,
+        margin: 40,
+        alignSelf: 'center',
         
     },
 
@@ -878,21 +885,25 @@ const styles = StyleSheet.create({
     minbidtext : {
         fontFamily: 'Montserrat-Black',
         color: colors.gold,
+        alignSelf: 'center',
     },
 
     minbid : {
         color: colors.orange,
         fontWeight: 'bold',
+        alignSelf: 'center',
     },
 
     maxbidtext : {
         fontFamily: 'Montserrat-Black',
         color: colors.gold,
+        alignSelf: 'center',
     },
 
     maxbid : { 
         color: colors.orange,
         fontWeight: 'bold',
+        alignSelf: 'center',
     },
 
     overallBiddingContainer : {

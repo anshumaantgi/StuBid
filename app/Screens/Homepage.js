@@ -375,9 +375,9 @@ const Homepage = ({route, navigation}) => {
             <View style = {styles.list}>
                 <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
                 <View style = {styles.listingContainer}>
-                    <View style = {styles.container}>
+                   
                         <Text style= {styles.name}>{product.name}</Text>
-                    </View>
+                
                 </View>
                 <View style = {styles.descriptionContainer}>
                     <Text style = {styles.description}>Description:</Text>
@@ -644,8 +644,10 @@ const styles = StyleSheet.create({
     },
 
     listingContainer: {
-        flexDirection: 'row',
-        marginTop: 10,
+        color: colors.darkbrown,
+        alignItems: 'stretch',
+        height: 30,
+        marginVertical: 10,
     },
 
     name: {

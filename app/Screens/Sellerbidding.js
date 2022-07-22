@@ -407,7 +407,7 @@ const Sellerbidding = ({route, navigation}) => {
                             backdropTransitionInTiming={600}
                             backdropTransitionOutTiming={600}>
                     
-                        <View style={styles.popupmenu}>
+                    <ScrollView style={styles.popupmenu} contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
                             <Text style = {styles.currentbid}>Are you sure you want to sell this item?</Text>
                             <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
                             <Text style = {styles.title}>{productdetails.product.name}</Text>
@@ -454,10 +454,10 @@ const Sellerbidding = ({route, navigation}) => {
                             <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
                                 toggleModal();
                             }}>
-                            <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                            <Text style ={styles.CANCELcustomBtnText}>Cancel</Text>
                             </TouchableOpacity>
                             </View>
-                        </View>
+                        </ScrollView>
                     </Modal>
                     </View>
                     </View>
@@ -491,7 +491,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: colors.darkbrown,
         fontFamily: "Montserrat-Black",
-        marginTop: 20
+        marginTop: 20,
+        alignSelf: 'center',
     
     },
 
@@ -523,7 +524,6 @@ const styles = StyleSheet.create({
     descriptionContainer: {
         color: colors.darkbrown,
         alignItems: 'stretch',
-        height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
     },
@@ -716,8 +716,6 @@ const styles = StyleSheet.create({
     },
 
     popupmenu: {
-        alignItems: 'center', 
-        justifyContent: 'center',
         backgroundColor: colors.white,
         borderRadius: 10,
         padding: 20,
@@ -732,6 +730,7 @@ const styles = StyleSheet.create({
     SELLcontainer: {
         flexDirection: 'row',  
         margin: 20,
+        alignSelf: 'center',
         
     },
 
@@ -769,6 +768,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 20,
         fontWeight: 'bold',
+        alignSelf: 'center',
     },
 
     highestbiddercontainer : {
@@ -781,6 +781,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         marginTop: 10,
+        alignSelf: 'center',
     },
 
     overallBiddingContainer : {
