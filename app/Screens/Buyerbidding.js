@@ -425,10 +425,10 @@ const Buyerbidding = ({route, navigation}) => {
                     productdetails && 
                     <View>
                     <View style = {styles.buttoncontainer}>
-                    <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={() => {
+                    <TouchableOpacity style = {styles.BUYOUTcustomBtnBG} onPress={async() => {
                        //alert("Buy item")
 
-                       getproductlisting();
+                       await getproductlisting();
 
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
@@ -448,7 +448,7 @@ const Buyerbidding = ({route, navigation}) => {
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={async () => {
                        //alert("Bid item")
-                        getproductlisting();
+                        await getproductlisting();
             
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
