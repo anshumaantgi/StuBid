@@ -443,15 +443,15 @@ const Buyerbidding = ({route, navigation}) => {
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
-                       else if (!(productdetails.ongoing)) {
+                       else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
+                        alert("Congratulations! You have won the auction. You can now exchange contact information with the Seller.")
+                       }
+                       else if (!productdetails.ongoing && productdetails.leadBuyerId != auth.currentUser.uid) {
                         alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
                        }
-                       else if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
-                            alert("Please note that you can only bid again if another buyer bids higher than your current price: " + "\n\n" + "$" + productdetails.currPrice)
-                        }
-                        else {
-                            toggleModal2();
-                        }
+                       else {
+                        toggleModal();
+                       }
                      
                        }}>
                        <Text style ={styles.BIDcustomBtnText}>Place a Bid</Text>
