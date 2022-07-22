@@ -869,7 +869,7 @@ const styles = StyleSheet.create({
 
     buyoutcontainer: {
         flexDirection: 'row',  
-        margin: 40,
+        margin: 10,
         alignSelf: 'center',
         
     },

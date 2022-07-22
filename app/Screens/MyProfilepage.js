@@ -378,12 +378,12 @@ const MyProfilepage = ({navigation}) => {
                         <Text style = {styles.descriptiontext}>{product.description}</Text>
                     </View>
                     <View style = {styles.activedaycontainer}>
-                                <Text style = {styles.activeday}>
-                                    Bid Ending in:
-                                </Text>
-                                <Text style = {styles.activedaytext}>
-                                    {checkDaysLeft(endingAt)} Days
-                                </Text>
+                    <Text style = {styles.activeday}>
+                           {checkDaysLeft(endingAt) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
+                        </Text>
+                        <Text style = {styles.activedaytext}>
+                            {checkDaysLeft(endingAt) && ongoing ? checkDaysLeft(endingAt) + ' Days': updatedAt.substring(0,10)} 
+                        </Text>
                     </View>
                 </View>
                 <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
