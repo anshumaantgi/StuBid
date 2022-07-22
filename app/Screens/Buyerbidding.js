@@ -138,7 +138,7 @@ const Buyerbidding = ({route, navigation}) => {
     // Retrieve current latest bidder information from firestore via AuctionId
     const getlatestbidder = async() => {
         var latestanon = [];
-        const q = query(biddingRef, orderBy("bidPrice", "desc"), where("auctionId", "==", aId));
+        const q = query(biddingRef, orderBy("bidId", "desc"), where("auctionId", "==", aId));
         //const querySnapshot = await getDocs(q);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -193,7 +193,7 @@ const Buyerbidding = ({route, navigation}) => {
 
     const getBidding = async () => {
     // Query the first page of docs
-    const first = query(biddingRef, orderBy("bidPrice", "desc"),  where("auctionId", "==", aId));
+    const first = query(biddingRef, orderBy("bidId", "desc"),  where("auctionId", "==", aId));
 
     const unsubscribe = onSnapshot(first, (querySnapshot) => {
     //const documentSnapshots = await getDocs(first);
@@ -869,9 +869,8 @@ const styles = StyleSheet.create({
 
     buyoutcontainer: {
         flexDirection: 'row',  
-        margin: 10,
+        margin: 40,
         alignSelf: 'center',
-        
     },
 
     CONFIRMcustomBtnBG: {
