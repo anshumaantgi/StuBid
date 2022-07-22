@@ -415,7 +415,6 @@ const ExchangeContact= ({route, navigation}) => {
                         <ScrollView style={styles.popupmenu} contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
                             <Text style = {styles.currentbid}>Leave a Review/Feedback</Text>
                             <View style = {styles.userprofile}>
-                                <Ionicons style={styles.lockIcon} name={'eye-off-outline'} size={25} color={colors.red} />
                                 <Text style = {styles.userprofilename}>{userfullname}</Text>
                             </View>
                             <Image source = {{uri : productdetails.product.pictureUri}} style = {styles.listImage} />
@@ -716,6 +715,7 @@ const styles = StyleSheet.create({
     SELLcontainer: {
         flexDirection: 'row',  
         margin: 20,
+        alignSelf: 'center',
         
     },
 
