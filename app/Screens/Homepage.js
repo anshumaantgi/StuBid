@@ -374,22 +374,22 @@ const Homepage = ({route, navigation}) => {
         return (
             <View style = {styles.list}>
                 <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
+                <View style = {styles.listingContainer}>
+                        <Text style= {styles.name}>{product.name}</Text>
+                </View>
                 <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
-                    <View style = {styles.listingContainer}>
-                            <Text style= {styles.name}>{product.name}</Text>
+                    <View style = {styles.descriptionContainer}>
+                        <Text style = {styles.description}>Description:</Text>
+                        <Text style = {styles.descriptiontext}>{product.description}</Text>
                     </View>
                     <View style = {styles.activedaycontainer}>
-                            <Text style = {styles.activeday}>
-                                Bid Ending in:
-                            </Text>
-                            <Text style = {styles.activedaytext}>
-                                {checkDaysLeft(endingAt)} Days
-                            </Text>
+                                <Text style = {styles.activeday}>
+                                    Bid Ending in:
+                                </Text>
+                                <Text style = {styles.activedaytext}>
+                                    {checkDaysLeft(endingAt)} Days
+                                </Text>
                     </View>
-                </View>
-                <View style = {styles.descriptionContainer}>
-                    <Text style = {styles.description}>Description:</Text>
-                    <Text style = {styles.descriptiontext}>{product.description}</Text>
                 </View>
                 <View style = {{flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
                     <View>
@@ -648,7 +648,6 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         height: 30,
         marginVertical: 10,
-        width: '70%',
     },
 
     name: {
@@ -663,6 +662,7 @@ const styles = StyleSheet.create({
         height: 55,
         borderWidth: 0.2,
         borderStyle: 'dashed',
+        width: '70%',
     },
 
     description: {
@@ -772,16 +772,16 @@ const styles = StyleSheet.create({
     activedaycontainer: {
         backgroundColor: colors.activeday,
         padding: 5,
+        height: 55,
         borderRadius: 5,
-        
         alignSelf: 'center',
-        marginVertical: 10,
     },
 
     activeday: {
         fontWeight: 'bold',
         color: colors.white,
         textAlign: 'center',
+        marginTop: 5,
     },
 
     activedaytext: {
