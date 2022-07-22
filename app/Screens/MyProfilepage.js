@@ -369,8 +369,18 @@ const MyProfilepage = ({navigation}) => {
         return (
             <View style = {styles.list}>
                 <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
-                <View style = {styles.listingContainer}>
-                    <Text style= {styles.name}>{product.name}</Text>
+                <View style = {{flexDirection: 'row', justifyContent:'space-between', marginVertical: 10,}}>
+                    <View style = {styles.listingContainer}>
+                            <Text style= {styles.name}>{product.name}</Text>
+                    </View>
+                    <View style = {styles.activedaycontainer}>
+                            <Text style = {styles.activeday}>
+                                Bid Ending in:
+                            </Text>
+                            <Text style = {styles.activedaytext}>
+                                {checkDaysLeft(endingAt)} Days
+                            </Text>
+                    </View>
                 </View>
                 <View style = {styles.descriptionContainer}>
                     <Text style = {styles.description}>Description:</Text>
@@ -404,14 +414,6 @@ const MyProfilepage = ({navigation}) => {
                             <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
                             <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
-                    </View>
-                    <View style = {styles.activedaycontainer}>
-                        <Text style = {styles.activeday}>
-                           {checkDaysLeft(endingAt) && ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
-                        </Text>
-                        <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt) && ongoing ? checkDaysLeft(endingAt) + ' Days': updatedAt.substring(0,10)} 
-                        </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
                         <TouchableOpacity 
@@ -722,6 +724,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         height: 30,
         marginVertical: 10,
+        width: '70%',
     },
 
     name: {
