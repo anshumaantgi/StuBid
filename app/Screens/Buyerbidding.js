@@ -12,9 +12,13 @@ import Modal from "react-native-modal";
 import Bid from '../models/Bid.js';
 import BidCreateView from '../views/BidCreateView.js';
 import NotificationView from '../views/NotificationView.js';
+import { AsyncStorage } from 'react-native';
 
 
 const Buyerbidding = ({route, navigation}) => {
+
+    //Check deleted
+    const [checkDeleted, setcheckDeleted] = useState(false);
 
     //Set up Modal (Pop-up screen) when bid/sell button is pressed, etc
     const [isModalVisible, setModalVisible] = useState(false);
@@ -124,6 +128,15 @@ const Buyerbidding = ({route, navigation}) => {
           dId = doc.id;
         });
         setProductdetails(itemdetails);
+        if (!itemdetails) {
+            AsyncStorage.getItem('isItemDeleted', (err, value) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    setcheckDeleted(JSON.parse(value)) // boolean false
+                }
+            })
+        }
         setDocId(dId);
     });
     }
@@ -180,7 +193,7 @@ const Buyerbidding = ({route, navigation}) => {
             setLatestbidder(null);
           };
         
-    }, []);
+    }, [checkDeleted]);
 
     
 
@@ -439,7 +452,6 @@ const Buyerbidding = ({route, navigation}) => {
                    </TouchableOpacity>
                    <TouchableOpacity style = {styles.BIDcustomBtnBG} onPress={() => {
                        //alert("Bid item")
-                       
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
@@ -452,8 +464,11 @@ const Buyerbidding = ({route, navigation}) => {
                        else if (latestbidder && (latestbidder.bidderId == auth.currentUser.uid)) {
                             alert("Please note that you can only bid again if another buyer bids higher than your current price: " + "\n\n" + "$" + productdetails.currPrice)
                         }
-                        else {
+                        else if (productdetails.ongoing) {
                             toggleModal2();
+                        }
+                        else {
+                            alert("closed");
                         }
                      
                        }}>
