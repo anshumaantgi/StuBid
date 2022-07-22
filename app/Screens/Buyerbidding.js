@@ -443,6 +443,9 @@ const Buyerbidding = ({route, navigation}) => {
                        if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
+                       else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
+                        alert("Constratulations! You have won the auction. You can now exchange contact information with the seller.")
+                       }
                        else if (!(productdetails.ongoing)) {
                         alert("Sorry, you are a step late! The item has just been sold to another bidder. You may search for other products in the homepage.")
                        }
