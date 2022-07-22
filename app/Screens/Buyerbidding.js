@@ -109,7 +109,8 @@ const Buyerbidding = ({route, navigation}) => {
             new NotificationView().createNotification(enteredsellerId, "Congratulations! Someone has bidded your item for $" + enteredbidPrice + "! Click here to view the bids placed.", docId);
 
             //Send bids to firestore
-            return await new BidCreateView(auth).createBid(new Bid(parseInt(enteredbidId), enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')), entereddocId, allBiddersId)
+            console.log(enteredbidPrice, enteredbidderanonname);
+            return await new BidCreateView(auth).createBid(enteredbuyerId, enteredauctionId, parseInt(enteredbidPrice), enteredbidderanonname, entereddocId, allBiddersId)
         }
     }
     

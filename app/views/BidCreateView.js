@@ -1,7 +1,8 @@
-import { getDoc, addDoc,doc, collection, updateDoc } from "firebase/firestore";
+import { getDoc, addDoc,doc, collection, updateDoc, setDoc } from "firebase/firestore";
 import { NumberDictionary } from "unique-names-generator";
 import { db } from "../config/config";
 import moment from "moment-timezone";
+import Bid from "../models/Bid";
 
 export default class BidCreateView {
     /**
@@ -20,31 +21,23 @@ export default class BidCreateView {
         this.auth = auth;
     }
     
-    async createBid(bid, docId, allBiddersId) {
-        // Auction Information is pulled
-        currAuction = await getDoc(doc(db ,'auctions' ,docId))
-        //Get All Bids on Auction
-        allBids = currAuction.bids // This is an array
-        // Get Current Price
-        currPrice = currAuction.currPrice
-
-        if (bid.bidPrice <= currPrice) {
-            throw new Error('Bid Price Needs to be more than current price. ')
-        } else if (currAuction.ongoing === false) {
-            throw new Error('Current Auction has expired.')
-        }else {
-            // Making a succesful Bid
-            
+    async createBid(enteredbuyerId, enteredauctionId, enteredbidPrice, enteredbidderanonname, entereddocId, allBiddersId) {
+        
+            console.log(enteredbidPrice)    
+            let docRef = doc(collection(db, "bids"))
+            let newBids = new Bid(docRef.id, enteredbuyerId, enteredauctionId, enteredbidPrice, enteredbidderanonname, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'))
+           
             //Creating a bid instance
-            console.log(bid.toFirestore())
-            await addDoc(collection(db,'bids'), bid.toFirestore())
+            console.log(newBids.toFirestore())
+
+            await setDoc(docRef, newBids.toFirestore())
             .then (
                 (success) => {
                     // Update Auction Current Price
 
-                    return updateDoc(doc(db, 'auctions', docId) , { 
-                        currPrice: bid.bidPrice,
-                        leadBuyerId: bid.bidderId,
+                    return updateDoc(doc(db, 'auctions', entereddocId) , { 
+                        currPrice: enteredbidPrice,
+                        leadBuyerId: enteredbuyerId,
                         allBiddersId: allBiddersId,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),
 
@@ -56,7 +49,7 @@ export default class BidCreateView {
             )
             .catch ( (err) => { throw new Error(err.message)})
 
-        }
+        
     }
 
 }
