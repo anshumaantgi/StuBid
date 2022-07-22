@@ -374,10 +374,18 @@ const Homepage = ({route, navigation}) => {
         return (
             <View style = {styles.list}>
                 <Image source = {{uri : product.pictureUri}} style = {styles.listImage} />
-                <View style = {styles.listingContainer}>
-                   
-                        <Text style= {styles.name}>{product.name}</Text>
-                
+                <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
+                    <View style = {styles.listingContainer}>
+                            <Text style= {styles.name}>{product.name}</Text>
+                    </View>
+                    <View style = {styles.activedaycontainer}>
+                            <Text style = {styles.activeday}>
+                                Bid Ending in:
+                            </Text>
+                            <Text style = {styles.activedaytext}>
+                                {checkDaysLeft(endingAt)} Days
+                            </Text>
+                    </View>
                 </View>
                 <View style = {styles.descriptionContainer}>
                     <Text style = {styles.description}>Description:</Text>
@@ -412,14 +420,6 @@ const Homepage = ({route, navigation}) => {
                             <Ionicons style={styles.lockIcon} name={'calendar-outline'} size={16} color={colors.black} />
                             <Text style = {styles.date_published}> {createdAt}</Text>
                         </View>
-                    </View>
-                    <View style = {styles.activedaycontainer}>
-                        <Text style = {styles.activeday}>
-                            Bid Ending in:
-                        </Text>
-                        <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(endingAt)} Days
-                        </Text>
                     </View>
                     <View style = {styles.bidcontainer}>
                         <TouchableOpacity 
@@ -648,6 +648,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         height: 30,
         marginVertical: 10,
+        width: '70%',
     },
 
     name: {
@@ -772,6 +773,9 @@ const styles = StyleSheet.create({
         backgroundColor: colors.activeday,
         padding: 5,
         borderRadius: 5,
+        
+        alignSelf: 'center',
+        marginVertical: 10,
     },
 
     activeday: {
