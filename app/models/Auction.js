@@ -1,11 +1,10 @@
 
 export default class Auction {
 
-    constructor(auctionId, auctionDocId, currPrice ,ong, createdAt,anomName, product, endingAt) {
+    constructor(auctionId, currPrice ,ong, createdAt,anomName, product, endingAt) {
        this.leadBuyerId = null;
        this.allBiddersId = null;
        this.auctionId = auctionId,
-       this.auctionDocId = auctionDocId,
        this.anomName = anomName;
        this.currPrice = currPrice;
        this.ongoing = ong;
@@ -20,7 +19,6 @@ export default class Auction {
             leadBuyerId: this.leadBuyerId,
             allBiddersId: this.allBiddersId,
             auctionId: this.auctionId,
-            auctionDocId: this.auctionDocId,
             anomName: this.anomName,
             product: this.product,
             currPrice: this.currPrice,

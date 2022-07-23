@@ -22,25 +22,27 @@ export default class AuctionView {
         
     }
 
-    async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName, endbiddate) {
+    async createProduct(minPrice, buyPrice, category, activeDays,anomName, endbiddate) {
 
-        // Adding Product Feilds
-        this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
         const storage = getStorage();
+        const docRef = doc(collection(db, "auctions"))
+        // Adding Product Feilds
+        this.product.setPriceAndCategory(minPrice, buyPrice, category, docRef.id, activeDays, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
+      
         try {
-        const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + auctionId + '.png');
+        const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + docRef.id + '.png');
         
         // Adding th Download link to Product class
         this.product.pictureUri = url;
         
-        let docRef = doc(collection(db, "auctions"))
-        let newAuction = new Auction(auctionId, docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate);
+        console.log(docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate)
+        let newAuction = new Auction(docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate);
         await setDoc(docRef, newAuction.toFirestore());
         console.log('GOOOD')
 
     } catch (e) {
         // Deleted the product , assocaited with the auction if Auction not sotred in database
-        const deleteRef = ref(storage, "products-image/" + auctionId + '.png');
+        const deleteRef = ref(storage, "products-image/" + docRef.id + '.png');
         await deleteObject(deleteRef);
         // Error thrown to be show to the user
         throw new Error(e.message);

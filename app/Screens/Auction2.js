@@ -16,7 +16,6 @@ const Auction2 = ({route, navigation}) => {
       const auctionView =  route.params;
       const [startingprice, setStartingprice] = useState('');
       const [buyoutprice, setBuyoutprice] = useState('');
-      const [counter, setCounter] = useState(0);
 
       //Category Picker
       const [open, setOpen] = useState(false);
@@ -93,40 +92,16 @@ const Auction2 = ({route, navigation}) => {
         });
         }
 
-        const countdocs = async()=> {
-        var allauctionID = [];
-        const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "auctions"));
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data().auctionId);
-          allauctionID.push(doc.data().auctionId);
-          }
-          )
-          if (allauctionID.length) {
-            setCounter(arrayMax(allauctionID) + 1);
-          }
-          else {
-            setCounter(1);
-          }
-          console.log("CAAAADDD", counter)
-        };
-        
-        useEffect(() => {
-           countdocs();
-        }, [])
-
       // Function to send to database
       async function sendValues(enteredcategory, enteredendbid, enteredbidduration, enteredstartingprice, enteredbuyoutprice, SellerAnonymousName) {
         if (!(enteredcategory && enteredbidduration && enteredstartingprice && enteredbuyoutprice && SellerAnonymousName)) {
-            //console.log(counter);
             throw new Error("Please do not leave any fields empty!");
           } else if (parseInt(enteredbuyoutprice) <=  parseInt(enteredstartingprice)) {
               throw new Error("Buyout Bid must be higher than Starting Bid!");
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
-            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,counter,parseInt(enteredbidduration),SellerAnonymousName, enteredendbid)
+            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,parseInt(enteredbidduration),SellerAnonymousName, enteredendbid)
           }
     };
     

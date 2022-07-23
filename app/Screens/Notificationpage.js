@@ -82,7 +82,7 @@ const Notificationpage = ({navigation}) => {
     for (let i = 0; i < documentSnapshots.docs.length; i++) {
         notif.push(documentSnapshots.docs[i].data());
         docId[documentSnapshots.docs[i].data().notificationId] = documentSnapshots.docs[i].id
-        let product = await getAuction(documentSnapshots.docs[i].data().auctionDocId)
+        let product = await getAuction(documentSnapshots.docs[i].data().auctionId)
         prods[documentSnapshots.docs[i].data().notificationId] = product;
        // console.log(newProducts);
     }

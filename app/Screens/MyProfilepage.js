@@ -180,7 +180,7 @@ const MyProfilepage = ({navigation}) => {
 
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
-                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionId), { 
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
@@ -189,16 +189,16 @@ const MyProfilepage = ({navigation}) => {
                 if (documentSnapshots.docs[i].data().leadBuyerId) {
                     console.log(2222222222222)
                     //Send Seller Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionId);
             
                     //Send Buyer Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionId);
             
                     //Send to all other unsuccessful buyers (if there are other bidders)
                     if (documentSnapshots.docs[i].data().allBiddersId) {
-                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
-                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
-                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                        for (let j = 0; j < documentSnapshots.docs[i].data().allBiddersId.length; j++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[j] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                await new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[j], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionId);
                             }
                         }
                     }
@@ -206,7 +206,7 @@ const MyProfilepage = ({navigation}) => {
                 else {
                     console.log(33333333333333)
                     //Send Seller unsuccessful auction (No Bidders but bid has ended)
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionId);
                     }
                 console.log(444444444444)
                 }
@@ -268,7 +268,7 @@ const MyProfilepage = ({navigation}) => {
 
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
-                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionId), { 
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
@@ -277,16 +277,16 @@ const MyProfilepage = ({navigation}) => {
                 if (documentSnapshots.docs[i].data().leadBuyerId) {
                     console.log(2222222222222)
                     //Send Seller Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionId);
             
                     //Send Buyer Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionId);
             
                     //Send to all other unsuccessful buyers (if there are other bidders)
                     if (documentSnapshots.docs[i].data().allBiddersId) {
-                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
-                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
-                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                        for (let j = 0; j < documentSnapshots.docs[i].data().allBiddersId.length; j++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[j] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                await new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[j], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionId);
                             }
                         }
                     }
@@ -294,7 +294,7 @@ const MyProfilepage = ({navigation}) => {
                 else {
                     console.log(33333333333333)
                     //Send Seller unsuccessful auction (No Bidders but bid has ended)
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionId);
                     }
                 console.log(444444444444)
                 }
@@ -320,7 +320,7 @@ const MyProfilepage = ({navigation}) => {
 
     }
 
-      const renderList = ({auctionId, auctionDocId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, updatedAt, endingAt}) => {
+      const renderList = ({auctionId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, updatedAt, endingAt}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];

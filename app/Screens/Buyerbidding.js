@@ -292,7 +292,7 @@ const Buyerbidding = ({route, navigation}) => {
         );
       }
 
-      const checkDaysLeft = (endingDate, auctionDocId) => {
+      const checkDaysLeft = (endingDate, auctionId, ongoing) => {
 
         var given = moment(endingDate, 'DD/MM/YYYY') ;
         var current = moment(moment().tz('Singapore').format('DD/MM/YYYY'), 'DD/MM/YYYY')
@@ -306,11 +306,12 @@ const Buyerbidding = ({route, navigation}) => {
         else
         {
             //Close and terminate auction
-            //return new TerminateAuctionView().closeListing(auctionDocId);
-            updateDoc(doc(db ,'auctions', auctionDocId), { 
+            if (ongoing) {
+            updateDoc(doc(db ,'auctions', auctionId), { 
                 ongoing: false,
                 updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
             })
+            }
         }
     }
 
@@ -367,11 +368,11 @@ const Buyerbidding = ({route, navigation}) => {
                             <Text style = {styles.buyoutbid}>Buyout Bid:  ${productdetails.product.buyPrice}</Text>
                         </View>
                         <View style = {styles.activedaycontainer}>
-                            <Text style = {styles.activeday}>
-                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing  ? 'Bid Ending in:' : 'Auction Closed:'}
+                        <Text style = {styles.activeday}>
+                            {productdetails.ongoing && checkDaysLeft(productdetails.endingAt, productdetails.auctionId, productdetails.ongoing)  ? 'Bid Ending in:' : 'Auction Closed:'}
                             </Text>
                             <Text style = {styles.activedaytext}>
-                            {checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) && productdetails.ongoing ? checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId) + ' Days': productdetails.updatedAt} 
+                            {productdetails.ongoing && checkDaysLeft(productdetails.endingAt, productdetails.auctionId, productdetails.ongoing) ? checkDaysLeft(productdetails.endingAt, productdetails.auctionId, productdetails.ongoing) + ' Days': productdetails.updatedAt} 
                             </Text>
                         </View>
                         </View>
@@ -405,7 +406,7 @@ const Buyerbidding = ({route, navigation}) => {
 
                        await getproductlisting();
 
-                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
                        else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {
@@ -425,7 +426,7 @@ const Buyerbidding = ({route, navigation}) => {
                        //alert("Bid item")
                         await getproductlisting();
             
-                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionDocId)) {
+                       if (!checkDaysLeft(productdetails.endingAt, productdetails.auctionId)) {
                         alert("Auction is closed as bid duration has just exceeded. Please proceed to homepage and refresh.")
                        }
                        else if (!productdetails.ongoing && productdetails.leadBuyerId == auth.currentUser.uid) {

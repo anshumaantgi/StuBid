@@ -72,14 +72,14 @@ const Homepage = ({route, navigation}) => {
     
     //Retrieval by Filter uni
     if (filterchecker && uniSelected.length) {
-        filterunifirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), limit(3));
-        filterunilast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
+        filterunifirst = query(productsRef,  orderBy("createdAt", "desc"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), limit(3));
+        filterunilast = query(productsRef,  orderBy("createdAt", "desc"), where('product.originUni', '==', uniSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter category
     if (filterchecker && catSelected.length) {
-        filtercatfirst = query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
-        filtercatlast= query(productsRef,  orderBy("createdAt"), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
+        filtercatfirst = query(productsRef,  orderBy("createdAt", "desc"), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
+        filtercatlast= query(productsRef,  orderBy("createdAt", "desc"), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
     //Retrieval by Filter price range
@@ -90,8 +90,8 @@ const Homepage = ({route, navigation}) => {
 
     //Retrieval by Filter uni and category
     if (filterchecker && uniSelected.length && catSelected.length) {
-        filterunicatfirst = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
-        filterunicatlast = query(productsRef,  orderBy("createdAt"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
+        filterunicatfirst = query(productsRef,  orderBy("createdAt", "desc"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), limit(3));
+        filterunicatlast = query(productsRef,  orderBy("createdAt", "desc"), where('product.originUni', '==', uniSelected), where('product.category', '==', catSelected), where("ongoing", "==", true), startAfter(lastDoc), limit(3));
     }
 
      //Retrieval by Filter uni and price range
@@ -176,33 +176,35 @@ const Homepage = ({route, navigation}) => {
 
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
-                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionId), { 
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
 
                 //Send notifications if Bid Ends
                 if (documentSnapshots.docs[i].data().leadBuyerId) {
-                    console.log(2222222222222)
+                    console.log(documentSnapshots.docs[i].data().leadBuyerId, "AAAAAAAAAAA")
                     //Send Seller Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
-            
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionId);
+                    console.log(documentSnapshots.docs[i].data().auctionId, "BBBBBBBBBBBBBBBBBBBBBBBBB")
                     //Send Buyer Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
-            
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionId);
+                    console.log(666666666666)
                     //Send to all other unsuccessful buyers (if there are other bidders)
-                    if (documentSnapshots.docs[i].data().allBiddersId) {
-                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
-                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
-                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                    if (documentSnapshots.docs[i].data().allBiddersId.length) {
+                        console.log(77777777777777, documentSnapshots.docs[i].data().allBiddersId.length)
+                        for (let j = 0; j < documentSnapshots.docs[i].data().allBiddersId.length; j++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[j] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                await new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[j], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionId);
                             }
                         }
+                        console.log(999999999)
                     }
                 }
                 else {
                     console.log(33333333333333)
                     //Send Seller unsuccessful auction (No Bidders but bid has ended)
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionId);
                     }
                 console.log(444444444444)
                 }
@@ -212,7 +214,6 @@ const Homepage = ({route, navigation}) => {
                 }
 
             }
-
             setProducts(newProducts);
         } else {
             setLastDoc(null);
@@ -273,33 +274,35 @@ const Homepage = ({route, navigation}) => {
 
                 //Do not push and display if bids duration exceeded
                 if (documentSnapshots.docs[i].data().endingAt == moment().tz('Singapore').format('DD/MM/YYYY') && documentSnapshots.docs[i].data().ongoing) {
-                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionDocId), { 
+                    updateDoc(doc(db ,'auctions', documentSnapshots.docs[i].data().auctionId), { 
                         ongoing: false,
                         updatedAt: moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss')
                     })
 
                 //Send notifications if Bid Ends
                 if (documentSnapshots.docs[i].data().leadBuyerId) {
-                    console.log(2222222222222)
+
                     //Send Seller Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
-            
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Congratulations, the highest bidder has won your auction! Click here to view Buyer's Contact Information", documentSnapshots.docs[i].data().auctionId);
+                    
                     //Send Buyer Bid End Success message
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionDocId);
-            
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().leadBuyerId, "The Bid Duration is over! Congratulations, you have won the auction as the highest bidder! Click here to view Seller's Contact Information", documentSnapshots.docs[i].data().auctionId);
+                    console.log("NIKEEEEEEEE")
                     //Send to all other unsuccessful buyers (if there are other bidders)
                     if (documentSnapshots.docs[i].data().allBiddersId) {
-                        for (let i = 0; i < documentSnapshots.docs[i].data().allBiddersId.length; i++) {
-                            if (documentSnapshots.docs[i].data().allBiddersId[i] != documentSnapshots.docs[i].data().leadBuyerId) {
-                                new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[i], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionDocId);
+                        console.log(134567891)
+                        for (let j = 0; j < documentSnapshots.docs[i].data().allBiddersId.length; j++) {
+                            if (documentSnapshots.docs[i].data().allBiddersId[j] != documentSnapshots.docs[i].data().leadBuyerId) {
+                                await new NotificationView().createNotification(documentSnapshots.docs[i].data().allBiddersId[j], "The Bid Duration is over! We're sorry to inform you that this product listing is closed and you've been outbidded.", documentSnapshots.docs[i].data().auctionId);
                             }
                         }
+                        console.log(888888888888)
                     }
                 }
                 else {
                     console.log(33333333333333)
                     //Send Seller unsuccessful auction (No Bidders but bid has ended)
-                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionDocId);
+                    new NotificationView().createNotification(documentSnapshots.docs[i].data().product.ownerId, "The Bid Duration is over! Unfortunately, there are no bidders for this product yet. Click here to view or delete your product.", documentSnapshots.docs[i].data().auctionId);
                     }
                 console.log(444444444444)
                 }
@@ -325,7 +328,7 @@ const Homepage = ({route, navigation}) => {
 
     }
 
-    const renderList = ({auctionId, auctionDocId, leadBuyerId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, endingAt}) => {
+    const renderList = ({auctionId, leadBuyerId, anomName, currPrice, product, createdAt, ongoing, allBiddersId, endingAt}) => {
         //check for any bidders in auction. If none, set it to empty array.
         if (!allBiddersId) {
             allBiddersId = [];
