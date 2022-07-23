@@ -42,7 +42,6 @@ const Buyerbidding = ({route, navigation}) => {
     const [docId, setDocId] = useState('');
     const [bidders, setBidders] = useState([]);
     const [userbidprice, setUserbidprice] = useState('');
-    const [id, setId] = useState(null);
     const [latestbidder, setLatestbidder] =  useState(null);
     const [isDeleted, setIsDeleted] =  useState(false);
 
@@ -79,7 +78,7 @@ const Buyerbidding = ({route, navigation}) => {
 
 
     //Send user bid details to Firestore
-    async function senduserbidvalues(enteredbidId, enteredsellerId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
+    async function senduserbidvalues(enteredsellerId, enteredbuyerId, enteredauctionId, entereddocId, enteredbidPrice, enteredbidderanonname) {
         var allBiddersId = [];
         if (productdetails.allBiddersId)
         {
@@ -139,7 +138,7 @@ const Buyerbidding = ({route, navigation}) => {
     // Retrieve current latest bidder information from firestore via AuctionId
     const getlatestbidder = async() => {
         var latestanon = [];
-        const q = query(biddingRef, orderBy("bidId", "desc"), where("auctionId", "==", aId));
+        const q = query(biddingRef, orderBy("bidPrice", "desc"), where("auctionId", "==", aId));
         //const querySnapshot = await getDocs(q);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -153,38 +152,14 @@ const Buyerbidding = ({route, navigation}) => {
     });
     }
 
-    //Bid Id auto-accumulator
-    const getId = async()=> {
-    var count = 0;
-    const db = getFirestore();
-    const q = query(biddingRef, where("auctionId", "==", aId));
-    //console.log(aId, 'WEEEE');
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    //const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        //console.log(doc.id, " => ", doc.data());
-        count = count + 1
-        }
-        )
-        setId(count);
-        count = 0; // reason for setting count = 0  here is because this is realtime querying and we need to reset it
-        // console.log("CAAAADDD", count)
-        // console.log("CAAAADDD", id)
-     });
-
-        };
-    
         
     //Execute and get products, etc
     useEffect(() => {
         getproductlisting();
-        getId();
         getBidding();
         getlatestbidder();
         return () => {
             setProductdetails(''); // Reset changes
-            setId(null);
             setLatestbidder(null);
           };
         
@@ -194,7 +169,7 @@ const Buyerbidding = ({route, navigation}) => {
 
     const getBidding = async () => {
     // Query the first page of docs
-    const first = query(biddingRef, orderBy("bidId", "desc"),  where("auctionId", "==", aId));
+    const first = query(biddingRef, orderBy("bidPrice", "desc"),  where("auctionId", "==", aId));
 
     const unsubscribe = onSnapshot(first, (querySnapshot) => {
     //const documentSnapshots = await getDocs(first);
@@ -414,7 +389,7 @@ const Buyerbidding = ({route, navigation}) => {
                     <Text style = {styles.leadingbidder}>{latestbidder && (latestbidder.bidderId == auth.currentUser.uid ? 'Me' : latestbidder.bidderAnomname)}</Text>
                 </View>
                 <Text style = {styles.currentbid}>Current Bids: </Text>
-                <Text style = {styles.numofbidsplaced}>Number of Bids: {id}</Text>
+                <Text style = {styles.numofbidsplaced}>Number of Bids: {bidders.length}</Text>
                 <Text style = {styles.nobidsnotice}>{bidders.length ? '' : 'There are currently no bids for this product.'}</Text>
            </View>
            </View>
@@ -559,7 +534,7 @@ const Buyerbidding = ({route, navigation}) => {
                         <View style = {styles.buyoutcontainer}>
                         <TouchableOpacity style = {styles.CONFIRMcustomBtnBG} onPress={() => {
                             //alert("Bid is placed!")
-                            senduserbidvalues(id, productdetails.product.ownerId, auth.currentUser.uid, aId, docId, userbidprice, randomName)
+                            senduserbidvalues(productdetails.product.ownerId, auth.currentUser.uid, aId, docId, userbidprice, randomName)
                             .then((success) =>  {navigation.navigate('BidSuccess', {aId, userbidprice});})
                             .catch((error) => {alert(error.message)})
                         }}> 
@@ -569,7 +544,7 @@ const Buyerbidding = ({route, navigation}) => {
                             toggleModal2();
                             setUserbidprice('');
                         }}>
-                        <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                        <Text style ={styles.CANCELcustomBtnText}>Cancel</Text>
                         </TouchableOpacity>
                         </View>
                     </ScrollView>

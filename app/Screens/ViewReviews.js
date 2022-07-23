@@ -33,7 +33,7 @@ const ViewReviews = ({route, navigation}) => {
     // Retrieve review details from firestore via AuctionId (Purpose is to check if user have done review yet)
     const getreviews = async() => {
 
-        const q = query(reviewRef, where("receiverId", "==", reviewerId));
+        const q = query(reviewRef, where("receiverId", "==", reviewerId), orderBy("createdAt", "desc"));
     
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             //get average rating
@@ -180,7 +180,7 @@ const ViewReviews = ({route, navigation}) => {
                 contentContainerStyle={{ paddingBottom: 70}}
                 data={reviewdetails}
                 ItemSeparatorComponent={ItemDivider}
-                keyExtractor={item =>  item.createdAt.toString()}
+                keyExtractor={item =>  item.reviewId.toString()}
                 renderItem={({item}) => renderList(item)}  />
                 
              

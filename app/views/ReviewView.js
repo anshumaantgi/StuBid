@@ -1,7 +1,7 @@
 import User from "../models/User"
 import {createUserWithEmailAndPassword, sendEmailVerification} from 'firebase/auth'
 import { db } from "../config/config";
-import { collection, addDoc} from "firebase/firestore"; 
+import { collection, doc,  setDoc, addDoc} from "firebase/firestore"; 
 import moment from "moment-timezone";
 import Review from "../models/Review";
 
@@ -28,13 +28,15 @@ export default class ReviewView {
             throw new Error("Please provide a comment/feedback for the user!");
         }
         else {
-            this.review = new Review(auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
+
+            let docRef = doc(collection(db, "reviews"))
+            this.review = new Review(docRef.id, auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
            //Creating a bid instance
            console.log(this.review.toFirestore())
-           await addDoc(collection(db,'reviews'), this.review.toFirestore())
+           await setDoc(docRef, this.review.toFirestore())
            .then (
                (success) => {
-                   // Update Auction Current Price
+                  console.log('Send Review successfully')
                }
 
            )

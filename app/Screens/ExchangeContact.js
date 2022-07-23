@@ -447,7 +447,7 @@ const ExchangeContact= ({route, navigation}) => {
                             <TouchableOpacity style = {styles.CANCELcustomBtnBG} onPress={() => {
                                 toggleModal();
                             }}>
-                            <Text style ={styles.CANCELcustomBtnText}>Cancal</Text>
+                            <Text style ={styles.CANCELcustomBtnText}>Cancel</Text>
                             </TouchableOpacity>
                             </View>
                         </ScrollView>

@@ -1,6 +1,7 @@
 export default class Review {
 
-    constructor(auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, createdTime) {
+    constructor(reviewId, auctionId, senderId, receiverId, rating, comment, itemName, pictureUri, createdTime) {
+       this.reviewId = reviewId;
        this.auctionId = auctionId;
        this.senderId = senderId;
        this.receiverId = receiverId;
@@ -15,6 +16,7 @@ export default class Review {
 
     toFirestore() {
         return {
+            reviewId : this.reviewId,
             auctionId : this.auctionId,
             senderId : this.senderId,
             receiverId : this.receiverId,
