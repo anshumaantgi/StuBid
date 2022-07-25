@@ -56,7 +56,7 @@
     </div>
   <h2 align ="center" > <strong> Our Aim </strong> </h2>
       
-<p align = "center"> We aim to create a one-stop mobile application which allows students from all Singapore Universities to conveniently buy or sell unwanted items online through an anonymous bidding system, maximizing the benefits gained by both the seller and buyer. </p>
+<p align = "center"> We aim to create a one-stop online marketplace, a mobile application which allows students from all Singapore Universities to conveniently buy or sell unwanted items online through an anonymous bidding system, maximizing the benefits gained by both the seller and buyer. </p>
   <br />
   <h2 align ="center" > <strong> How it Works? </strong> </h2>
 <p align = "center"> Sellers can upload a photo and the relevant details of their item and set a starting bid of the item. Any interested buyers who search for the item can make a bid higher or equal the starting bid for the item. If the Seller is satisfied with the price bid by the item, he or she can accept the bid offered. Once the bid is successfully accepted, seller and buyer can start to interact and exchange contact information with each other for the transaction to occur. Upon successful transaction, both seller and buyer can leave a review for each other. </p>
@@ -93,7 +93,11 @@
     ```sh
     npm install
     ```
-6. Run CLI command:  
+6. Run CLI command:
+    ```sh
+    expo upgrade
+    ```
+7. To start the app, run the following CLI command:  
     ```sh
     npm start
     ```
