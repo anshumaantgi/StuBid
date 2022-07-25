@@ -2,24 +2,22 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
-const ItemPublishSuccess = ({route, navigation}) => {
-    const selleranonname = route.params.randomName;
+
+const DeleteItemSuccess = ({navigation}) => {
+
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
           <Text style={styles.text}> 
-           Item has been published Successfully.
+            You have successfully deleted the item from the listing.
           </Text>
           <Text style={styles.text}> 
-           Please take note of your Anonymous Identity : 
-          </Text>
-          <Text style={styles.selleranon}> 
-            {selleranonname}
+           Buyers will be notified of the deleted listing.
           </Text>
           
           <View style={{flexDirection: 'row'}}>
                 <Text style={styles.returnlogintext}>Return to Homepage? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("MainContainer")}>
+                <TouchableOpacity onPress={() => navigation.replace("MainContainer")}>
                     <Text style ={styles.logintext}>Homepage</Text>
                 </TouchableOpacity>
             </View>
@@ -61,14 +59,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    selleranon : {
-        fontSize: 15,
-        color: colors.red,
-        textAlign: "center",
-        fontFamily: "Montserrat-Black",
-        marginHorizontal: 60,
-        marginVertical: 10,
-    },
-
 })
-export default ItemPublishSuccess;
+export default DeleteItemSuccess;

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, ScrollView, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import {auth} from '../config/config.js';
@@ -15,7 +15,7 @@ const ForgetPassword = ({navigation}) => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
             <Text style={styles.title}> 
             Reset Password
@@ -31,13 +31,13 @@ const ForgetPassword = ({navigation}) => {
                 }}>
                 <Text style ={styles.customBtnText}>Send to Email</Text>
             </TouchableOpacity>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row',   alignSelf: 'center',}}>
                 <Text style={styles.returnlogintext}>Return to Login Page? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style ={styles.logintext}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
       },
 
     logo: {
         width: '100%',
-        marginVertical: '-30%',
+        alignSelf: 'center',
+        marginBottom: -150,
+        marginTop: -50,
     },
 
     title: {
@@ -64,18 +64,20 @@ const styles = StyleSheet.create({
         color: colors.darkbrown,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
-        marginRight: '40%',
+        alignSelf: 'center',
     },
 
     text: {
         color: colors.darkbrown,
-        textAlign: "left",
+        textAlign: "center",
         width: '80%',
         marginVertical: 10,
+        alignSelf: 'center',
     },
 
 
     textinput: {
+        alignSelf: 'center',
         backgroundColor: colors.textinput,
         width: '80%',
         borderRadius: 5,
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
     },
 
     customBtnBG: {
+        alignSelf: 'center',
         width: '80%',
         marginVertical: 10,
         backgroundColor: colors.darkbrown,

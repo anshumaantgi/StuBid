@@ -31,6 +31,9 @@ const Registration = ({navigation}) => {
     ]);
 
     async function sendValues(enteredfullname, selectuniname, enteredemail, enteredpassword, enteredrepassword) {
+        /** 
+         * Functions Sends Values to the Functional Class Registeration View
+         */
         return await new RegisterationView(db, auth).createUser(enteredfullname, enteredemail,selectuniname, enteredpassword, enteredrepassword);
     };
 
@@ -83,7 +86,9 @@ const Registration = ({navigation}) => {
         <ScrollView contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps='handled'>
         <SafeAreaView style={styles.container}>
             <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
-            <TextInput style = {styles.textinput} placeholder='Full Name' placeholderTextColor={colors.white} value = {fullname} onChangeText={(value) => setFullname(value)}/>
+            <Text style={styles.titleinput} >Full Name</Text>
+            <TextInput style = {styles.textinput} placeholder='Enter Full Name' placeholderTextColor={colors.white} value = {fullname} onChangeText={(value) => setFullname(value)}/>
+            <Text style={styles.titleinput} >Name of University</Text>
             <DropDownPicker
                 open={open}
                 value={value}
@@ -99,19 +104,22 @@ const Registration = ({navigation}) => {
                     setValue(value);
                     FindUniMatchAddress(value);
                   }}
-                placeholder="Name of University"
-                containerStyle={{width: '80%', marginVertical: 10}}
+                placeholder="Select University"
+                containerStyle={{width: '80%', marginVertical: 10,  alignSelf: 'center',}}
                 style={{backgroundColor: colors.textinput, paddingVertical: 20, borderColor: '#fff'}}
                 placeholderStyle={{color: colors.white}}
                 dropDownStyle = {{backgroundColor: colors.textinput}}
                 labelStyle = {{color: colors.white}}
 
             />
-            <View style={{flexDirection: 'row'}}>
+                <Text style={styles.titleinput} >Email</Text>
+            <View style={{flexDirection: 'row',  alignSelf: 'center'}}>
                 <TextInput style = {styles.textinputemail} placeholder='Email Username (Only)' placeholderTextColor={colors.white} value = {email} onChangeText={(value) => setEmail(value)} keyboardType="email-address"/>
                 <TextInput style = {styles.text} editable = {false} value  = {unimatchaddress} placeholder='@university.sg' placeholderTextColor={colors.white}/>
             </View>
+            <Text style={styles.titleinput} >Password</Text>
             <TextInput style = {styles.textinput} placeholder='Password' placeholderTextColor={colors.white} value = {password} onChangeText={(value) => setPassword(value)} secureTextEntry={true}/>
+            <Text style={styles.titleinput} >Confirm Password</Text>
             <TextInput style = {styles.textinput} placeholder='Re-Enter Password' placeholderTextColor={colors.white} value = {repassword} onChangeText={(value) => setRepassword(value)} secureTextEntry={true}/>
             <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(fullname, value, email + unimatchaddress, password, repassword)
@@ -122,7 +130,7 @@ const Registration = ({navigation}) => {
             >
                 <Text style ={styles.customBtnText}>Create Account</Text>
             </TouchableOpacity>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 70,}}>
                 <Text style={styles.returnlogintext}>Have an account?  </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style ={styles.logintext}>Login</Text>
@@ -142,14 +150,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: '20%',
       },
 
     logo: {
         width: '100%',
-        marginVertical: '-40%',
+        marginTop: -70,
+        marginBottom: -120,
+    },
+
+    titleinput : {
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginLeft: '10%',
     },
 
     textinput: {
@@ -160,6 +172,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         marginVertical: 10,
         color: colors.white,
+        alignSelf: 'center',
     },
 
     textinputemail: {
@@ -197,7 +210,8 @@ const styles = StyleSheet.create({
         marginVertical: '5%',
         backgroundColor: colors.darkbrown,
         paddingVertical: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        alignSelf: 'center',
     },
 
     forgetpasswordtext: {

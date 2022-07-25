@@ -7,6 +7,13 @@ export default class LoginView {
     }
 
     async logUser( email, password ) {
+        /**
+         * Sends User credentials to the Firebase module functions , so user can be authenticated
+         * 
+         * @Params : email , password
+         * @Return : None
+         * @Throw : FireBase Errors
+         */
 
         await signInWithEmailAndPassword(this.auth, email, password)
         .then((userCredential) => {

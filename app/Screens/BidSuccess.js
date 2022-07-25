@@ -2,25 +2,34 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import colors from '../config/colors.js';
 
-const ItemPublishSuccess = ({route, navigation}) => {
-    const selleranonname = route.params.randomName;
+const BidSuccess = ({route, navigation}) => {
+    const buyerbidprice = route.params.userbidprice;
+    const auctionId = route.params.aId;
     return (
         <View style={styles.container}>
           <Image style = {styles.image} source= {require('../assets/Successlogo/Success.png')} resizeMode = "contain" /> 
           <Text style={styles.text}> 
-           Item has been published Successfully.
+           Hurray!
           </Text>
           <Text style={styles.text}> 
-           Please take note of your Anonymous Identity : 
+           You have successfully bidded the item for : 
           </Text>
-          <Text style={styles.selleranon}> 
-            {selleranonname}
+          <Text style={styles.buyerbid}> 
+            ${buyerbidprice}
+          </Text>
+          <Text style={styles.text}> 
+            Your bidding details will be notified
+            to the seller. You may also view your
+            bidding details on your account.
           </Text>
           
           <View style={{flexDirection: 'row'}}>
-                <Text style={styles.returnlogintext}>Return to Homepage? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("MainContainer")}>
-                    <Text style ={styles.logintext}>Homepage</Text>
+                <Text style={styles.returnlogintext}>Return to Product Listing? </Text>
+                <TouchableOpacity onPress={() =>
+                {
+                    navigation.navigate("BuyerBid", {auctionId});
+                }}>
+                    <Text style ={styles.logintext}>Go Back</Text>
                 </TouchableOpacity>
             </View>
           
@@ -61,9 +70,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    selleranon : {
-        fontSize: 15,
-        color: colors.red,
+    buyerbid : {
+        fontSize: 30,
+        color: colors.orange,
         textAlign: "center",
         fontFamily: "Montserrat-Black",
         marginHorizontal: 60,
@@ -71,4 +80,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default ItemPublishSuccess;
+export default BidSuccess;

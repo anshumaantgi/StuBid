@@ -2,6 +2,7 @@ import { collection, deleteDoc, addDoc, setDoc, Timestamp, doc} from "firebase/f
 import { db } from "../config/config";
 import Auction from "../models/Auction";
 import {uploadBytes, ref, getDownloadURL,deleteObject, getStorage} from 'firebase/storage';
+import moment from "moment-timezone";
 
 export default class AuctionView {
     constructor(auth,db, product) {
@@ -11,6 +12,7 @@ export default class AuctionView {
     }
 
     async uploadImage (uri , pictureName) {
+        // Uploading Image to Storage and then retiriving the Downlaod link
         const response = await fetch(uri);
         const blob = await response.blob();
         const storage = getStorage();
@@ -20,23 +22,29 @@ export default class AuctionView {
         
     }
 
-    async createProduct(minPrice, buyPrice, category, auctionId, activeDays,anomName) {
-        //console.log(anomName)
-        this.product.setPriceAndCategory(minPrice, buyPrice, category, auctionId, activeDays, new Date().toLocaleString());
+    async createProduct(minPrice, buyPrice, category, activeDays,anomName, endbiddate) {
+
         const storage = getStorage();
+        const docRef = doc(collection(db, "auctions"))
+        // Adding Product Feilds
+        this.product.setPriceAndCategory(minPrice, buyPrice, category, docRef.id, activeDays, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'));
+      
         try {
-        const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + auctionId + '.png');
+        const url =  await this.uploadImage(this.product.pictureUri, "products-image/" + docRef.id + '.png');
         
+        // Adding th Download link to Product class
         this.product.pictureUri = url;
         
+        console.log(docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate)
+        let newAuction = new Auction(docRef.id, minPrice, true, moment().tz('Singapore').format('DD/MM/YYYY, HH:mm:ss'),anomName, this.product.toFirestore(), endbiddate);
+        await setDoc(docRef, newAuction.toFirestore());
+        console.log('GOOOD')
 
-        
-
-        newAuction = new Auction(auctionId,minPrice, true, new Date().toLocaleString(),anomName, this.product.toFirestore());
-        await addDoc(collection(db, "auctions") , newAuction.toFirestore());
     } catch (e) {
-        const deleteRef = ref(storage, "products-image/" + auctionId + '.png');
+        // Deleted the product , assocaited with the auction if Auction not sotred in database
+        const deleteRef = ref(storage, "products-image/" + docRef.id + '.png');
         await deleteObject(deleteRef);
+        // Error thrown to be show to the user
         throw new Error(e.message);
     }
     }

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, ScrollView, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import colors from '../config/colors.js';
 import LoginView from '../views/LoginView.js';
@@ -16,10 +16,12 @@ const Login = ({navigation}) => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Image style = {styles.logo} source = {require('../assets/StuBid-Logo-Original-ver.png')} resizeMode = "contain" /> 
-            <TextInput style = {styles.textinput} placeholder='Email (School)' placeholderTextColor={colors.white} value = {email} onChangeText={(value) => setEmail(value)} keyboardType="email-address"/>
-            <TextInput style = {styles.textinput} placeholder='Password' placeholderTextColor={colors.white} value = {password} onChangeText={(value) => setPassword(value)} secureTextEntry={true}/>
+            <Text style={styles.titleinput} >Email</Text>
+            <TextInput style = {styles.textinput} placeholder='Enter School Email' placeholderTextColor={colors.white} value = {email} onChangeText={(value) => setEmail(value)} keyboardType="email-address"/>
+            <Text style={styles.titleinput} >Password</Text>
+            <TextInput style = {styles.textinput} placeholder='Enter Password' placeholderTextColor={colors.white} value = {password} onChangeText={(value) => setPassword(value)} secureTextEntry={true}/>
             <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
                 <Text style ={styles.forgetpasswordtext}>Forget Password?</Text>
             </TouchableOpacity>
@@ -31,13 +33,13 @@ const Login = ({navigation}) => {
                 }}>
                 <Text style ={styles.customBtnText}>Login</Text>
             </TouchableOpacity>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignSelf: 'center',}}>
                 <Text style={styles.noaccounttext}>Don't have an account?  </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Registration")}>
                     <Text style ={styles.signuptext}>Sign up</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -50,13 +52,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
       },
 
     logo: {
         width: '100%',
-        marginVertical: '-30%',
+        alignSelf: 'center',
+        marginBottom: -100,
+    },
+
+    titleinput : {
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginLeft: '10%',
     },
 
     textinput: {
@@ -67,6 +74,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         marginVertical: 10,
         color: colors.white,
+        alignSelf: 'center',
     },
 
     customBtnText: {
@@ -81,7 +89,8 @@ const styles = StyleSheet.create({
         marginVertical: '15%',
         backgroundColor: colors.darkbrown,
         paddingVertical: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        alignSelf: 'center',
     },
 
     forgetpasswordtext: {
@@ -89,6 +98,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         marginLeft: '50%',
         fontWeight: 'bold',
+        alignSelf: 'center',
 
     },
 

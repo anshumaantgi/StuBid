@@ -6,6 +6,8 @@ import colors from '../config/colors.js';
 import {auth, db} from '../config/config.js'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { doc, getDocs, getFirestore, collection} from "firebase/firestore"; 
+import moment from "moment-timezone";
+import AuctionView from '../views/AuctionView.js';
 
 
 const Auction2 = ({route, navigation}) => {
@@ -14,7 +16,6 @@ const Auction2 = ({route, navigation}) => {
       const auctionView =  route.params;
       const [startingprice, setStartingprice] = useState('');
       const [buyoutprice, setBuyoutprice] = useState('');
-      const [counter, setCounter] = useState(0);
 
       //Category Picker
       const [open, setOpen] = useState(false);
@@ -71,11 +72,10 @@ const Auction2 = ({route, navigation}) => {
       const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, animals] }); // big_donkey
 
       //Retrieve start date
-      const startdate = new Date().toLocaleDateString();
+      const startdate =  moment().tz('Singapore').format('DD/MM/YYYY')
 
       //Retrieve end date
-      const newdate = new Date(new Date().getTime()+(value2*24*60*60*1000));
-      const endbiddate = newdate.toLocaleDateString();
+      const endbiddate =  moment().add(value2, 'days').tz('Singapore').format('DD/MM/YYYY') //to display on app
 
       const displayendbiddate = () => {
         if (value2 === null) {
@@ -86,35 +86,22 @@ const Auction2 = ({route, navigation}) => {
       }
 
        //Retrieve Total number of documents (purpose is for auto accumulate Auction ID)
-       const countdocs = async()=> {
-        var count = 0;
-        const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "auctions"));
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-          count = count + 1
-          }
-          )
-          console.log("DOG", count);
-          setCounter(count)
-          console.log("CAAAA", counter)};
-        
-        useEffect(() => {
-           countdocs();
-        }, [])
+       const arrayMax = (arr) => {
+        return arr.reduce(function (p, v) {
+          return ( p > v ? p : v );
+        });
+        }
 
       // Function to send to database
       async function sendValues(enteredcategory, enteredendbid, enteredbidduration, enteredstartingprice, enteredbuyoutprice, SellerAnonymousName) {
         if (!(enteredcategory && enteredbidduration && enteredstartingprice && enteredbuyoutprice && SellerAnonymousName)) {
-            //console.log(counter);
             throw new Error("Please do not leave any fields empty!");
           } else if (parseInt(enteredbuyoutprice) <=  parseInt(enteredstartingprice)) {
               throw new Error("Buyout Bid must be higher than Starting Bid!");
           } else {
             // Create Auction Object and Input Auction ID
             // Save the Anonymous name to the Auction Object
-            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,counter,parseInt(enteredbidduration),SellerAnonymousName)
+            return await auctionView.createProduct(parseInt(enteredstartingprice), parseInt(enteredbuyoutprice),enteredcategory,parseInt(enteredbidduration),SellerAnonymousName, enteredendbid)
           }
     };
     
@@ -141,7 +128,7 @@ const Auction2 = ({route, navigation}) => {
                     console.log(value);
                   }}
                 placeholder="Choose Category"
-                containerStyle={{width: '80%', marginVertical: 10}}
+                containerStyle={{width: '80%', marginVertical: 10, alignSelf: 'center'}}
                 style={{backgroundColor: colors.textinput, paddingVertical: 20, borderColor: '#fff',}}
                 placeholderStyle={{color: colors.white}}
                 dropDownStyle = {{backgroundColor: colors.textinput}}
@@ -168,7 +155,7 @@ const Auction2 = ({route, navigation}) => {
                     console.log(value2);
                   }}
                 placeholder="Select Bid Duration"
-                containerStyle={{width: '80%', marginVertical: 10}}
+                containerStyle={{width: '80%', marginVertical: 10, alignSelf: 'center'}}
                 style={{backgroundColor: colors.textinput, paddingVertical: 20, borderColor: '#fff',}}
                 placeholderStyle={{color: colors.white}}
                 dropDownStyle = {{backgroundColor: colors.textinput}}
@@ -177,19 +164,20 @@ const Auction2 = ({route, navigation}) => {
             <Text style={styles.textdaysleft}> Start Bid Date: {startdate} </Text>
             <Text style={styles.textdaysleft}> End Bid Date: {displayendbiddate()} </Text>
             <Text style={styles.text}>Select your preferred Bid Duration. 'End Bid Date' will automatically specify the due date for the Auction.</Text>
-             <Text style={styles.title}>Set Bidding/Buyout Price</Text>
+             <Text style={[styles.title,{ marginBottom: 20}]}>Set Bidding/Buyout Price</Text>
+             <Text style={styles.titleinput} >Starting Bid Price ($)</Text>
              <TextInput style = {styles.textinput} placeholder='Starting Bid Price ($)' placeholderTextColor={colors.white} value = {startingprice} onChangeText={(value) => setStartingprice(value)} keyboardType='numeric' />
+             <Text style={styles.titleinput} >Buyout Bid Price ($)</Text>
              <TextInput style = {styles.textinput} placeholder='Buyout Bid Price ($)' placeholderTextColor={colors.white} value = {buyoutprice} onChangeText={(value) => setBuyoutprice(value)} keyboardType='numeric'/>
              <TouchableOpacity style = {styles.customBtnBG} onPress={() => {
                 sendValues(value, endbiddate, value2, startingprice, buyoutprice, randomName)
-                .then((success) =>  {alert(`Please take note of your Anonymous name during the auction: \n\n` + randomName); navigation.navigate('ItemPublishSuccess');})
-                .catch((error) => {alert(error.message)})
+                .then((success) =>  {navigation.navigate('ItemPublishSuccess', {randomName});})
+                .catch((error) => {alert(error.message); console.log('ERRRORRRRRRRRRRRRRR')})
             }
         }
             >
                 <Text style ={styles.customBtnText}>Publish Item</Text>
             </TouchableOpacity>
-            <Text style={styles.selleranonymousname}>Your Anonymous Name (Seller) : {randomName}</Text>
         </SafeAreaView>
         </KeyboardAvoidingView>
     </ScrollView>
@@ -201,8 +189,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white,
-        alignItems: 'center',
-        justifyContent: 'center',
       },
     
       title: {
@@ -213,12 +199,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
       },
 
+      titleinput : {
+        fontWeight: 'bold',
+        fontSize: 12,
+        marginLeft: '10%',
+      },
+
       text: {
         color: colors.darkbrown,
         fontSize: 12,
         width: '80%',
         textAlign: 'left',
         marginVertical: 5,
+        alignSelf: 'center',
       },
 
       textdaysleft: {
@@ -228,6 +221,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         marginVertical: 5,
+        alignSelf: 'center',
       },
 
       textinput: {
@@ -238,6 +232,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         marginVertical: 10,
         color: colors.white,
+        alignSelf: 'center',
       },
 
       customBtnText: {
@@ -252,7 +247,8 @@ const styles = StyleSheet.create({
         marginVertical: '5%',
         backgroundColor: colors.darkbrown,
         paddingVertical: 15,
-        borderRadius: 5
+        borderRadius: 5,
+        alignSelf: 'center',
     },
 
     datePicker: {
@@ -261,6 +257,7 @@ const styles = StyleSheet.create({
 
     datePickercontainer: {
         marginVertical: 10,
+        
         
     },
     selleranonymousname : {

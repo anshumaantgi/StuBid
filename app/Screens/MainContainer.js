@@ -6,11 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Screens
 import Homepage from './Homepage';
-import Auctionpage from './Auctionpage';
 import Notificationpage from './Notificationpage';
 import MyProfilepage from './MyProfilepage';
 import colors from '../config/colors';
-import { View } from 'react-native';
+import { View , Dimensions} from 'react-native';
 import Auction1 from './Auction1';
 import Auction2 from './Auction2';
 
@@ -19,6 +18,9 @@ const homeName = "Home";
 const AuctionName = "Auction";
 const NotificationName = "Notification";
 const MyProfileName = "My Profile";
+
+//height of screen
+const windowHeight = Dimensions.get('window').height;
 
 const Tab = createBottomTabNavigator();
 export const FilterContext = React.createContext();
@@ -52,13 +54,13 @@ function MainContainer({route, navigation}) {
           },
           tabBarActiveTintColor : colors.gold,
           tabBarInactiveTintColor : colors.white,
-
+          tabBarHideOnKeyboard: true,
           tabBarLabelStyle: {
             fontSize: 12,
           },
          
           tabBarStyle: {
-            height: 80,
+            height: windowHeight/10,
             paddingHorizontal: 20,
             padding: 10,
             backgroundColor: colors.darkbrown,

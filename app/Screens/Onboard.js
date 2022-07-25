@@ -94,16 +94,19 @@ const Onboard = ({navigation}) => {
 const styles = StyleSheet.create({
     slide : {
         flex : 1,
-        alignItems: "center",
-        justifyContent: "center",
         //backgroundColor: colors.white,
 
     },
     imagelogo : {
-        marginVertical: -180,
+        alignSelf: 'center',
+        width: 350,
+        height: 350,
     },
     image : {
-        marginVertical: 60,
+        marginTop: -80,
+        marginBottom: 40,
+        alignSelf: 'center',
+        
     },
     title : {
         fontSize: 24,
