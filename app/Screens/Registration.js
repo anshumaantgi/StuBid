@@ -52,7 +52,7 @@ const Registration = ({navigation}) => {
             case "SMU" :
                 // Do work here
                 //console.log('@smu.edu');
-                setUnimatchaddress('@smu.edu');
+                setUnimatchaddress('@smu.edu.sg');
                 break;
             case "SIT" :
                 // Do work here
@@ -62,7 +62,7 @@ const Registration = ({navigation}) => {
             case "SUTD" :
                 // Do work here
                 //console.log('@sutd.edu.sg');
-                setUnimatchaddress('@sutd.edu.sg');
+                setUnimatchaddress('@mymail.sutd.edu.sg');
                 break;
             case "SUSS" :
                 // Do work here
